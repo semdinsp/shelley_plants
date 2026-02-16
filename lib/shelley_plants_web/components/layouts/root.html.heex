@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <.live_title default="Shelley's Native Plants" suffix=" · Shelley's Native Plants">
+      {assigns[:page_title]}
+    </.live_title>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
+    </script>
+    <script>
+      (() => {
+        const setTheme = (theme) => {
+          if (theme === "system") {
+            localStorage.removeItem("phx:theme");
+            document.documentElement.removeAttribute("data-theme");
+          } else {
+            localStorage.setItem("phx:theme", theme);
+            document.documentElement.setAttribute("data-theme", theme);
+          }
+        };
+        if (!document.documentElement.hasAttribute("data-theme")) {
+          setTheme(localStorage.getItem("phx:theme") || "system");
+        }
+        window.addEventListener("storage", (e) => e.key === "phx:theme" && setTheme(e.newValue || "system"));
+        window.addEventListener("phx:set-theme", (e) => setTheme(e.target.dataset.phxTheme));
+      })();
+    </script>
+  </head>
+  <body>
+    <header class="navbar px-4 sm:px-6 lg:px-8 border-b border-base-200">
+      <div class="flex-1">
+        <a href="/" class="flex items-center gap-2 text-lg font-semibold tracking-tight">
+          <.icon name="hero-sparkles" class="size-5 text-green-600" /> Shelley's Native Plants
+        </a>
+      </div>
+      <nav class="flex-none">
+        <ul class="menu menu-horizontal items-center gap-1 px-1">
+          <li>
+            <.link href={~p"/plants"} class="btn btn-ghost btn-sm">Plants</.link>
+          </li>
+          <li>
+            <.link href={~p"/#about"} class="btn btn-ghost btn-sm">About</.link>
+          </li>
+          <%= if @current_scope do %>
+            <%= if @current_scope.admin? do %>
+              <li>
+                <.link href={~p"/admin"} class="btn btn-ghost btn-sm">Admin</.link>
+              </li>
+            <% end %>
+            <li>
+              <.link href={~p"/settings"} class="btn btn-ghost btn-sm">Settings</.link>
+            </li>
+            <li>
+              <.link href={~p"/users/log-out"} method="delete" class="btn btn-ghost btn-sm">
+                Log out
+              </.link>
+            </li>
+          <% else %>
+            <li>
+              <.link href={~p"/users/log-in"} class="btn btn-primary btn-sm">Log in</.link>
+            </li>
+          <% end %>
+        </ul>
+      </nav>
+    </header>
+    {@inner_content}
+  </body>
+</html>

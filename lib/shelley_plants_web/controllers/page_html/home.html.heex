@@ -1,0 +1,364 @@
+<Layouts.flash_group flash={@flash} />
+
+<%!-- Hero section --%>
+<section class="relative overflow-hidden bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-950 dark:to-emerald-900">
+  <div class="mx-auto max-w-5xl px-6 py-24 sm:py-32 lg:px-8">
+    <div class="text-center">
+      <p class="text-sm font-semibold uppercase tracking-widest text-green-700 dark:text-green-400 mb-4">
+        Celebrating Ontario's Natural Heritage
+      </p>
+      <h1 class="text-4xl font-bold tracking-tight text-balance sm:text-6xl mb-6 text-stone-900 dark:text-stone-100">
+        Discover Ontario's<br />Native Plants
+      </h1>
+      <p class="mx-auto max-w-2xl text-lg leading-8 text-stone-700 dark:text-stone-300 mb-10">
+        A curated guide to the wildflowers, grasses, and perennials that belong here —
+        supporting local ecosystems, attracting pollinators, and bringing lasting beauty
+        to your garden.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href={~p"/plants"} class="btn btn-primary btn-lg gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="size-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4 6h16M4 10h16M4 14h16M4 18h16"
+            />
+          </svg>
+          Browse the Plant Catalog
+        </a>
+        <a href="#about" class="btn btn-outline btn-lg gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="size-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+            />
+          </svg>
+          About Shelley
+        </a>
+      </div>
+    </div>
+  </div>
+  <%!-- Decorative bottom wave --%>
+  <div class="absolute bottom-0 left-0 right-0">
+    <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full">
+      <path
+        d="M0 60L48 50C96 40 192 20 288 15C384 10 480 20 576 25C672 30 768 30 864 25C960 20 1056 10 1152 10C1248 10 1344 20 1392 25L1440 30V60H1392C1344 60 1248 60 1152 60C1056 60 960 60 864 60C768 60 672 60 576 60C480 60 384 60 288 60C192 60 96 60 48 60H0Z"
+        class="fill-base-100"
+      />
+    </svg>
+  </div>
+</section>
+
+<%!-- Why native plants section --%>
+<section class="mx-auto max-w-5xl px-6 py-20 lg:px-8">
+  <div class="text-center mb-16">
+    <h2 class="text-3xl font-bold tracking-tight mb-4">Why Plant Native?</h2>
+    <p class="mx-auto max-w-2xl text-base-content/70 leading-7">
+      Native plants evolved alongside local wildlife for thousands of years.
+      Choosing them means choosing a healthier, more resilient landscape.
+    </p>
+  </div>
+  <div class="grid grid-cols-1 gap-8 sm:grid-cols-3">
+    <div class="text-center p-6 rounded-2xl bg-base-200">
+      <div class="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="size-6 text-green-700 dark:text-green-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+          />
+        </svg>
+      </div>
+      <h3 class="font-semibold text-lg mb-2">Support Biodiversity</h3>
+      <p class="text-sm text-base-content/70 leading-6">
+        Native plants provide essential habitat and food sources for local birds,
+        bees, butterflies, and other wildlife.
+      </p>
+    </div>
+    <div class="text-center p-6 rounded-2xl bg-base-200">
+      <div class="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="size-6 text-blue-700 dark:text-blue-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"
+          />
+        </svg>
+      </div>
+      <h3 class="font-semibold text-lg mb-2">Lower Maintenance</h3>
+      <p class="text-sm text-base-content/70 leading-6">
+        Adapted to local soils and climate, native plants typically require
+        less water, fertilizer, and care once established.
+      </p>
+    </div>
+    <div class="text-center p-6 rounded-2xl bg-base-200">
+      <div class="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="size-6 text-amber-700 dark:text-amber-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+          />
+        </svg>
+      </div>
+      <h3 class="font-semibold text-lg mb-2">Year-Round Beauty</h3>
+      <p class="text-sm text-base-content/70 leading-6">
+        From spring ephemerals to winter seed heads, native plants offer
+        striking seasonal interest throughout the year.
+      </p>
+    </div>
+  </div>
+  <div class="mt-12 text-center">
+    <a href={~p"/plants"} class="btn btn-primary gap-2">
+      Explore the full plant catalog &rarr;
+    </a>
+  </div>
+</section>
+
+<%!-- Divider --%>
+<div class="border-t border-base-200 mx-6 lg:mx-8"></div>
+
+<%!-- About section --%>
+<section id="about" class="mx-auto max-w-5xl px-6 py-20 lg:px-8">
+  <div class="text-center mb-12">
+    <p class="text-sm font-semibold uppercase tracking-widest text-green-700 dark:text-green-400 mb-3">
+      Meet Your Guide
+    </p>
+    <h2 class="text-3xl font-bold tracking-tight">About Dr. Shelley Ball</h2>
+  </div>
+
+  <div class="mx-auto max-w-3xl">
+    <div class="prose prose-lg mx-auto text-base-content leading-8">
+      <p class="text-xl font-medium text-base-content/80 mb-6">
+        Biologist. Educator. Storyteller. Advocate for the natural world.
+      </p>
+
+      <p class="mb-6">
+        Dr. Shelley Ball has spent a career building bridges between people and the
+        natural world. As the founder of Biosphere Environmental Education, her mission
+        is simple and enduring: to connect people to nature, and to inspire them to
+        care about it and protect it.
+      </p>
+
+      <p class="mb-6">
+        Shelley holds a Ph.D. in Biology with a specialization in evolutionary ecology
+        and population genetics, and was among the pioneers of DNA Barcoding — a
+        DNA-based tool now used globally to inventory the diversity of life on Earth.
+        With nearly 30 years of teaching experience spanning kindergarten through
+        graduate school, she brings rare breadth to every educational encounter.
+      </p>
+
+      <p class="mb-6">
+        Her work extends well beyond the laboratory and classroom. Shelley is a <strong>Fellow of the Royal Canadian Geographical Society</strong>, a
+        <strong>TEDx Speaker</strong>
+        (Ottawa), and a professional public speaker and
+        author. In December 2016, she was a member of the inaugural <strong>Homeward Bound Women in Science Leadership Expedition to Antarctica</strong>.
+        In March 2018, she represented the Canadian Federation of University Women
+        (CFUW) at the <strong>United Nations 62nd Commission on the Status of Women</strong>,
+        and was honoured with the <strong>2018 CFUW National Mentoring Award</strong>
+        — recognition of her longstanding dedication to mentoring women in science and
+        academia.
+      </p>
+
+      <p class="mb-6">
+        Shelley currently serves as Chair of the Environment Committee for
+        CFUW – Perth &amp; District, and as a mentor with the CFUW National Mentoring
+        Program. She is also a career mentor and life coach, helping individuals
+        discover and pursue their true vocations.
+      </p>
+
+      <p class="mb-8">
+        Whether she is guiding an expedition through a wilderness landscape, speaking
+        on a conference stage, or crouching in a meadow to identify a wildflower,
+        Shelley brings the same infectious passion: a deep love of nature and an
+        unwavering belief that understanding it is the first step toward protecting it.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-10">
+      <div class="flex items-start gap-3 p-4 rounded-xl bg-base-200">
+        <div class="shrink-0 mt-1">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="size-5 text-green-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
+            />
+          </svg>
+        </div>
+        <div>
+          <p class="font-semibold text-sm">Ph.D. in Biology</p>
+          <p class="text-sm text-base-content/60">
+            Evolutionary Ecology &amp; Population Genetics
+          </p>
+        </div>
+      </div>
+      <div class="flex items-start gap-3 p-4 rounded-xl bg-base-200">
+        <div class="shrink-0 mt-1">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="size-5 text-green-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"
+            />
+          </svg>
+        </div>
+        <div>
+          <p class="font-semibold text-sm">Antarctic Expedition Member</p>
+          <p class="text-sm text-base-content/60">Homeward Bound Women in Science, 2016</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-3 p-4 rounded-xl bg-base-200">
+        <div class="shrink-0 mt-1">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="size-5 text-green-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
+            />
+          </svg>
+        </div>
+        <div>
+          <p class="font-semibold text-sm">TEDx Speaker</p>
+          <p class="text-sm text-base-content/60">Ottawa TEDx Conference</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-3 p-4 rounded-xl bg-base-200">
+        <div class="shrink-0 mt-1">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="size-5 text-green-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+            />
+          </svg>
+        </div>
+        <div>
+          <p class="font-semibold text-sm">~30 Years of Teaching</p>
+          <p class="text-sm text-base-content/60">Kindergarten through graduate school</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-3 p-4 rounded-xl bg-base-200">
+        <div class="shrink-0 mt-1">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="size-5 text-green-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
+            />
+          </svg>
+        </div>
+        <div>
+          <p class="font-semibold text-sm">CFUW National Mentoring Award</p>
+          <p class="text-sm text-base-content/60">Winner, 2018</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-3 p-4 rounded-xl bg-base-200">
+        <div class="shrink-0 mt-1">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="size-5 text-green-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"
+            />
+          </svg>
+        </div>
+        <div>
+          <p class="font-semibold text-sm">Fellow, Royal Canadian Geographical Society</p>
+          <p class="text-sm text-base-content/60">
+            Recognized for contributions to geography &amp; environment
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%!-- Footer --%>
+<footer class="border-t border-base-200 mt-8">
+  <div class="mx-auto max-w-5xl px-6 py-10 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-base-content/50">
+    <p>&copy; {Date.utc_today().year} Shelley's Native Plants. All rights reserved.</p>
+    <div class="flex gap-6">
+      <a href={~p"/plants"} class="hover:text-base-content transition-colors">Plants</a>
+      <a href="#about" class="hover:text-base-content transition-colors">About</a>
+    </div>
+  </div>
+</footer>
