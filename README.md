@@ -14,6 +14,22 @@ mix phx.new trackguests2 --binary-id. # need to check on v7
 mix phx.gen.auth Accounts User users
 mix ecto.migrate
 
+## LOADING PLANTS
+
+### dev
+mix plants.import priv/data/plants.json
+
+### prod
+copy data
+fly sftp put plant_info/plants_import.json /tmp/plants_import.json
+
+
+Production (Fly.io):
+  fly ssh console --pty -C \
+    "/app/bin/shelley_plants eval 
+  'ShelleyPlants.Release.import_plants([\"/tmp/plants_import.json\"])'"
+
+  The architecture:
 
 
 ## Learn more
