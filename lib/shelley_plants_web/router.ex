@@ -33,6 +33,7 @@ defmodule ShelleyPlantsWeb.Router do
     live_session :plants,
       on_mount: [{ShelleyPlantsWeb.UserAuth, :mount_current_scope}] do
       live "/plants", PlantLive.Index, :index
+      live "/plants/gallery", PlantLive.Gallery, :index
       live "/plants/new", PlantLive.Form, :new
       live "/plants/:id", PlantLive.Show, :show
       live "/plants/:id/edit", PlantLive.Form, :edit
