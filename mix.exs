@@ -65,6 +65,13 @@ defmodule ShelleyPlants.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 1.0"},
       {:jason, "~> 1.2"},
+      # scott mailer
+      {:ex_aws, "~> 2.1"},
+      {:ex_aws_s3, "~> 2.0"},
+      {:hackney, "~> 1.18"},
+      {:poison, "~> 3.0"},
+      # stripe support
+      # end exasw3
       {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.5"}
     ]

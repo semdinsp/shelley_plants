@@ -144,3 +144,10 @@ The task logs each record individually:
 ```
 
 Failed records do **not** halt the import — all records are attempted and the task exits with code `1` if any failures occurred.
+
+
+## IMPORT ON FLY
+
+ fly sftp put plant_info/plants_import.json /tmp/plants_import.json
+
+ 
