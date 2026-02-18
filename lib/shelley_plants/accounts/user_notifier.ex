@@ -9,7 +9,7 @@ defmodule ShelleyPlants.Accounts.UserNotifier do
     email =
       new()
       |> to(recipient)
-      |> from({"ShelleyPlants", "contact@example.com"})
+      |> from({"ShelleyPlants", "scott.sproule@gmail.com"})
       |> subject(subject)
       |> text_body(body)
 
