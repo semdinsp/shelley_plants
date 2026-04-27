@@ -30,44 +30,35 @@
     </script>
   </head>
   <body>
-    <header class="navbar px-4 sm:px-6 lg:px-8 border-b border-base-200">
-      <div class="flex-1">
-        <a href="/" class="flex items-center gap-2 text-lg font-semibold tracking-tight">
-          <.icon name="hero-sparkles" class="size-5 text-green-600" /> Shelley's Native Plants
-        </a>
-      </div>
-      <nav class="flex-none">
-        <ul class="menu menu-horizontal items-center gap-1 px-1">
-          <li>
+    <header class="sticky top-0 z-40 border-b border-base-200/60 bg-base-100/80 backdrop-blur-md">
+      <div class="mx-auto max-w-5xl px-6 lg:px-8">
+        <div class="flex h-14 items-center justify-between">
+          <a href="/" class="flex items-center gap-2 font-semibold tracking-tight text-base-content">
+            <.icon name="hero-sparkles" class="size-4 text-primary" />
+            <span>Shelley's Native Plants</span>
+          </a>
+          <nav class="flex items-center gap-1">
             <.link href={~p"/plants"} class="btn btn-ghost btn-sm">Plants</.link>
-          </li>
-          <li>
             <.link href={~p"/plants/gallery"} class="btn btn-ghost btn-sm">Visual Tour</.link>
-          </li>
-          <li>
             <.link href={~p"/#about"} class="btn btn-ghost btn-sm">About</.link>
-          </li>
-          <%= if @current_scope do %>
-            <%= if @current_scope.admin? do %>
-              <li>
+            <%= if @current_scope do %>
+              <%= if @current_scope.admin? do %>
                 <.link href={~p"/admin"} class="btn btn-ghost btn-sm">Admin</.link>
-              </li>
-            <% end %>
-            <li>
+              <% end %>
               <.link href={~p"/settings"} class="btn btn-ghost btn-sm">Settings</.link>
-            </li>
-            <li>
               <.link href={~p"/users/log-out"} method="delete" class="btn btn-ghost btn-sm">
                 Log out
               </.link>
-            </li>
-          <% else %>
-            <li>
+            <% else %>
+              <div class="w-px h-4 bg-base-300 mx-1"></div>
               <.link href={~p"/users/log-in"} class="btn btn-primary btn-sm">Log in</.link>
-            </li>
-          <% end %>
-        </ul>
-      </nav>
+            <% end %>
+            <div class="ml-2">
+              <Layouts.theme_toggle />
+            </div>
+          </nav>
+        </div>
+      </div>
     </header>
     {@inner_content}
   </body>
