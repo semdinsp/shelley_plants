@@ -51,6 +51,7 @@ defmodule ShelleyPlants.Accounts.UserNotifier do
   defp deliver_magic_link_instructions(user, url) do
     # SCOTT FIX
     IO.inspect(url, label: "Magic Link Login URL")
+
     deliver(user.email, "Log in instructions", """
 
     ==============================

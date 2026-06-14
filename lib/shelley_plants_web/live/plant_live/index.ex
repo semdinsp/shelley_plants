@@ -21,6 +21,14 @@ defmodule ShelleyPlantsWeb.PlantLive.Index do
         rows={@streams.plants}
         row_click={fn {_id, plant} -> JS.navigate(~p"/plants/#{plant}") end}
       >
+        <:col :let={{_id, plant}} label="Photo">
+          <img
+            :if={plant.picture}
+            src={plant.picture}
+            alt={plant.common_name}
+            class="h-12 w-12 rounded object-cover"
+          />
+        </:col>
         <:col :let={{_id, plant}} label="Common name">{plant.common_name}</:col>
         <:col :let={{_id, plant}} label="Latin name"><em>{plant.latin_name}</em></:col>
         <:col :let={{_id, plant}} label="Plant type">{plant.plant_type}</:col>

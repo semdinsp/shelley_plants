@@ -57,12 +57,11 @@ if config_env() == :prod do
 
   config :shelley_plants, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
-   config :shelley_plants, ShelleyPlants.Mailer,
+  config :shelley_plants, ShelleyPlants.Mailer,
     adapter: Swoosh.Adapters.AmazonSES,
     access_key: System.get_env("AWS_ACCESS_KEY_ID"),
     secret: System.get_env("AWS_SECRET_ACCESS_KEY"),
     region: "us-east-1"
-
 
   config :shelley_plants, ShelleyPlantsWeb.Endpoint,
     url: [host: host, port: 443, scheme: "https"],
