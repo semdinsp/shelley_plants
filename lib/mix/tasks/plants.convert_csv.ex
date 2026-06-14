@@ -24,10 +24,18 @@ defmodule Mix.Tasks.Plants.ConvertCsv do
 
     [_header | data_rows] = rows
 
+    existing_pictures = load_existing_pictures(json_path)
+
     records =
       data_rows
       |> Enum.map(&row_to_plant/1)
       |> Enum.reject(&(&1["common_name"] == "" and &1["latin_name"] == ""))
+      |> Enum.map(fn record ->
+        case Map.fetch(existing_pictures, record["latin_name"]) do
+          {:ok, picture} -> Map.put(record, "picture", picture)
+          :error -> record
+        end
+      end)
 
     File.write!(json_path, Jason.encode!(records, pretty: true))
 
@@ -35,6 +43,19 @@ defmodule Mix.Tasks.Plants.ConvertCsv do
   end
 
   def run(_), do: Mix.raise("Usage: mix plants.convert_csv <input.csv> <output.json>")
+
+  defp load_existing_pictures(json_path) do
+    case File.read(json_path) do
+      {:ok, content} ->
+        content
+        |> Jason.decode!()
+        |> Map.new(fn record -> {record["latin_name"], record["picture"]} end)
+        |> Map.reject(fn {_latin_name, picture} -> is_nil(picture) end)
+
+      {:error, _} ->
+        %{}
+    end
+  end
 
   defp row_to_plant([
          common_name,
