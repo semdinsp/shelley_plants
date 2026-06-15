@@ -33,33 +33,95 @@
     <header class="sticky top-0 z-40 border-b border-base-200/60 bg-base-100/80 backdrop-blur-md">
       <div class="mx-auto max-w-5xl px-6 lg:px-8">
         <div class="flex h-14 items-center justify-between">
-          <a
-            href="/"
-            class="flex items-center gap-2 font-semibold tracking-tight text-base-content"
-          >
-            <.icon name="hero-sparkles" class="size-4 text-primary" />
-            <span>Shelley's Native Plants</span>
+          <a href="/" class="flex items-center gap-2 text-primary" aria-label="Shelley's Native Plants">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="size-6"
+            >
+              <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17 1.39.41 2.34.41 8 0 17-8.5 17-18-1.5 1.5-7 2.5-9 2.5 0 0 1.5-3 5-3-3 0-5 1.5-5 6z" />
+            </svg>
+            <span class="hidden md:inline font-semibold text-base-content">Shelley's Native Plants</span>
           </a>
-          <nav class="flex items-center gap-1">
-            <.link href={~p"/plants"} class="btn btn-ghost btn-sm">Plants</.link>
-            <.link href={~p"/plants/gallery"} class="btn btn-ghost btn-sm">Visual Tour</.link>
-            <.link href={~p"/#about"} class="btn btn-ghost btn-sm">About</.link>
+          <nav class="hidden md:flex items-center gap-1 text-base">
+            <.link href={~p"/plants"} class="btn btn-ghost">
+              <.icon name="hero-squares-2x2" class="size-5" /> Plants
+            </.link>
+            <.link href={~p"/plants/gallery"} class="btn btn-ghost">
+              <.icon name="hero-photo" class="size-5" /> Visual Tour
+            </.link>
+            <.link href={~p"/#about"} class="btn btn-ghost">
+              <.icon name="hero-information-circle" class="size-5" /> About
+            </.link>
             <%= if @current_scope do %>
               <%= if @current_scope.admin? do %>
-                <.link href={~p"/admin"} class="btn btn-ghost btn-sm">Admin</.link>
+                <.link href={~p"/admin"} class="btn btn-ghost">
+                  <.icon name="hero-cog-6-tooth" class="size-5" /> Admin
+                </.link>
               <% end %>
-              <.link href={~p"/settings"} class="btn btn-ghost btn-sm">Settings</.link>
-              <.link href={~p"/users/log-out"} method="delete" class="btn btn-ghost btn-sm">
-                Log out
+              <.link href={~p"/settings"} class="btn btn-ghost">
+                <.icon name="hero-user-circle" class="size-5" /> Settings
+              </.link>
+              <.link href={~p"/users/log-out"} method="delete" class="btn btn-ghost">
+                <.icon name="hero-arrow-right-on-rectangle" class="size-5" /> Log out
               </.link>
             <% else %>
               <div class="w-px h-4 bg-base-300 mx-1"></div>
-              <.link href={~p"/users/log-in"} class="btn btn-primary btn-sm">Log in</.link>
+              <.link href={~p"/users/log-in"} class="btn btn-primary">
+                <.icon name="hero-arrow-right-on-rectangle" class="size-5" /> Log in
+              </.link>
             <% end %>
             <div class="ml-2">
               <Layouts.theme_toggle />
             </div>
           </nav>
+          <div class="dropdown dropdown-end md:hidden">
+            <div tabindex="0" role="button" class="btn btn-ghost btn-sm" aria-label="Open menu">
+              <.icon name="hero-bars-3" class="size-5" />
+            </div>
+            <ul tabindex="0" class="menu dropdown-content z-50 mt-3 w-52 rounded-box bg-base-100 p-2 shadow">
+              <li>
+                <.link href={~p"/plants"}><.icon name="hero-squares-2x2" class="size-5" /> Plants</.link>
+              </li>
+              <li>
+                <.link href={~p"/plants/gallery"}>
+                  <.icon name="hero-photo" class="size-5" /> Visual Tour
+                </.link>
+              </li>
+              <li>
+                <.link href={~p"/#about"}>
+                  <.icon name="hero-information-circle" class="size-5" /> About
+                </.link>
+              </li>
+              <%= if @current_scope do %>
+                <%= if @current_scope.admin? do %>
+                  <li>
+                    <.link href={~p"/admin"}>
+                      <.icon name="hero-cog-6-tooth" class="size-5" /> Admin
+                    </.link>
+                  </li>
+                <% end %>
+                <li>
+                  <.link href={~p"/settings"}>
+                    <.icon name="hero-user-circle" class="size-5" /> Settings
+                  </.link>
+                </li>
+                <li>
+                  <.link href={~p"/users/log-out"} method="delete">
+                    <.icon name="hero-arrow-right-on-rectangle" class="size-5" /> Log out
+                  </.link>
+                </li>
+              <% else %>
+                <li>
+                  <.link href={~p"/users/log-in"}>
+                    <.icon name="hero-arrow-right-on-rectangle" class="size-5" /> Log in
+                  </.link>
+                </li>
+              <% end %>
+              <li class="mt-1"><Layouts.theme_toggle /></li>
+            </ul>
+          </div>
         </div>
       </div>
     </header>
