@@ -360,6 +360,7 @@ defmodule ShelleyPlantsWeb.CoreComponents do
       end
 
     ~H"""
+    <div class="overflow-x-auto w-full">
     <table class="table table-zebra">
       <thead>
         <tr>
@@ -388,6 +389,7 @@ defmodule ShelleyPlantsWeb.CoreComponents do
         </tr>
       </tbody>
     </table>
+    </div>
     """
   end
 

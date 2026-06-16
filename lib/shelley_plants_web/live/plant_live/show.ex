@@ -57,8 +57,10 @@ defmodule ShelleyPlantsWeb.PlantLive.Show do
 
     {:ok,
      socket
-     |> assign(:page_title, "Plant Details")
-     |> assign(:plant, Catalog.get_plant!(id))}
+     |> then(fn socket ->
+       plant = Catalog.get_plant!(id)
+       socket |> assign(:page_title, plant.common_name) |> assign(:plant, plant)
+     end)}
   end
 
   @impl true
