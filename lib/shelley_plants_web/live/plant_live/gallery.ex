@@ -9,7 +9,7 @@ defmodule ShelleyPlantsWeb.PlantLive.Gallery do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div class="mb-8">
-          <h1 class="text-3xl font-serif font-semibold text-base-content">Visual Tour</h1>
+          <h1 class="text-3xl font-serif font-semibold text-base-content">Plant Gallery</h1>
           <p class="mt-2 text-base-content/70">
             Explore Ontario's native plants — click any card to learn more.
           </p>
@@ -29,7 +29,7 @@ defmodule ShelleyPlantsWeb.PlantLive.Gallery do
 
     {:ok,
      socket
-     |> assign(:page_title, "Visual Tour")
+     |> assign(:page_title, "Plant Gallery")
      |> assign(:plants, plants)}
   end
 

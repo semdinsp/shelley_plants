@@ -8,7 +8,7 @@ defmodule ShelleyPlantsWeb.PlantLive.Index do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <.header>
-        Native Plants
+        Species List
         <:actions :if={@current_scope && @current_scope.admin?}>
           <.button variant="primary" navigate={~p"/plants/new"}>
             <.icon name="hero-plus" /> New Plant
@@ -37,7 +37,11 @@ defmodule ShelleyPlantsWeb.PlantLive.Index do
         <:col :let={{_id, plant}} label="Height">{plant.height}</:col>
         <:col :let={{_id, plant}} label="Light">{plant.light_requirements}</:col>
         <:col :let={{_id, plant}} label="Native (ON)">
-          {if plant.native_ontario, do: "Yes", else: "No"}
+          {cond do
+            plant.locally_native -> "Yes (local)"
+            plant.native_ontario -> "Yes"
+            true -> "Non-native to Ontario"
+          end}
         </:col>
         <:action :let={{_id, plant}}>
           <.link navigate={~p"/plants/#{plant}"} aria-label="View"><.icon name="hero-eye" class="size-5" /></.link>
@@ -66,7 +70,7 @@ defmodule ShelleyPlantsWeb.PlantLive.Index do
 
     {:ok,
      socket
-     |> assign(:page_title, "Native Plants")
+     |> assign(:page_title, "Species List")
      |> stream(:plants, Catalog.list_plants())}
   end
 

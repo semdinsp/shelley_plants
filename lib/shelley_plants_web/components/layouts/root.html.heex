@@ -45,11 +45,11 @@
             <span class="hidden md:inline font-semibold text-base-content">Shelley's Native Plants</span>
           </a>
           <nav class="hidden md:flex items-center gap-1 text-base">
-            <.link href={~p"/plants"} class="btn btn-ghost">
-              <.icon name="hero-squares-2x2" class="size-5" /> Plants
-            </.link>
             <.link href={~p"/plants/gallery"} class="btn btn-ghost">
-              <.icon name="hero-photo" class="size-5" /> Visual Tour
+              <.icon name="hero-photo" class="size-5" /> Plant Gallery
+            </.link>
+            <.link href={~p"/plants"} class="btn btn-ghost">
+              <.icon name="hero-squares-2x2" class="size-5" /> Species List
             </.link>
             <.link href={~p"/#about"} class="btn btn-ghost">
               <.icon name="hero-information-circle" class="size-5" /> About
@@ -82,11 +82,11 @@
             </div>
             <ul tabindex="0" class="menu dropdown-content z-50 mt-3 w-52 rounded-box bg-base-100 p-2 shadow">
               <li>
-                <.link href={~p"/plants"}><.icon name="hero-squares-2x2" class="size-5" /> Plants</.link>
+                <.link href={~p"/plants/gallery"}><.icon name="hero-photo" class="size-5" /> Plant Gallery</.link>
               </li>
               <li>
-                <.link href={~p"/plants/gallery"}>
-                  <.icon name="hero-photo" class="size-5" /> Visual Tour
+                <.link href={~p"/plants"}>
+                  <.icon name="hero-squares-2x2" class="size-5" /> Species List
                 </.link>
               </li>
               <li>
