@@ -4,6 +4,8 @@ defmodule ShelleyPlants.Accounts.UserNotifier do
   alias ShelleyPlants.Mailer
   alias ShelleyPlants.Accounts.User
 
+  require Logger
+
   # Delivers the email using the application mailer.
   defp deliver(recipient, subject, body) do
     email =
@@ -13,8 +15,13 @@ defmodule ShelleyPlants.Accounts.UserNotifier do
       |> subject(subject)
       |> text_body(body)
 
-    with {:ok, _metadata} <- Mailer.deliver(email) do
-      {:ok, email}
+    case Mailer.deliver(email) do
+      {:ok, _metadata} ->
+        {:ok, email}
+
+      {:error, reason} ->
+        Logger.error("Failed to deliver email to #{recipient}: #{inspect(reason)}")
+        {:error, reason}
     end
   end
 
