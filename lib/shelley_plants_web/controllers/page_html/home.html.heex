@@ -1,16 +1,49 @@
 <Layouts.flash_group flash={@flash} />
 
-<%!-- Hero section --%>
-<section class="relative overflow-hidden bg-gradient-to-b from-base-200 to-base-100">
-  <div class="mx-auto max-w-5xl px-6 py-28 sm:py-36 lg:px-8">
+<%!-- Hero section — full-bleed photo collage with gradient overlay --%>
+<section class="relative overflow-hidden min-h-[600px] sm:min-h-[680px] flex items-center">
+  <%!-- Photo collage background --%>
+  <div class="absolute inset-0 grid grid-cols-3 gap-0">
+    <div class="relative overflow-hidden">
+      <img
+        src="/images/plants/symphyotrichum_novae_angliae.jpg"
+        alt="New England Aster"
+        class="w-full h-full object-cover scale-105"
+        style="transform-origin: center; object-position: center top;"
+      />
+    </div>
+    <div class="relative overflow-hidden">
+      <img
+        src="/images/plants/rudbeckia_hirta.jpg"
+        alt="Black-eyed Susan"
+        class="w-full h-full object-cover scale-105"
+        style="object-position: center center;"
+      />
+    </div>
+    <div class="relative overflow-hidden">
+      <img
+        src="/images/plants/monarda_fistulosa.jpg"
+        alt="Wild Bergamot"
+        class="w-full h-full object-cover scale-105"
+        style="object-position: center top;"
+      />
+    </div>
+  </div>
+
+  <%!-- Multi-layer gradient: strong left fade + overall dark overlay for readability --%>
+  <div class="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-black/30"></div>
+  <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20"></div>
+
+  <%!-- Hero content --%>
+  <div class="relative z-10 mx-auto max-w-5xl px-6 py-28 sm:py-36 lg:px-8 w-full">
     <div class="max-w-2xl">
-      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-5">
+      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-5 drop-shadow">
         Celebrating Ontario's Natural Heritage
       </p>
-      <h1 class="text-5xl font-bold tracking-tight text-balance sm:text-7xl mb-6 text-base-content leading-[1.1]">
+      <h1 class="text-5xl font-bold tracking-tight text-balance sm:text-7xl mb-6 text-white leading-[1.1] drop-shadow-lg">
         Discover<br /> Ontario's<br /> Native Plants
       </h1>
-      <p class="max-w-xl text-lg leading-relaxed text-base-content/60 mb-10">
+      <p class="max-w-xl text-lg leading-relaxed text-white/80 mb-10 drop-shadow">
         A curated guide to the wildflowers, grasses, and perennials that belong here —
         supporting local ecosystems, attracting pollinators, and bringing lasting beauty
         to your garden.
@@ -29,78 +62,100 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
           </svg>
         </a>
-        <a href={~p"/plants/gallery"} class="btn btn-ghost btn-lg">
+        <a href={~p"/plants/gallery"} class="btn btn-ghost btn-lg text-white border-white/30 hover:bg-white/10 hover:border-white/50">
           <.icon name="hero-photo" class="size-5" /> Plant Gallery
         </a>
-        <a href="#about" class="btn btn-ghost btn-lg">
+        <a href="#about" class="btn btn-ghost btn-lg text-white border-white/30 hover:bg-white/10 hover:border-white/50">
           <.icon name="hero-information-circle" class="size-5" /> About Shelley
         </a>
       </div>
     </div>
   </div>
-  <%!-- Decorative botanical element --%>
-  <div class="absolute right-0 top-0 bottom-0 w-2/5 hidden lg:block pointer-events-none overflow-hidden">
-    <div class="absolute inset-0 bg-gradient-to-l from-transparent to-base-100/50"></div>
-    <div class="absolute inset-0 flex items-center justify-center">
-      <svg
-        viewBox="0 0 400 500"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        class="w-full h-full opacity-[0.07] text-primary"
-      >
-        <circle cx="200" cy="200" r="180" stroke="currentColor" stroke-width="1" />
-        <circle cx="200" cy="200" r="120" stroke="currentColor" stroke-width="1" />
-        <circle cx="200" cy="200" r="60" stroke="currentColor" stroke-width="1" />
-        <line x1="20" y1="200" x2="380" y2="200" stroke="currentColor" stroke-width="1" />
-        <line x1="200" y1="20" x2="200" y2="380" stroke="currentColor" stroke-width="1" />
-        <line x1="73" y1="73" x2="327" y2="327" stroke="currentColor" stroke-width="1" />
-        <line x1="327" y1="73" x2="73" y2="327" stroke="currentColor" stroke-width="1" />
-        <ellipse cx="200" cy="200" rx="100" ry="180" stroke="currentColor" stroke-width="0.75" />
-        <ellipse cx="200" cy="200" rx="180" ry="100" stroke="currentColor" stroke-width="0.75" />
-        <ellipse
-          cx="200"
-          cy="200"
-          rx="100"
-          ry="180"
-          stroke="currentColor"
-          stroke-width="0.75"
-          transform="rotate(45 200 200)"
-        />
-        <ellipse
-          cx="200"
-          cy="200"
-          rx="100"
-          ry="180"
-          stroke="currentColor"
-          stroke-width="0.75"
-          transform="rotate(-45 200 200)"
-        />
-      </svg>
-    </div>
-  </div>
 </section>
 
-<%!-- Stats bar --%>
-<div class="border-y border-base-200 bg-base-200/40">
-  <div class="mx-auto max-w-5xl px-6 lg:px-8">
+<%!-- Stats bar — with botanical texture strip --%>
+<div class="relative border-y border-base-200 overflow-hidden">
+  <%!-- Background image strip with heavy overlay --%>
+  <div class="absolute inset-0">
+    <img
+      src="/images/plants/liatris_aspera.jpg"
+      alt=""
+      aria-hidden="true"
+      class="w-full h-full object-cover object-center"
+    />
+    <div class="absolute inset-0 bg-base-100/92 dark:bg-base-100/95"></div>
+  </div>
+  <div class="relative mx-auto max-w-5xl px-6 lg:px-8">
     <div class="grid grid-cols-3 divide-x divide-base-300">
-      <div class="py-6 px-4 text-center">
-        <p class="text-2xl font-bold text-primary font-serif">100+</p>
-        <p class="text-xs text-base-content/50 mt-1 uppercase tracking-wider">Native species</p>
+      <div class="py-8 px-4 text-center">
+        <p class="text-3xl font-bold text-primary font-serif">100+</p>
+        <p class="text-xs text-base-content/50 mt-1.5 uppercase tracking-wider">Native species</p>
       </div>
-      <div class="py-6 px-4 text-center">
-        <p class="text-2xl font-bold text-primary font-serif">30+</p>
-        <p class="text-xs text-base-content/50 mt-1 uppercase tracking-wider">Years teaching</p>
+      <div class="py-8 px-4 text-center">
+        <p class="text-3xl font-bold text-primary font-serif">30+</p>
+        <p class="text-xs text-base-content/50 mt-1.5 uppercase tracking-wider">Years teaching</p>
       </div>
-      <div class="py-6 px-4 text-center">
-        <p class="text-2xl font-bold text-primary font-serif">1</p>
-        <p class="text-xs text-base-content/50 mt-1 uppercase tracking-wider">
+      <div class="py-8 px-4 text-center">
+        <p class="text-3xl font-bold text-primary font-serif">1</p>
+        <p class="text-xs text-base-content/50 mt-1.5 uppercase tracking-wider">
           Ontario ecosystem
         </p>
       </div>
     </div>
   </div>
 </div>
+
+<%!-- Featured Plants strip --%>
+<%= if @featured_plants != [] do %>
+<section class="mx-auto max-w-5xl px-6 pt-20 pb-4 lg:px-8">
+  <div class="flex items-end justify-between mb-8">
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-3">
+        From the collection
+      </p>
+      <h2 class="text-2xl font-bold tracking-tight sm:text-3xl">Featured Plants</h2>
+    </div>
+    <a href={~p"/plants/gallery"} class="btn btn-ghost btn-sm gap-1.5 hidden sm:flex">
+      View all <.icon name="hero-arrow-right" class="size-4" />
+    </a>
+  </div>
+
+  <%!-- Horizontally scrollable on mobile, grid on sm+ --%>
+  <div class="flex gap-4 overflow-x-auto pb-4 sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0 lg:grid-cols-6 -mx-6 px-6 sm:mx-0 sm:px-0 snap-x snap-mandatory sm:snap-none">
+    <%= for plant <- @featured_plants do %>
+      <a
+        href={~p"/plants/#{plant}"}
+        class="group flex-shrink-0 w-40 sm:w-auto snap-start"
+      >
+        <div class="relative rounded-xl overflow-hidden aspect-[3/4] bg-base-200 shadow-sm group-hover:shadow-md transition-shadow">
+          <%= if plant.picture do %>
+            <img
+              src={plant.picture}
+              alt={plant.common_name}
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+          <% else %>
+            <div class="w-full h-full flex items-center justify-center text-base-content/20">
+              <.icon name="hero-photo" class="size-10" />
+            </div>
+          <% end %>
+          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-3">
+            <p class="text-white text-xs font-semibold leading-tight line-clamp-2"><%= plant.common_name %></p>
+            <p class="text-white/60 text-[10px] italic mt-0.5 line-clamp-1 leading-tight"><%= plant.latin_name %></p>
+          </div>
+        </div>
+      </a>
+    <% end %>
+  </div>
+
+  <div class="mt-6 sm:hidden">
+    <a href={~p"/plants/gallery"} class="btn btn-ghost btn-sm gap-1.5 w-full">
+      View all plants <.icon name="hero-arrow-right" class="size-4" />
+    </a>
+  </div>
+</section>
+<% end %>
 
 <%!-- Why native plants section --%>
 <section class="mx-auto max-w-5xl px-6 py-24 lg:px-8">
@@ -115,74 +170,109 @@
     </p>
   </div>
   <div class="grid grid-cols-1 gap-px bg-base-300 rounded-2xl overflow-hidden sm:grid-cols-3">
-    <div class="bg-base-100 p-8 group hover:bg-base-200/50 transition-colors">
-      <div class="mb-5 flex size-10 items-center justify-center rounded-xl bg-green-100 dark:bg-green-900/40">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="size-5 text-green-700 dark:text-green-400"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          stroke-width="1.5"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
-          />
-        </svg>
+    <%!-- Support Biodiversity — pollinator bloom --%>
+    <div class="bg-base-100 group hover:bg-base-200/50 transition-colors overflow-hidden">
+      <div class="relative h-44 overflow-hidden">
+        <img
+          src="/images/plants/monarda_punctata.jpg"
+          alt="Spotted Bee Balm"
+          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
       </div>
-      <h3 class="font-semibold text-base mb-2">Support Biodiversity</h3>
-      <p class="text-sm text-base-content/60 leading-relaxed">
-        Native plants provide essential habitat and food sources for local birds,
-        bees, butterflies, and other wildlife.
-      </p>
+      <div class="p-8">
+        <div class="mb-5 flex size-10 items-center justify-center rounded-xl bg-green-100 dark:bg-green-900/40">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="size-5 text-green-700 dark:text-green-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+            />
+          </svg>
+        </div>
+        <h3 class="font-semibold text-base mb-2">Support Biodiversity</h3>
+        <p class="text-sm text-base-content/60 leading-relaxed">
+          Native plants provide essential habitat and food sources for local birds,
+          bees, butterflies, and other wildlife.
+        </p>
+      </div>
     </div>
-    <div class="bg-base-100 p-8 group hover:bg-base-200/50 transition-colors">
-      <div class="mb-5 flex size-10 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-900/40">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="size-5 text-blue-700 dark:text-blue-400"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          stroke-width="1.5"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"
-          />
-        </svg>
+
+    <%!-- Lower Maintenance — grass / meadow --%>
+    <div class="bg-base-100 group hover:bg-base-200/50 transition-colors overflow-hidden">
+      <div class="relative h-44 overflow-hidden">
+        <img
+          src="/images/plants/andropogon_gerardii.jpg"
+          alt="Big Bluestem"
+          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
       </div>
-      <h3 class="font-semibold text-base mb-2">Lower Maintenance</h3>
-      <p class="text-sm text-base-content/60 leading-relaxed">
-        Adapted to local soils and climate, native plants typically require
-        less water, fertilizer, and care once established.
-      </p>
+      <div class="p-8">
+        <div class="mb-5 flex size-10 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-900/40">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="size-5 text-blue-700 dark:text-blue-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"
+            />
+          </svg>
+        </div>
+        <h3 class="font-semibold text-base mb-2">Lower Maintenance</h3>
+        <p class="text-sm text-base-content/60 leading-relaxed">
+          Adapted to local soils and climate, native plants typically require
+          less water, fertilizer, and care once established.
+        </p>
+      </div>
     </div>
-    <div class="bg-base-100 p-8 group hover:bg-base-200/50 transition-colors">
-      <div class="mb-5 flex size-10 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/40">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="size-5 text-amber-700 dark:text-amber-400"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          stroke-width="1.5"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-          />
-        </svg>
+
+    <%!-- Year-Round Beauty — autumn/textural plant --%>
+    <div class="bg-base-100 group hover:bg-base-200/50 transition-colors overflow-hidden">
+      <div class="relative h-44 overflow-hidden">
+        <img
+          src="/images/plants/helenium_autumnale.jpg"
+          alt="Sneezeweed"
+          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
       </div>
-      <h3 class="font-semibold text-base mb-2">Year-Round Beauty</h3>
-      <p class="text-sm text-base-content/60 leading-relaxed">
-        From spring ephemerals to winter seed heads, native plants offer
-        striking seasonal interest throughout the year.
-      </p>
+      <div class="p-8">
+        <div class="mb-5 flex size-10 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/40">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="size-5 text-amber-700 dark:text-amber-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+            />
+          </svg>
+        </div>
+        <h3 class="font-semibold text-base mb-2">Year-Round Beauty</h3>
+        <p class="text-sm text-base-content/60 leading-relaxed">
+          From spring ephemerals to winter seed heads, native plants offer
+          striking seasonal interest throughout the year.
+        </p>
+      </div>
     </div>
   </div>
   <div class="mt-10">
@@ -214,6 +304,10 @@
         <p class="text-base font-medium text-base-content/70 mb-6 italic">
           Biologist. Educator. Storyteller.<br />Advocate for the natural world.
         </p>
+
+        <%!-- TODO: add headshot -->
+        <%!-- <img src="/images/shelley_headshot.jpg" alt="Dr. Shelley Ball" class="w-32 h-32 rounded-full object-cover mb-6 border-2 border-base-300" /> --%>
+
         <div class="space-y-4 text-sm text-base-content/70 leading-relaxed">
           <p>
             Dr. Shelley Ball has spent a career building bridges between people and the

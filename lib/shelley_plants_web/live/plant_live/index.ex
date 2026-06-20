@@ -3,6 +3,8 @@ defmodule ShelleyPlantsWeb.PlantLive.Index do
 
   alias ShelleyPlants.Catalog
 
+  @categories ~w(Wildflower Grass Shrub Tree)
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -15,6 +17,23 @@ defmodule ShelleyPlantsWeb.PlantLive.Index do
           </.button>
         </:actions>
       </.header>
+
+      <%!-- Category filter buttons --%>
+      <div class="flex flex-wrap gap-2 mb-6">
+        <.link
+          patch={~p"/plants"}
+          class={"btn btn-sm #{if @category == nil, do: "btn-primary", else: "btn-ghost"}"}
+        >
+          All
+        </.link>
+        <.link
+          :for={cat <- @categories}
+          patch={~p"/plants?category=#{cat}"}
+          class={"btn btn-sm #{if @category == cat, do: "btn-primary", else: "btn-ghost"}"}
+        >
+          {cat}
+        </.link>
+      </div>
 
       <.table
         id="plants"
@@ -31,6 +50,7 @@ defmodule ShelleyPlantsWeb.PlantLive.Index do
         </:col>
         <:col :let={{_id, plant}} label="Common name">{plant.common_name}</:col>
         <:col :let={{_id, plant}} label="Latin name"><em>{plant.latin_name}</em></:col>
+        <:col :let={{_id, plant}} label="Category">{plant.category}</:col>
         <:col :let={{_id, plant}} label="Plant type">{plant.plant_type}</:col>
         <:col :let={{_id, plant}} label="Flower color">{plant.flower_color}</:col>
         <:col :let={{_id, plant}} label="Bloom time">{plant.bloom_time}</:col>
@@ -71,7 +91,20 @@ defmodule ShelleyPlantsWeb.PlantLive.Index do
     {:ok,
      socket
      |> assign(:page_title, "Species List")
+     |> assign(:categories, @categories)
+     |> assign(:category, nil)
      |> stream(:plants, Catalog.list_plants())}
+  end
+
+  @impl true
+  def handle_params(params, _uri, socket) do
+    category = Map.get(params, "category")
+    category = if category in @categories, do: category, else: nil
+
+    {:noreply,
+     socket
+     |> assign(:category, category)
+     |> stream(:plants, Catalog.list_plants_by_category(category), reset: true)}
   end
 
   @impl true
@@ -85,6 +118,9 @@ defmodule ShelleyPlantsWeb.PlantLive.Index do
   @impl true
   def handle_info({type, %ShelleyPlants.Catalog.Plant{}}, socket)
       when type in [:created, :updated, :deleted] do
-    {:noreply, stream(socket, :plants, Catalog.list_plants(), reset: true)}
+    {:noreply,
+     stream(socket, :plants, Catalog.list_plants_by_category(socket.assigns.category),
+       reset: true
+     )}
   end
 end

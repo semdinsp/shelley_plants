@@ -28,6 +28,13 @@ defmodule ShelleyPlantsWeb.PlantLive.Form do
           options={[{"Perennial", "perennial"}, {"Annual", "annual"}]}
           prompt="Select plant type"
         />
+        <.input
+          field={@form[:category]}
+          type="select"
+          label="Category"
+          options={[{"Wildflower", "Wildflower"}, {"Grass", "Grass"}, {"Shrub", "Shrub"}, {"Tree", "Tree"}]}
+          prompt="Select category"
+        />
         <.input field={@form[:flower_color]} type="text" label="Flower color" />
         <.input field={@form[:bloom_time]} type="text" label="Bloom time" />
         <.input field={@form[:height]} type="text" label="Height" />

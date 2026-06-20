@@ -39,6 +39,25 @@ defmodule ShelleyPlants.Catalog do
     Repo.all(from p in Plant, order_by: [asc: p.common_name])
   end
 
+  def list_plants_by_category(nil), do: list_plants()
+  def list_plants_by_category(""), do: list_plants()
+
+  def list_plants_by_category(category) do
+    Repo.all(from p in Plant, where: p.category == ^category, order_by: [asc: p.common_name])
+  end
+
+  @doc """
+  Returns up to `limit` featured plants that have photos, for the homepage strip.
+  """
+  def list_featured_plants(limit \\ 6) do
+    Repo.all(
+      from p in Plant,
+        where: not is_nil(p.picture),
+        order_by: [asc: p.common_name],
+        limit: ^limit
+    )
+  end
+
   @doc """
   Gets a single plant.
 

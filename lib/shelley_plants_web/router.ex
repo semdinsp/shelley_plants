@@ -37,6 +37,7 @@ defmodule ShelleyPlantsWeb.Router do
       live "/plants/new", PlantLive.Form, :new
       live "/plants/:id", PlantLive.Show, :show
       live "/plants/:id/edit", PlantLive.Form, :edit
+      live "/design-garden", GardenLive.Design, :index
     end
   end
 

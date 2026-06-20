@@ -3,6 +3,8 @@ defmodule ShelleyPlantsWeb.PlantLive.Gallery do
 
   alias ShelleyPlants.Catalog
 
+  @categories ~w(Wildflower Grass Shrub Tree)
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -15,6 +17,23 @@ defmodule ShelleyPlantsWeb.PlantLive.Gallery do
           </p>
         </div>
 
+        <%!-- Category filter buttons --%>
+        <div class="flex flex-wrap gap-2 mb-8">
+          <.link
+            patch={~p"/plants/gallery"}
+            class={"btn btn-sm #{if @category == nil, do: "btn-primary", else: "btn-ghost"}"}
+          >
+            All
+          </.link>
+          <.link
+            :for={cat <- @categories}
+            patch={~p"/plants/gallery?category=#{cat}"}
+            class={"btn btn-sm #{if @category == cat, do: "btn-primary", else: "btn-ghost"}"}
+          >
+            {cat}
+          </.link>
+        </div>
+
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <.plant_card :for={plant <- @plants} plant={plant} />
         </div>
@@ -25,12 +44,23 @@ defmodule ShelleyPlantsWeb.PlantLive.Gallery do
 
   @impl true
   def mount(_params, _session, socket) do
-    plants = Catalog.list_plants()
-
     {:ok,
      socket
      |> assign(:page_title, "Plant Gallery")
-     |> assign(:plants, plants)}
+     |> assign(:categories, @categories)
+     |> assign(:category, nil)
+     |> assign(:plants, Catalog.list_plants())}
+  end
+
+  @impl true
+  def handle_params(params, _uri, socket) do
+    category = Map.get(params, "category")
+    category = if category in @categories, do: category, else: nil
+
+    {:noreply,
+     socket
+     |> assign(:category, category)
+     |> assign(:plants, Catalog.list_plants_by_category(category))}
   end
 
   # ── Card component ────────────────────────────────────────────────────────────
