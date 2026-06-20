@@ -192,9 +192,7 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
         </div>
         <%= if @form_data["width"] != "" && @form_data["length"] != "" do %>
           <p class="text-xs text-base-content/40 mt-3">
-            ≈ <%= Float.round(
-              (String.to_float(to_string(@form_data["width"] || "0")) *
-               String.to_float(to_string(@form_data["length"] || "0"))), 1) %> m²
+            ≈ <%= Float.round(parse_float(@form_data["width"]) * parse_float(@form_data["length"]), 1) %> m²
           </p>
         <% end %>
       </section>
@@ -377,6 +375,13 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
       <h2 class="text-base font-semibold text-base-content">{@title}</h2>
     </div>
     """
+  end
+
+  defp parse_float(val) when is_binary(val) do
+    case Float.parse(val) do
+      {f, _} -> f
+      :error -> 0.0
+    end
   end
 
   # ── Event handlers ────────────────────────────────────────────────────────────
