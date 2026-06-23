@@ -377,7 +377,7 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
               style="max-width: 100%"
             >
               <rect x="1" y="1" width={cw - 2} height={ch - 2} rx="6"
-                fill="oklch(92% 0.04 148 / 0.3)" stroke="oklch(42% 0.14 148)" stroke-width="2" stroke-dasharray="6,3" />
+                fill="#e8f5ee" fill-opacity="0.3" stroke="#2d6a4f" stroke-width="2" stroke-dasharray="6,3" />
               <%= for circle <- circles do %>
                 <g>
                   <circle cx={circle.x} cy={circle.y} r={circle.r}
