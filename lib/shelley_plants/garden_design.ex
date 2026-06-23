@@ -192,58 +192,69 @@ defmodule ShelleyPlants.GardenDesign do
 
   # ── Diagram placement ─────────────────────────────────────────────────────────
 
-  defp place_plants(plants, canvas_w, canvas_h, scale, shape, structure) do
-    Enum.with_index(plants)
-    |> Enum.map(fn {plant, idx} ->
-      r = max(round((plant.spread_cm || 40) * scale / 100 / 2 * 80), 8)
-      {x, y} = plant_position(idx, length(plants), canvas_w, canvas_h, r, shape, structure, plant)
+  defp place_plants(plants, canvas_w, canvas_h, scale, _shape, structure) do
+    # Expand each species into individual instances, one circle per plant
+    instances =
+      plants
+      |> Enum.flat_map(fn plant ->
+        Enum.map(1..plant.quantity, fn _ ->
+          %{
+            spread_cm: plant.spread_cm || 40,
+            color: plant.color || "#4ade80",
+            label: plant.common_name,
+            height_min_cm: plant.height_min_cm || 60
+          }
+        end)
+      end)
+
+    # Sort by height for layered structure (tallest first = back of diagram)
+    instances =
+      if structure == "layered" do
+        Enum.sort_by(instances, & &1.height_min_cm, :desc)
+      else
+        instances
+      end
+
+    total = length(instances)
+
+    # Use the smallest spread to set circle radius — keeps diagram readable
+    # Cap radius so circles fit the canvas even for large quantities
+    min_spread = instances |> Enum.map(& &1.spread_cm) |> Enum.min(fn -> 40 end)
+    r_from_spread = max(round(min_spread * scale / 100 / 2 * 80), 6)
+
+    # Also cap radius so all circles fit: grid cell size = canvas / sqrt(total)
+    r_from_grid =
+      if total > 0 do
+        cell = :math.sqrt(canvas_w * canvas_h / total)
+        max(round(cell / 2 * 0.85), 6)
+      else
+        r_from_spread
+      end
+
+    r = min(r_from_spread, r_from_grid)
+    margin = r + 3
+
+    usable_w = max(canvas_w - margin * 2, 1)
+    usable_h = max(canvas_h - margin * 2, 1)
+    cols = max(ceil(:math.sqrt(total * canvas_w / max(canvas_h, 1))), 1)
+    rows = max(ceil(total / cols), 1)
+
+    Enum.with_index(instances)
+    |> Enum.map(fn {inst, idx} ->
+      row = div(idx, cols)
+      col = rem(idx, cols)
+      # Offset every other row for a natural staggered look
+      offset = if rem(row, 2) == 1, do: round(usable_w / cols / 2), else: 0
+      x = margin + offset + round(col * usable_w / cols + usable_w / (cols * 2))
+      y = margin + round(row * usable_h / max(rows, 1) + usable_h / (rows * 2))
       %{
-        x: x, y: y, r: r,
-        color: plant.color || "#4ade80",
-        label: plant.common_name,
-        latin: plant.latin_name,
-        quantity: plant.quantity
+        x: clamp(x, margin, canvas_w - margin),
+        y: clamp(y, margin, canvas_h - margin),
+        r: r,
+        color: inst.color,
+        label: inst.label
       }
     end)
-  end
-
-  defp plant_position(idx, total, w, h, r, _shape, structure, plant) do
-    margin = r + 4
-    usable_w = max(w - margin * 2, 1)
-    usable_h = max(h - margin * 2, 1)
-
-    case structure do
-      "layered" ->
-        # Arrange in rows by height: tall at back (top), short at front (bottom)
-        row_count = max(ceil(total / 3), 1)
-        row = floor(idx / 3)
-        col = rem(idx, 3)
-        cols_in_row = min(total - row * 3, 3)
-        x = margin + round(col * usable_w / max(cols_in_row, 1) + usable_w / max(cols_in_row * 2, 1))
-        y_frac = if row_count > 1, do: row / (row_count - 1), else: 0.5
-        # Taller plants (larger height_min_cm) go to the back (top = y small)
-        height_frac = normalize_height(plant, 0.1, 0.9)
-        y = margin + round(height_frac * usable_h * y_frac + (1 - y_frac) * usable_h * 0.1)
-        {clamp(x, margin, w - margin), clamp(y, margin, h - margin)}
-
-      _ ->
-        # Grid layout with slight offset for odd rows
-        cols = max(ceil(:math.sqrt(total * w / max(h, 1))), 1)
-        rows = max(ceil(total / cols), 1)
-        row = div(idx, cols)
-        col = rem(idx, cols)
-        offset = if rem(row, 2) == 1, do: round(usable_w / cols / 2), else: 0
-        x = margin + offset + round(col * usable_w / cols + usable_w / (cols * 2))
-        y = margin + round(row * usable_h / max(rows, 1) + usable_h / (rows * 2))
-        {clamp(x, margin, w - margin), clamp(y, margin, h - margin)}
-    end
-  end
-
-  defp normalize_height(plant, min_out, max_out) do
-    h = plant.height_min_cm || 60
-    # Normalise 10-250cm range to min_out..max_out
-    frac = (h - 10) / max(250 - 10, 1)
-    min_out + frac * (max_out - min_out)
   end
 
   defp clamp(val, lo, hi), do: val |> max(lo) |> min(hi)
