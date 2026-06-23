@@ -37,9 +37,26 @@ defmodule ShelleyPlantsWeb.PlantLive.Form do
         />
         <.input field={@form[:flower_color]} type="text" label="Flower color" />
         <.input field={@form[:bloom_time]} type="text" label="Bloom time" />
-        <.input field={@form[:height]} type="text" label="Height" />
-        <.input field={@form[:light_requirements]} type="text" label="Light requirements" />
-        <.input field={@form[:moisture]} type="text" label="Moisture" />
+        <.input field={@form[:height]} type="text" label='Height (display text, e.g. 24-48")' />
+        <.input field={@form[:height_min_cm]} type="number" label="Min height (cm)" />
+        <.input field={@form[:height_max_cm]} type="number" label="Max height (cm)" />
+        <.input field={@form[:spread_cm]} type="number" label="Typical spread (cm)" />
+        <.input field={@form[:light_requirements]} type="text" label="Light requirements (display text)" />
+        <.input
+          field={@form[:sun_level]}
+          type="select"
+          label="Sun level"
+          options={[{"Full sun", "full_sun"}, {"Part shade", "part_shade"}, {"Full shade", "full_shade"}]}
+          prompt="Select sun level"
+        />
+        <.input field={@form[:moisture]} type="text" label="Moisture (display text)" />
+        <.input
+          field={@form[:moisture_level]}
+          type="select"
+          label="Moisture level"
+          options={[{"Dry", "dry"}, {"Average", "average"}, {"Moist", "moist"}, {"Wet", "wet"}]}
+          prompt="Select moisture level"
+        />
         <.input field={@form[:chelsea_chop]} type="checkbox" label="Chelsea chop" />
         <.input field={@form[:native_ontario]} type="checkbox" label="Native to Ontario" />
         <.input field={@form[:locally_native]} type="checkbox" label="Locally native" />

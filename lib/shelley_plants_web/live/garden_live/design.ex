@@ -1,57 +1,7 @@
 defmodule ShelleyPlantsWeb.GardenLive.Design do
   use ShelleyPlantsWeb, :live_view
 
-  # TODO: replace mock_plants with real plant-matching query based on size/shape/height/sun inputs
-  @mock_plants [
-    %{
-      common_name: "Black-eyed Susan",
-      latin_name: "Rudbeckia hirta",
-      height: "60–90 cm",
-      light: "Full sun",
-      picture: "/images/plants/rudbeckia_hirta.jpg",
-      category: "Wildflower"
-    },
-    %{
-      common_name: "Wild Bergamot",
-      latin_name: "Monarda fistulosa",
-      height: "60–120 cm",
-      light: "Full sun to part shade",
-      picture: "/images/plants/monarda_fistulosa.jpg",
-      category: "Wildflower"
-    },
-    %{
-      common_name: "New England Aster",
-      latin_name: "Symphyotrichum novae-angliae",
-      height: "90–150 cm",
-      light: "Full sun",
-      picture: "/images/plants/symphyotrichum_novae_angliae.jpg",
-      category: "Wildflower"
-    },
-    %{
-      common_name: "Swamp Milkweed",
-      latin_name: "Asclepias incarnata",
-      height: "90–120 cm",
-      light: "Full sun to part shade",
-      picture: "/images/plants/asclepias_incarnata.jpg",
-      category: "Wildflower"
-    },
-    %{
-      common_name: "Big Bluestem",
-      latin_name: "Andropogon gerardii",
-      height: "120–180 cm",
-      light: "Full sun",
-      picture: "/images/plants/andropogon_gerardii.jpg",
-      category: "Grass"
-    },
-    %{
-      common_name: "Columbine",
-      latin_name: "Aquilegia canadensis",
-      height: "30–60 cm",
-      light: "Part shade",
-      picture: "/images/plants/aquilegia_canadensis.jpg",
-      category: "Wildflower"
-    }
-  ]
+  alias ShelleyPlants.GardenDesign
 
   @shapes [
     %{id: "rectangular", label: "Rectangular", svg: """
@@ -93,15 +43,15 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
      |> assign(:height_structures, @height_structures)
      |> assign(:sun_options, @sun_options)
      |> assign(:form_data, %{
-       "width" => "",
-       "length" => "",
-       "shape" => nil,
-       "max_height" => "",
-       "height_structure" => nil,
-       "sun" => nil
+       "width" => "", "length" => "", "shape" => nil,
+       "max_height" => "", "height_structure" => nil, "sun" => nil
      })
      |> assign(:state, :form)
-     |> assign(:loading, false)}
+     |> assign(:loading, false)
+     |> assign(:plants, [])
+     |> assign(:alternates, %{})
+     |> assign(:diagram, nil)
+     |> assign(:expanded_alternates, MapSet.new())}
   end
 
   @impl true
@@ -109,19 +59,35 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-12">
-
-        <%!-- Page header --%>
         <div class="mb-10">
-          <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-3">
-            Plan your space
-          </p>
-          <h1 class="text-4xl font-bold font-serif tracking-tight text-base-content mb-4">
-            Design Your Garden
-          </h1>
+          <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-3">Plan your space</p>
+          <h1 class="text-4xl font-bold font-serif tracking-tight text-base-content mb-4">Design Your Garden</h1>
           <p class="text-lg text-base-content/60 leading-relaxed max-w-xl">
             Tell us about your outdoor space and we'll suggest native Ontario plants
             perfectly suited to it — by size, light, and structure.
           </p>
+        </div>
+
+        <%!-- Professional design callout --%>
+        <div class="bg-accent/10 border border-accent/20 rounded-2xl p-5 mb-10 flex items-start gap-4">
+          <.icon name="hero-light-bulb" class="size-5 text-accent shrink-0 mt-0.5" />
+          <div class="text-sm text-base-content/70 leading-relaxed">
+            <p class="font-semibold text-base-content mb-1">A note on garden design</p>
+            <p>
+              Creating a garden that truly thrives takes more than a plant list — it involves
+              grading, soil preparation, drainage, and a trained eye for how plants
+              grow together over time. This tool is a starting point, not a substitute for
+              professional expertise.
+            </p>
+            <p class="mt-2">
+              For full landscape design, I warmly recommend my colleague
+              <a href="https://www.north44ld.com/" target="_blank" rel="noopener noreferrer"
+                class="font-semibold text-primary underline underline-offset-2 hover:text-primary/80">
+                Ashley at North 44 Landscape Design
+              </a>
+              — a talented designer I collaborate with closely and trust completely.
+            </p>
+          </div>
         </div>
 
         <%= if @state == :form do %>
@@ -133,14 +99,19 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
             loading={@loading}
           />
         <% else %>
-          <.results_section plants={@mock_plants} form_data={@form_data} />
+          <.results_section
+            plants={@plants}
+            alternates={@alternates}
+            diagram={@diagram}
+            form_data={@form_data}
+            expanded_alternates={@expanded_alternates}
+          />
           <div class="mt-8 pt-6 border-t border-base-200">
             <button phx-click="reset" class="btn btn-ghost gap-2">
               <.icon name="hero-arrow-left" class="size-4" /> Start over
             </button>
           </div>
         <% end %>
-
       </div>
     </Layouts.app>
     """
@@ -157,37 +128,17 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
   defp garden_form(assigns) do
     ~H"""
     <form phx-submit="submit" phx-change="validate" class="space-y-10">
-
-      <%!-- Section 1: Garden size --%>
       <section class="bg-base-100 border border-base-200 rounded-2xl p-6 sm:p-8 shadow-sm">
         <.section_heading number="1" title="Garden size" />
         <p class="text-sm text-base-content/50 mb-6">Enter the approximate dimensions of your planting area.</p>
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-medium text-base-content mb-1.5">Width (m)</label>
-            <input
-              type="number"
-              name="width"
-              value={@form_data["width"]}
-              min="0.5"
-              max="100"
-              step="0.5"
-              placeholder="e.g. 3"
-              class="input input-bordered w-full"
-            />
+            <input type="number" name="width" value={@form_data["width"]} min="0.5" max="100" step="0.5" placeholder="e.g. 3" class="input input-bordered w-full" />
           </div>
           <div>
             <label class="block text-sm font-medium text-base-content mb-1.5">Length (m)</label>
-            <input
-              type="number"
-              name="length"
-              value={@form_data["length"]}
-              min="0.5"
-              max="100"
-              step="0.5"
-              placeholder="e.g. 5"
-              class="input input-bordered w-full"
-            />
+            <input type="number" name="length" value={@form_data["length"]} min="0.5" max="100" step="0.5" placeholder="e.g. 5" class="input input-bordered w-full" />
           </div>
         </div>
         <%= if @form_data["width"] != "" && @form_data["length"] != "" do %>
@@ -197,16 +148,15 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
         <% end %>
       </section>
 
-      <%!-- Section 2: Shape --%>
       <section class="bg-base-100 border border-base-200 rounded-2xl p-6 sm:p-8 shadow-sm">
         <.section_heading number="2" title="Garden shape" />
         <p class="text-sm text-base-content/50 mb-6">Choose the shape that best describes your space.</p>
         <div class="grid grid-cols-3 sm:grid-cols-5 gap-3">
           <%= for shape <- @shapes do %>
-            <label class={"cursor-pointer group"}>
+            <label class="cursor-pointer group">
               <input type="radio" name="shape" value={shape.id} class="sr-only peer" checked={@form_data["shape"] == shape.id} />
               <div class="flex flex-col items-center gap-2 p-3 rounded-xl border-2 border-base-200 peer-checked:border-primary peer-checked:bg-primary/5 hover:border-primary/50 transition-colors">
-                <svg viewBox="0 0 48 48" class="w-10 h-10 text-base-content/40 peer-checked:text-primary group-has-[:checked]:text-primary" xmlns="http://www.w3.org/2000/svg">
+                <svg viewBox="0 0 48 48" class="w-10 h-10 text-base-content/40 group-has-[:checked]:text-primary" xmlns="http://www.w3.org/2000/svg">
                   <%= Phoenix.HTML.raw(shape.svg) %>
                 </svg>
                 <span class="text-xs text-center text-base-content/60 leading-tight"><%= shape.label %></span>
@@ -216,28 +166,15 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
         </div>
       </section>
 
-      <%!-- Section 3: Max height --%>
       <section class="bg-base-100 border border-base-200 rounded-2xl p-6 sm:p-8 shadow-sm">
         <.section_heading number="3" title="Maximum plant height" />
         <div class="max-w-xs">
           <label class="block text-sm font-medium text-base-content mb-1.5">Max height (cm)</label>
-          <input
-            type="number"
-            name="max_height"
-            value={@form_data["max_height"]}
-            min="10"
-            max="500"
-            step="10"
-            placeholder="e.g. 120"
-            class="input input-bordered w-full"
-          />
-          <p class="text-xs text-base-content/40 mt-2 leading-relaxed">
-            Think about fences, windowsills, sightlines, or a neighbour's view. Leave blank if there's no constraint.
-          </p>
+          <input type="number" name="max_height" value={@form_data["max_height"]} min="10" max="500" step="10" placeholder="e.g. 120" class="input input-bordered w-full" />
+          <p class="text-xs text-base-content/40 mt-2 leading-relaxed">Think about fences, windowsills, or a neighbour's view. Leave blank for no constraint.</p>
         </div>
       </section>
 
-      <%!-- Section 4: Height structure --%>
       <section class="bg-base-100 border border-base-200 rounded-2xl p-6 sm:p-8 shadow-sm">
         <.section_heading number="4" title="Height structure" />
         <p class="text-sm text-base-content/50 mb-6">How do you want the heights to work together?</p>
@@ -246,8 +183,7 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
             <label class="cursor-pointer">
               <input type="radio" name="height_structure" value={hs.id} class="sr-only peer" checked={@form_data["height_structure"] == hs.id} />
               <div class="flex items-start gap-3 p-4 rounded-xl border-2 border-base-200 peer-checked:border-primary peer-checked:bg-primary/5 hover:border-primary/50 transition-colors h-full">
-                <div class="mt-0.5 size-4 rounded-full border-2 border-base-300 peer-checked:border-primary flex items-center justify-center shrink-0 peer-checked:bg-primary">
-                </div>
+                <div class="mt-0.5 size-4 rounded-full border-2 border-base-300 peer-checked:border-primary peer-checked:bg-primary shrink-0"></div>
                 <div>
                   <p class="text-sm font-semibold text-base-content"><%= hs.label %></p>
                   <p class="text-xs text-base-content/50 mt-0.5 leading-relaxed"><%= hs.desc %></p>
@@ -258,11 +194,6 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
         </div>
       </section>
 
-      <%!-- Section 5: Sun exposure (suggested addition — see note below) --%>
-      <%!-- NOTE: sun exposure is already on individual plant records (light_requirements field).
-           Adding it here lets us filter recommendations. If you prefer to surface this
-           field elsewhere (e.g. on the plant filter bar), you can remove this section
-           and this input will simply be ignored by the matching logic. --%>
       <section class="bg-base-100 border border-base-200 rounded-2xl p-6 sm:p-8 shadow-sm">
         <.section_heading number="5" title="Sun exposure" />
         <p class="text-sm text-base-content/50 mb-6">How much direct sunlight does this spot get?</p>
@@ -280,13 +211,8 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
         </div>
       </section>
 
-      <%!-- Submit --%>
       <div class="flex justify-end">
-        <button
-          type="submit"
-          class="btn btn-primary btn-lg gap-2 w-full sm:w-auto"
-          disabled={@loading}
-        >
+        <button type="submit" class="btn btn-primary btn-lg gap-2 w-full sm:w-auto" disabled={@loading}>
           <%= if @loading do %>
             <span class="loading loading-spinner loading-sm"></span> Finding plants…
           <% else %>
@@ -294,7 +220,6 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
           <% end %>
         </button>
       </div>
-
     </form>
     """
   end
@@ -302,66 +227,191 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
   # ── Results component ─────────────────────────────────────────────────────────
 
   attr :plants, :list, required: true
+  attr :alternates, :map, required: true
+  attr :diagram, :any, required: true
   attr :form_data, :map, required: true
+  attr :expanded_alternates, :any, required: true
 
   defp results_section(assigns) do
     ~H"""
-    <div>
-      <%!-- Results header --%>
-      <div class="bg-success/10 border border-success/20 rounded-2xl p-6 mb-8 flex items-start gap-4">
+    <div class="space-y-10">
+
+      <%!-- Summary card --%>
+      <div class="bg-success/10 border border-success/20 rounded-2xl p-6 flex items-start gap-4">
         <.icon name="hero-check-circle" class="size-6 text-success shrink-0 mt-0.5" />
         <div>
           <p class="font-semibold text-base-content">Your garden plan is ready!</p>
-          <p class="text-sm text-base-content/60 mt-1">
-            Based on your space, here are native plants suited to your garden.
-          </p>
-          <%!-- TODO: replace with dynamic summary once real matching is in place --%>
-          <p class="text-xs text-warning mt-2 font-medium">
-            ⚠ Sample results — full plant-matching logic coming soon
+          <p class="text-sm text-base-content/60 mt-1 leading-relaxed">
+            <%= summary_text(@form_data, @plants) %>
           </p>
         </div>
       </div>
 
-      <%!-- TODO: replace @plants with real recommendations from Catalog.recommend_plants/1 --%>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        <%= for plant <- @plants do %>
-          <article class="card bg-base-100 shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden group border border-base-200">
-            <figure class="relative h-48 overflow-hidden bg-base-200">
-              <%= if plant.picture do %>
-                <img
-                  src={plant.picture}
-                  alt={plant.common_name}
-                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-              <% else %>
-                <div class="w-full h-full flex flex-col items-center justify-center text-base-content/30">
-                  <.icon name="hero-photo" class="size-12" />
+      <%!-- Plant purchase list --%>
+      <section>
+        <h2 class="text-lg font-semibold text-base-content mb-1">Plant List</h2>
+        <p class="text-sm text-base-content/50 mb-4">Suggested plants for your space, with recommended quantities. Expand each plant to see alternatives.</p>
+
+        <%!-- Total summary row --%>
+        <div class="flex items-center justify-between bg-base-200/60 rounded-xl px-4 py-3 mb-4 text-sm">
+          <span class="text-base-content/60"><%= length(@plants) %> species recommended</span>
+          <span class="font-semibold text-base-content">
+            <%= Enum.sum(Enum.map(@plants, & &1.quantity)) %> plants total
+          </span>
+        </div>
+
+        <div class="space-y-3">
+          <%= for plant <- @plants do %>
+            <% alts = Map.get(@alternates, plant.id, []) %>
+            <% expanded = MapSet.member?(@expanded_alternates, plant.id) %>
+
+            <div class="border border-base-200 rounded-2xl overflow-hidden bg-base-100">
+              <%!-- Main plant row --%>
+              <div class="flex items-center gap-3 p-4">
+                <%!-- Colour dot --%>
+                <span class="size-3 rounded-full shrink-0" style={"background-color: #{plant.color}"}></span>
+
+                <%!-- Photo thumbnail --%>
+                <div class="size-14 rounded-xl overflow-hidden bg-base-200 shrink-0">
+                  <%= if plant.picture do %>
+                    <img src={plant.picture} alt={plant.common_name} class="w-full h-full object-cover" />
+                  <% else %>
+                    <div class="w-full h-full flex items-center justify-center text-base-content/20">
+                      <.icon name="hero-photo" class="size-6" />
+                    </div>
+                  <% end %>
+                </div>
+
+                <%!-- Plant info --%>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-start justify-between gap-2">
+                    <div class="min-w-0">
+                      <p class="font-semibold text-sm text-base-content leading-tight truncate"><%= plant.common_name %></p>
+                      <p class="text-xs italic text-base-content/50 truncate"><%= plant.latin_name %></p>
+                    </div>
+                    <div class="text-right shrink-0">
+                      <p class="text-lg font-bold text-primary leading-none">×<%= plant.quantity %></p>
+                      <p class="text-xs text-base-content/40 mt-0.5">plants</p>
+                    </div>
+                  </div>
+                  <div class="flex flex-wrap gap-1.5 mt-2">
+                    <%= if plant.height_min_cm && plant.height_max_cm do %>
+                      <span class="badge badge-ghost badge-xs gap-1">
+                        <.icon name="hero-arrows-up-down" class="size-2.5" />
+                        <%= plant.height_min_cm %>–<%= plant.height_max_cm %> cm
+                      </span>
+                    <% end %>
+                    <%= if plant.category do %>
+                      <span class="badge badge-ghost badge-xs"><%= plant.category %></span>
+                    <% end %>
+                    <%= if plant.sun_level do %>
+                      <span class="badge badge-ghost badge-xs"><%= human_sun(plant.sun_level) %></span>
+                    <% end %>
+                  </div>
+                </div>
+
+                <%!-- View + Alternates toggle --%>
+                <div class="flex flex-col items-end gap-2 shrink-0">
+                  <.link navigate={~p"/plants/#{plant}"} class="btn btn-ghost btn-xs gap-1">
+                    <.icon name="hero-eye" class="size-3" /> View
+                  </.link>
+                  <%= if alts != [] do %>
+                    <button
+                      phx-click="toggle_alternates"
+                      phx-value-id={plant.id}
+                      class="btn btn-ghost btn-xs gap-1 text-base-content/50"
+                    >
+                      <.icon name={if expanded, do: "hero-chevron-up", else: "hero-chevron-down"} class="size-3" />
+                      <%= length(alts) %> alt<%= if length(alts) > 1, do: "s" %>
+                    </button>
+                  <% end %>
+                </div>
+              </div>
+
+              <%!-- Alternates drawer --%>
+              <%= if expanded && alts != [] do %>
+                <div class="border-t border-base-200 bg-base-50 px-4 py-3">
+                  <p class="text-xs font-semibold text-base-content/40 uppercase tracking-wider mb-3">Alternative plants</p>
+                  <div class="space-y-2">
+                    <%= for alt <- alts do %>
+                      <div class="flex items-center gap-3 py-1">
+                        <div class="size-10 rounded-lg overflow-hidden bg-base-200 shrink-0">
+                          <%= if alt.picture do %>
+                            <img src={alt.picture} alt={alt.common_name} class="w-full h-full object-cover" />
+                          <% else %>
+                            <div class="w-full h-full flex items-center justify-center text-base-content/20">
+                              <.icon name="hero-photo" class="size-4" />
+                            </div>
+                          <% end %>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <p class="text-sm font-medium text-base-content leading-tight"><%= alt.common_name %></p>
+                          <p class="text-xs italic text-base-content/40 truncate"><%= alt.latin_name %></p>
+                        </div>
+                        <.link navigate={~p"/plants/#{alt}"} class="btn btn-ghost btn-xs">
+                          <.icon name="hero-eye" class="size-3" />
+                        </.link>
+                      </div>
+                    <% end %>
+                  </div>
                 </div>
               <% end %>
-              <span class="absolute top-2 right-2 badge badge-ghost badge-sm bg-base-100/80 backdrop-blur-sm">
-                <%= plant.category %>
-              </span>
-            </figure>
-            <div class="card-body p-4 gap-2">
-              <h3 class="font-semibold text-base leading-snug"><%= plant.common_name %></h3>
-              <p class="text-xs italic text-base-content/50"><%= plant.latin_name %></p>
-              <div class="flex flex-wrap gap-2 mt-1">
-                <span class="badge badge-ghost badge-sm gap-1">
-                  <.icon name="hero-arrows-up-down" class="size-3" /> <%= plant.height %>
-                </span>
-                <span class="badge badge-ghost badge-sm gap-1">
-                  <.icon name="hero-sun" class="size-3" /> <%= plant.light %>
-                </span>
-              </div>
             </div>
-          </article>
-        <% end %>
-      </div>
+          <% end %>
+        </div>
+      </section>
+
+      <%!-- Planting diagram — after the plant list --%>
+      <%= if @diagram do %>
+        <section>
+          <h2 class="text-lg font-semibold text-base-content mb-1">Planting Diagram</h2>
+          <p class="text-sm text-base-content/50 mb-4">A bird's-eye view of how your plants might be arranged. Each circle represents one plant, sized by its spread.</p>
+
+          <div class="bg-base-200/60 rounded-2xl p-4 overflow-x-auto">
+            <% {cw, ch, circles} = @diagram %>
+            <svg
+              viewBox={"0 0 #{cw} #{ch}"}
+              width={min(cw, 520)}
+              height={round(ch * min(cw, 520) / max(cw, 1))}
+              class="block mx-auto"
+              style="max-width: 100%"
+            >
+              <rect x="1" y="1" width={cw - 2} height={ch - 2} rx="6"
+                fill="oklch(92% 0.04 148 / 0.3)" stroke="oklch(42% 0.14 148)" stroke-width="2" stroke-dasharray="6,3" />
+              <%= for circle <- circles do %>
+                <g>
+                  <circle cx={circle.x} cy={circle.y} r={circle.r}
+                    fill={circle.color} fill-opacity="0.85"
+                    stroke="white" stroke-width="1.5" />
+                  <%= if circle.r >= 14 do %>
+                    <text x={circle.x} y={circle.y + 4}
+                      text-anchor="middle" font-size="8" fill="white"
+                      font-family="sans-serif" font-weight="600">
+                      <%= String.split(circle.label, " ") |> List.first() %>
+                    </text>
+                  <% end %>
+                </g>
+              <% end %>
+            </svg>
+          </div>
+
+          <div class="mt-4 flex flex-wrap gap-x-5 gap-y-2">
+            <%= for plant <- @plants do %>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="size-3 rounded-full shrink-0" style={"background-color: #{plant.color}"}></span>
+                <span class="text-base-content/70"><%= plant.common_name %></span>
+                <span class="text-base-content/40 text-xs">×<%= plant.quantity %></span>
+              </div>
+            <% end %>
+          </div>
+        </section>
+      <% end %>
+
     </div>
     """
   end
 
-  # ── Section heading helper ────────────────────────────────────────────────────
+  # ── Helpers ───────────────────────────────────────────────────────────────────
 
   attr :number, :string, required: true
   attr :title, :string, required: true
@@ -369,9 +419,7 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
   defp section_heading(assigns) do
     ~H"""
     <div class="flex items-center gap-3 mb-5">
-      <span class="flex size-7 items-center justify-center rounded-full bg-primary text-primary-content text-xs font-bold shrink-0">
-        {@number}
-      </span>
+      <span class="flex size-7 items-center justify-center rounded-full bg-primary text-primary-content text-xs font-bold shrink-0">{@number}</span>
       <h2 class="text-base font-semibold text-base-content">{@title}</h2>
     </div>
     """
@@ -382,6 +430,33 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
       {f, _} -> f
       :error -> 0.0
     end
+  end
+  defp parse_float(_), do: 0.0
+
+  defp human_sun("full_sun"), do: "Full sun"
+  defp human_sun("part_shade"), do: "Part shade"
+  defp human_sun("full_shade"), do: "Full shade"
+  defp human_sun(_), do: ""
+
+  defp summary_text(form_data, plants) do
+    w = form_data["width"]
+    l = form_data["length"]
+    sun = human_sun(form_data["sun"])
+    structure = form_data["height_structure"]
+    total = Enum.sum(Enum.map(plants, & &1.quantity))
+
+    size_str = if w != "" and l != "", do: "#{w}m × #{l}m garden", else: "your garden"
+    sun_str = if sun != "", do: " in #{String.downcase(sun)}", else: ""
+    struct_str = case structure do
+      "layered" -> ", layered from front to back"
+      "low_uniform" -> ", kept low and uniform"
+      "focal" -> ", with tall focal points"
+      "mixed" -> ", mixed naturalistic style"
+      _ -> ""
+    end
+
+    "#{length(plants)} species recommended for your #{size_str}#{sun_str}#{struct_str}. " <>
+    "#{total} plants in total."
   end
 
   # ── Event handlers ────────────────────────────────────────────────────────────
@@ -396,15 +471,23 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
   def handle_event("submit", params, socket) do
     form_data = Map.merge(socket.assigns.form_data, Map.take(params, ["width", "length", "shape", "max_height", "height_structure", "sun"]))
 
-    socket =
-      socket
-      |> assign(:form_data, form_data)
-      |> assign(:loading, true)
+    {plants, alternates} = GardenDesign.recommend(form_data)
+    diagram = GardenDesign.diagram_data(plants, form_data)
 
-    # TODO: replace with real async plant-matching task once backend logic is built
-    Process.send_after(self(), :finish_loading, 1500)
+    {:noreply,
+     socket
+     |> assign(:form_data, form_data)
+     |> assign(:plants, plants)
+     |> assign(:alternates, alternates)
+     |> assign(:diagram, diagram)
+     |> assign(:state, :results)}
+  end
 
-    {:noreply, socket}
+  @impl true
+  def handle_event("toggle_alternates", %{"id" => id}, socket) do
+    expanded = socket.assigns.expanded_alternates
+    updated = if MapSet.member?(expanded, id), do: MapSet.delete(expanded, id), else: MapSet.put(expanded, id)
+    {:noreply, assign(socket, :expanded_alternates, updated)}
   end
 
   @impl true
@@ -412,17 +495,9 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
     {:noreply,
      socket
      |> assign(:state, :form)
-     |> assign(:loading, false)
-     |> assign(:mock_plants, @mock_plants)}
-  end
-
-  @impl true
-  def handle_info(:finish_loading, socket) do
-    # TODO: replace @mock_plants with real recommendations from Catalog.recommend_plants/1
-    {:noreply,
-     socket
-     |> assign(:loading, false)
-     |> assign(:state, :results)
-     |> assign(:mock_plants, @mock_plants)}
+     |> assign(:plants, [])
+     |> assign(:alternates, %{})
+     |> assign(:diagram, nil)
+     |> assign(:expanded_alternates, MapSet.new())}
   end
 end

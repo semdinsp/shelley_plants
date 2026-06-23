@@ -17,7 +17,9 @@ defmodule ShelleyPlantsWeb do
   those modules here.
   """
 
-  def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
+  def static_paths,
+    do: ~w(assets fonts images favicon.ico favicon.svg apple-touch-icon.png
+           android-chrome-192.png android-chrome-512.png site.webmanifest robots.txt)
 
   def router do
     quote do

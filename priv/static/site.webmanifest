@@ -1,0 +1,11 @@
+{
+  "name": "Shelley's Native Plants",
+  "short_name": "Native Plants",
+  "icons": [
+    { "src": "/android-chrome-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/android-chrome-512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "theme_color": "#2d6a4f",
+  "background_color": "#faf9f6",
+  "display": "browser"
+}
