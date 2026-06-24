@@ -88,6 +88,7 @@ defmodule ShelleyPlantsWeb do
       import Phoenix.HTML
       # Core UI components
       import ShelleyPlantsWeb.CoreComponents
+      import ShelleyPlantsWeb.AboutComponents
 
       # Common modules used in templates
       alias Phoenix.LiveView.JS
