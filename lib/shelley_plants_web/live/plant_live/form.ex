@@ -32,7 +32,12 @@ defmodule ShelleyPlantsWeb.PlantLive.Form do
           field={@form[:category]}
           type="select"
           label="Category"
-          options={[{"Wildflower", "Wildflower"}, {"Grass", "Grass"}, {"Shrub", "Shrub"}, {"Tree", "Tree"}]}
+          options={[
+            {"Wildflower", "Wildflower"},
+            {"Grass", "Grass"},
+            {"Shrub", "Shrub"},
+            {"Tree", "Tree"}
+          ]}
           prompt="Select category"
         />
         <.input field={@form[:flower_color]} type="text" label="Flower color" />
@@ -41,12 +46,20 @@ defmodule ShelleyPlantsWeb.PlantLive.Form do
         <.input field={@form[:height_min_cm]} type="number" label="Min height (cm)" />
         <.input field={@form[:height_max_cm]} type="number" label="Max height (cm)" />
         <.input field={@form[:spread_cm]} type="number" label="Typical spread (cm)" />
-        <.input field={@form[:light_requirements]} type="text" label="Light requirements (display text)" />
+        <.input
+          field={@form[:light_requirements]}
+          type="text"
+          label="Light requirements (display text)"
+        />
         <.input
           field={@form[:sun_level]}
           type="select"
           label="Sun level"
-          options={[{"Full sun", "full_sun"}, {"Part shade", "part_shade"}, {"Full shade", "full_shade"}]}
+          options={[
+            {"Full sun", "full_sun"},
+            {"Part shade", "part_shade"},
+            {"Full shade", "full_shade"}
+          ]}
           prompt="Select sun level"
         />
         <.input field={@form[:moisture]} type="text" label="Moisture (display text)" />

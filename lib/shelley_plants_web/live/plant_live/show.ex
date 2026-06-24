@@ -34,7 +34,9 @@ defmodule ShelleyPlantsWeb.PlantLive.Show do
         <:item title="Chelsea chop">{if @plant.chelsea_chop, do: "Yes", else: "No"}</:item>
         <:item title="Light requirements">{@plant.light_requirements}</:item>
         <:item title="Moisture">{@plant.moisture}</:item>
-        <:item title="Native to Ontario">{if @plant.native_ontario, do: "Yes", else: "Non-native to Ontario"}</:item>
+        <:item title="Native to Ontario">
+          {if @plant.native_ontario, do: "Yes", else: "Non-native to Ontario"}
+        </:item>
         <:item title="Locally native">{if @plant.locally_native, do: "Yes", else: "No"}</:item>
         <:item title="Deer resistant">{if @plant.deer_resistant, do: "Yes", else: "No"}</:item>
         <:item :if={@plant.ecological_benefit} title="Ecological benefit">

@@ -64,7 +64,9 @@ defmodule ShelleyPlantsWeb.PlantLive.Index do
           end}
         </:col>
         <:action :let={{_id, plant}}>
-          <.link navigate={~p"/plants/#{plant}"} aria-label="View"><.icon name="hero-eye" class="size-5" /></.link>
+          <.link navigate={~p"/plants/#{plant}"} aria-label="View">
+            <.icon name="hero-eye" class="size-5" />
+          </.link>
         </:action>
         <:action :let={{_id, plant}} :if={@current_scope && @current_scope.admin?}>
           <.link navigate={~p"/plants/#{plant}/edit"}>Edit</.link>

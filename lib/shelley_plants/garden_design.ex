@@ -18,9 +18,18 @@ defmodule ShelleyPlants.GardenDesign do
 
   # Vibrant per-plant palette — cycles through when category is nil or repeated
   @plant_palette [
-    "#f43f5e", "#f97316", "#f59e0b", "#84cc16",
-    "#10b981", "#06b6d4", "#3b82f6", "#8b5cf6",
-    "#ec4899", "#14b8a6", "#eab308", "#ef4444"
+    "#f43f5e",
+    "#f97316",
+    "#f59e0b",
+    "#84cc16",
+    "#10b981",
+    "#06b6d4",
+    "#3b82f6",
+    "#8b5cf6",
+    "#ec4899",
+    "#14b8a6",
+    "#eab308",
+    "#ef4444"
   ]
 
   # Sun levels that are compatible with a given garden sun input
@@ -89,12 +98,18 @@ defmodule ShelleyPlants.GardenDesign do
       Enum.with_index(selected)
       |> Enum.map(fn {plant, idx} ->
         qty = suggested_quantity(plant, area, length(selected))
+
         color =
           if plant.category && plant.category != "" do
-            Map.get(@category_colors, plant.category, Enum.at(@plant_palette, rem(idx, palette_size)))
+            Map.get(
+              @category_colors,
+              plant.category,
+              Enum.at(@plant_palette, rem(idx, palette_size))
+            )
           else
             Enum.at(@plant_palette, rem(idx, palette_size))
           end
+
         Map.merge(plant, %{quantity: qty, color: color})
       end)
 
@@ -138,10 +153,14 @@ defmodule ShelleyPlants.GardenDesign do
   defp select_by_structure(candidates, "layered", limit) do
     # Mix of short (≤61cm), mid (61-122cm), tall (>122cm)
     short = Enum.filter(candidates, &((&1.height_max_cm || 0) <= 61))
-    mid = Enum.filter(candidates, &((&1.height_min_cm || 0) > 30 and (&1.height_max_cm || 0) <= 122))
+
+    mid =
+      Enum.filter(candidates, &((&1.height_min_cm || 0) > 30 and (&1.height_max_cm || 0) <= 122))
+
     tall = Enum.filter(candidates, &((&1.height_min_cm || 0) >= 91))
 
     thirds = max(div(limit, 3), 1)
+
     (Enum.take(short, thirds) ++ Enum.take(mid, thirds) ++ Enum.take(tall, limit - thirds * 2))
     |> Enum.uniq_by(& &1.id)
     |> fallback_if_empty(candidates, limit)
@@ -149,7 +168,12 @@ defmodule ShelleyPlants.GardenDesign do
 
   defp select_by_structure(candidates, "focal", limit) do
     focal = candidates |> Enum.filter(&((&1.height_min_cm || 0) >= 91)) |> Enum.take(2)
-    supporting = candidates |> Enum.reject(&((&1.height_min_cm || 0) >= 91)) |> diverse_sample(limit - length(focal))
+
+    supporting =
+      candidates
+      |> Enum.reject(&((&1.height_min_cm || 0) >= 91))
+      |> diverse_sample(limit - length(focal))
+
     (focal ++ supporting) |> Enum.uniq_by(& &1.id)
   end
 
@@ -247,6 +271,7 @@ defmodule ShelleyPlants.GardenDesign do
       offset = if rem(row, 2) == 1, do: round(usable_w / cols / 2), else: 0
       x = margin + offset + round(col * usable_w / cols + usable_w / (cols * 2))
       y = margin + round(row * usable_h / max(rows, 1) + usable_h / (rows * 2))
+
       %{
         x: clamp(x, margin, canvas_w - margin),
         y: clamp(y, margin, canvas_h - margin),
@@ -284,16 +309,19 @@ defmodule ShelleyPlants.GardenDesign do
 
   defp parse_float(nil), do: 0.0
   defp parse_float(""), do: 0.0
+
   defp parse_float(v) when is_binary(v) do
     case Float.parse(v) do
       {f, _} -> f
       :error -> 0.0
     end
   end
+
   defp parse_float(v) when is_number(v), do: v * 1.0
 
   defp parse_int(nil), do: nil
   defp parse_int(""), do: nil
+
   defp parse_int(v) when is_binary(v) do
     case Integer.parse(v) do
       {i, _} -> i
