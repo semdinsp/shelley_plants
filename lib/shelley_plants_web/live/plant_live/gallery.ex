@@ -11,7 +11,7 @@ defmodule ShelleyPlantsWeb.PlantLive.Gallery do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div class="mb-8">
-          <h1 class="text-3xl font-serif font-semibold text-base-content">Plant Gallery</h1>
+          <h1 class="text-3xl font-serif font-semibold text-base-content">Shop Plants</h1>
           <p class="mt-2 text-base-content/70">
             Explore Ontario's native plants — click any card to learn more.
           </p>
@@ -46,7 +46,7 @@ defmodule ShelleyPlantsWeb.PlantLive.Gallery do
   def mount(_params, _session, socket) do
     {:ok,
      socket
-     |> assign(:page_title, "Plant Gallery")
+     |> assign(:page_title, "Shop Plants")
      |> assign(:categories, @categories)
      |> assign(:category, nil)
      |> assign(:plants, Catalog.list_plants())}
