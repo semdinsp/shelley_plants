@@ -1,0 +1,30 @@
+<Layouts.flash_group flash={@flash} />
+
+<%!-- Page header --%>
+<section class="bg-base-200/40 border-b border-base-200">
+  <div class="mx-auto max-w-5xl px-6 py-16 lg:px-8 text-center">
+    <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-4">
+      About
+    </p>
+    <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">
+      About Biosphere Native Plants
+    </h1>
+  </div>
+</section>
+
+<%!-- Bio + credentials --%>
+<section class="border-b border-base-200">
+  <div class="mx-auto max-w-5xl px-6 py-24 lg:px-8">
+    <div class="grid grid-cols-1 gap-16 lg:grid-cols-2 lg:gap-24">
+      <.shelley_bio variant={:full} />
+      <.credentials_grid />
+    </div>
+  </div>
+</section>
+
+<%!-- Visit us --%>
+<section class="bg-base-200/40">
+  <div class="mx-auto max-w-5xl px-6 py-24 lg:px-8">
+    <.visit_us />
+  </div>
+</section>

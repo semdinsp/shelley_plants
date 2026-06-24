@@ -7,4 +7,8 @@ defmodule ShelleyPlantsWeb.PageController do
     featured_plants = Catalog.list_featured_plants(6)
     render(conn, :home, featured_plants: featured_plants)
   end
+
+  def about(conn, _params) do
+    render(conn, :about)
+  end
 end
