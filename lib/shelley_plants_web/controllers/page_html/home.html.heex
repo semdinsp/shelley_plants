@@ -37,16 +37,24 @@
   <%!-- Hero content --%>
   <div class="relative z-10 mx-auto max-w-5xl px-6 py-28 sm:py-36 lg:px-8 w-full">
     <div class="max-w-2xl">
+      <%!-- TODO: replace with the Biosphere Native Plants logo image once provided --%>
+      <img
+        src="/images/logo.svg"
+        alt="Biosphere Native Plants logo"
+        class="h-12 w-auto mb-6 drop-shadow-lg"
+      />
       <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-5 drop-shadow">
         Celebrating Ontario's Natural Heritage
       </p>
       <h1 class="text-5xl font-bold tracking-tight text-balance sm:text-7xl mb-6 text-white leading-[1.1] drop-shadow-lg">
-        Discover<br /> Ontario's<br /> Native Plants
+        Biosphere<br /> Native Plants
       </h1>
+      <p class="text-base font-medium text-white/70 mb-4 drop-shadow">
+        Ontario native plant sales
+      </p>
       <p class="max-w-xl text-lg leading-relaxed text-white/80 mb-10 drop-shadow">
-        A curated guide to the wildflowers, grasses, and perennials that belong here —
-        supporting local ecosystems, attracting pollinators, and bringing lasting beauty
-        to your garden.
+        Supporting ecosystem restoration where we live and bringing lasting beauty to
+        your garden.
       </p>
       <div class="flex flex-wrap gap-3">
         <a href={~p"/plants/gallery"} class="btn btn-primary btn-lg gap-2">
