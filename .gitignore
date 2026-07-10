@@ -36,3 +36,6 @@ npm-debug.log
 /assets/node_modules/
 
 .gstack/
+
+# Uncompressed originals kept locally as a backup before image compression.
+/original_photos/
