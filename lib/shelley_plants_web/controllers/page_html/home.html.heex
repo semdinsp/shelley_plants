@@ -36,14 +36,17 @@
 
   <%!-- Hero content --%>
   <div class="relative z-10 mx-auto max-w-5xl px-6 py-28 sm:py-36 lg:px-8 w-full">
-    <div class="max-w-2xl">
-      <%!-- TODO: replace with the Biosphere Native Plants logo image once provided --%>
-      <img
-        src="/images/logo.svg"
-        alt="Biosphere Native Plants logo"
-        class="h-12 w-auto mb-6 drop-shadow-lg"
-      />
-      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-5 drop-shadow">
+    <div class="mx-auto max-w-2xl text-center">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="-2015 -2000 4030 4030"
+        fill="#d62828"
+        class="size-[6.75rem] mx-auto mb-4 drop-shadow-lg"
+        aria-hidden="true"
+      >
+        <path d="m-90 2030 45-863a95 95 0 0 0-111-98l-859 151 116-320a65 65 0 0 0-20-73l-941-762 212-99a65 65 0 0 0 34-79l-186-572 542 115a65 65 0 0 0 73-38l105-247 423 454a65 65 0 0 0 111-57l-204-1052 327 189a65 65 0 0 0 91-27l332-652 332 652a65 65 0 0 0 91 27l327-189-204 1052a65 65 0 0 0 111 57l423-454 105 247a65 65 0 0 0 73 38l542-115-186 572a65 65 0 0 0 34 79l212 99-941 762a65 65 0 0 0-20 73l116 320-859-151a95 95 0 0 0-111 98l45 863z" />
+      </svg>
+      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-white mb-5 drop-shadow">
         Celebrating Ontario's Natural Heritage
       </p>
       <h1 class="text-5xl font-bold tracking-tight text-balance sm:text-7xl mb-6 text-white leading-[1.1] drop-shadow-lg">
@@ -52,11 +55,11 @@
       <p class="text-base font-medium text-white/70 mb-4 drop-shadow">
         Ontario native plant sales
       </p>
-      <p class="max-w-xl text-lg leading-relaxed text-white/80 mb-10 drop-shadow">
+      <p class="max-w-xl mx-auto text-lg leading-relaxed text-white/80 mb-10 drop-shadow">
         Supporting ecosystem restoration where we live and bringing lasting beauty to
         your garden.
       </p>
-      <div class="flex flex-wrap gap-3">
+      <div class="flex flex-wrap justify-center gap-3">
         <a href={~p"/plants/gallery"} class="btn btn-primary btn-lg gap-2">
           <.icon name="hero-photo" class="size-5" /> Shop Plants
         </a>
@@ -102,6 +105,54 @@
     </div>
   </div>
 </div>
+
+<%!-- Shop by Category --%>
+<section class="mx-auto max-w-5xl px-6 py-20 lg:px-8">
+  <div class="text-center mb-10">
+    <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-3">
+      Find your plants
+    </p>
+    <h2 class="text-2xl font-bold tracking-tight sm:text-3xl">Shop by Category</h2>
+  </div>
+  <div class="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
+    <a
+      href={~p"/plants/gallery?category=Wildflower"}
+      class="group relative flex flex-col items-center justify-center gap-3 rounded-2xl border border-base-300 bg-base-100 px-5 py-7 text-center shadow-sm transition-all hover:-translate-y-1 hover:border-primary hover:shadow-lg"
+    >
+      <div class="flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-content">
+        <.icon name="hero-sparkles" class="size-6" />
+      </div>
+      <span class="text-base font-bold tracking-tight">Wildflowers</span>
+    </a>
+    <a
+      href={~p"/plants/gallery?category=Grass"}
+      class="group relative flex flex-col items-center justify-center gap-3 rounded-2xl border border-base-300 bg-base-100 px-5 py-7 text-center shadow-sm transition-all hover:-translate-y-1 hover:border-primary hover:shadow-lg"
+    >
+      <div class="flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-content">
+        <.icon name="hero-bars-3-bottom-left" class="size-6 rotate-90" />
+      </div>
+      <span class="text-base font-bold tracking-tight">Grasses</span>
+    </a>
+    <a
+      href={~p"/plants/gallery?category=Shrub"}
+      class="group relative flex flex-col items-center justify-center gap-3 rounded-2xl border border-base-300 bg-base-100 px-5 py-7 text-center shadow-sm transition-all hover:-translate-y-1 hover:border-primary hover:shadow-lg"
+    >
+      <div class="flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-content">
+        <.icon name="hero-cloud" class="size-6" />
+      </div>
+      <span class="text-base font-bold tracking-tight">Shrubs</span>
+    </a>
+    <a
+      href={~p"/plants/gallery?category=Tree"}
+      class="group relative flex flex-col items-center justify-center gap-3 rounded-2xl border border-base-300 bg-base-100 px-5 py-7 text-center shadow-sm transition-all hover:-translate-y-1 hover:border-primary hover:shadow-lg"
+    >
+      <div class="flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-content">
+        <.icon name="hero-globe-americas" class="size-6" />
+      </div>
+      <span class="text-base font-bold tracking-tight">Trees</span>
+    </a>
+  </div>
+</section>
 
 <%!-- Featured Plants strip --%>
 <%= if @featured_plants != [] do %>
