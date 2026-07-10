@@ -39,3 +39,10 @@ npm-debug.log
 
 # Uncompressed originals kept locally as a backup before image compression.
 /original_photos/
+
+# macOS Finder metadata.
+.DS_Store
+
+# Local Elixir formatter config and GitHub workflows, not tracked in this repo.
+/.formatter.exs
+/.github/
