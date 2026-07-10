@@ -36,8 +36,17 @@
 
   <%!-- Hero content --%>
   <div class="relative z-10 mx-auto max-w-5xl px-6 py-28 sm:py-36 lg:px-8 w-full">
-    <div class="max-w-2xl">
-      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-5 drop-shadow">
+    <div class="mx-auto max-w-2xl text-center">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="-2015 -2000 4030 4030"
+        fill="#d62828"
+        class="size-8 mx-auto mb-4 drop-shadow-lg"
+        aria-hidden="true"
+      >
+        <path d="m-90 2030 45-863a95 95 0 0 0-111-98l-859 151 116-320a65 65 0 0 0-20-73l-941-762 212-99a65 65 0 0 0 34-79l-186-572 542 115a65 65 0 0 0 73-38l105-247 423 454a65 65 0 0 0 111-57l-204-1052 327 189a65 65 0 0 0 91-27l332-652 332 652a65 65 0 0 0 91 27l327-189-204 1052a65 65 0 0 0 111 57l423-454 105 247a65 65 0 0 0 73 38l542-115-186 572a65 65 0 0 0 34 79l212 99-941 762a65 65 0 0 0-20 73l116 320-859-151a95 95 0 0 0-111 98l45 863z" />
+      </svg>
+      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-white mb-5 drop-shadow">
         Celebrating Ontario's Natural Heritage
       </p>
       <h1 class="text-5xl font-bold tracking-tight text-balance sm:text-7xl mb-6 text-white leading-[1.1] drop-shadow-lg">
@@ -46,11 +55,11 @@
       <p class="text-base font-medium text-white/70 mb-4 drop-shadow">
         Ontario native plant sales
       </p>
-      <p class="max-w-xl text-lg leading-relaxed text-white/80 mb-10 drop-shadow">
+      <p class="max-w-xl mx-auto text-lg leading-relaxed text-white/80 mb-10 drop-shadow">
         Supporting ecosystem restoration where we live and bringing lasting beauty to
         your garden.
       </p>
-      <div class="flex flex-wrap gap-3">
+      <div class="flex flex-wrap justify-center gap-3">
         <a href={~p"/plants/gallery"} class="btn btn-primary btn-lg gap-2">
           <.icon name="hero-photo" class="size-5" /> Shop Plants
         </a>
