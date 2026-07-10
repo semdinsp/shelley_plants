@@ -41,7 +41,7 @@
         xmlns="http://www.w3.org/2000/svg"
         viewBox="-2015 -2000 4030 4030"
         fill="#d62828"
-        class="size-8 mx-auto mb-4 drop-shadow-lg"
+        class="size-[6.75rem] mx-auto mb-4 drop-shadow-lg"
         aria-hidden="true"
       >
         <path d="m-90 2030 45-863a95 95 0 0 0-111-98l-859 151 116-320a65 65 0 0 0-20-73l-941-762 212-99a65 65 0 0 0 34-79l-186-572 542 115a65 65 0 0 0 73-38l105-247 423 454a65 65 0 0 0 111-57l-204-1052 327 189a65 65 0 0 0 91-27l332-652 332 652a65 65 0 0 0 91 27l327-189-204 1052a65 65 0 0 0 111 57l423-454 105 247a65 65 0 0 0 73 38l542-115-186 572a65 65 0 0 0 34 79l212 99-941 762a65 65 0 0 0-20 73l116 320-859-151a95 95 0 0 0-111 98l45 863z" />
@@ -105,6 +105,54 @@
     </div>
   </div>
 </div>
+
+<%!-- Shop by Category --%>
+<section class="mx-auto max-w-5xl px-6 py-20 lg:px-8">
+  <div class="text-center mb-10">
+    <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-3">
+      Find your plants
+    </p>
+    <h2 class="text-2xl font-bold tracking-tight sm:text-3xl">Shop by Category</h2>
+  </div>
+  <div class="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
+    <a
+      href={~p"/plants/gallery?category=Wildflower"}
+      class="group relative flex flex-col items-center justify-center gap-3 rounded-2xl border border-base-300 bg-base-100 px-5 py-7 text-center shadow-sm transition-all hover:-translate-y-1 hover:border-primary hover:shadow-lg"
+    >
+      <div class="flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-content">
+        <.icon name="hero-sparkles" class="size-6" />
+      </div>
+      <span class="text-base font-bold tracking-tight">Wildflowers</span>
+    </a>
+    <a
+      href={~p"/plants/gallery?category=Grass"}
+      class="group relative flex flex-col items-center justify-center gap-3 rounded-2xl border border-base-300 bg-base-100 px-5 py-7 text-center shadow-sm transition-all hover:-translate-y-1 hover:border-primary hover:shadow-lg"
+    >
+      <div class="flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-content">
+        <.icon name="hero-bars-3-bottom-left" class="size-6 rotate-90" />
+      </div>
+      <span class="text-base font-bold tracking-tight">Grasses</span>
+    </a>
+    <a
+      href={~p"/plants/gallery?category=Shrub"}
+      class="group relative flex flex-col items-center justify-center gap-3 rounded-2xl border border-base-300 bg-base-100 px-5 py-7 text-center shadow-sm transition-all hover:-translate-y-1 hover:border-primary hover:shadow-lg"
+    >
+      <div class="flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-content">
+        <.icon name="hero-cloud" class="size-6" />
+      </div>
+      <span class="text-base font-bold tracking-tight">Shrubs</span>
+    </a>
+    <a
+      href={~p"/plants/gallery?category=Tree"}
+      class="group relative flex flex-col items-center justify-center gap-3 rounded-2xl border border-base-300 bg-base-100 px-5 py-7 text-center shadow-sm transition-all hover:-translate-y-1 hover:border-primary hover:shadow-lg"
+    >
+      <div class="flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-content">
+        <.icon name="hero-globe-americas" class="size-6" />
+      </div>
+      <span class="text-base font-bold tracking-tight">Trees</span>
+    </a>
+  </div>
+</section>
 
 <%!-- Featured Plants strip --%>
 <%= if @featured_plants != [] do %>
