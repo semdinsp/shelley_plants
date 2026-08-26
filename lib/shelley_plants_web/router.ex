@@ -22,6 +22,7 @@ defmodule ShelleyPlantsWeb.Router do
 
     get "/", PageController, :home
     get "/about", PageController, :about
+    get "/design-garden/export", GardenExportController, :export
   end
 
   ## Plant catalog routes

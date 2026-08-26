@@ -59,6 +59,26 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-12">
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-base-content/50 mb-8">
+          <span>
+            Created by <span class="font-medium text-base-content/70">Biosphere Native Plants</span>
+          </span>
+          <a
+            href="https://shelley-plants.fly.dev/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-1 text-primary hover:text-primary/80 underline underline-offset-2"
+          >
+            <.icon name="hero-globe-alt" class="size-3.5" /> shelley-plants.fly.dev
+          </a>
+          <a
+            href="tel:+16136176524"
+            class="inline-flex items-center gap-1 text-primary hover:text-primary/80 underline underline-offset-2"
+          >
+            <.icon name="hero-phone" class="size-3.5" /> 613-617-6524
+          </a>
+        </div>
+
         <div class="mb-10">
           <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-3">
             Plan your space
@@ -282,10 +302,20 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
 
       <%!-- Plant purchase list --%>
       <section>
-        <h2 class="text-lg font-semibold text-base-content mb-1">Plant List</h2>
-        <p class="text-sm text-base-content/50 mb-4">
-          Suggested plants for your space, with recommended quantities. Expand each plant to see alternatives.
-        </p>
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-semibold text-base-content mb-1">Plant List</h2>
+            <p class="text-sm text-base-content/50 mb-4">
+              Suggested plants for your space, with recommended quantities. Expand each plant to see alternatives.
+            </p>
+          </div>
+          <a
+            href={~p"/design-garden/export?#{@form_data}"}
+            class="btn btn-outline btn-sm gap-2 shrink-0"
+          >
+            <.icon name="hero-arrow-down-tray" class="size-4" /> Download CSV
+          </a>
+        </div>
 
         <%!-- Total summary row --%>
         <div class="flex items-center justify-between bg-base-200/60 rounded-xl px-4 py-3 mb-4 text-sm">
