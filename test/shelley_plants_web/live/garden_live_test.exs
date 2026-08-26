@@ -10,22 +10,12 @@ defmodule ShelleyPlantsWeb.GardenLiveTest do
       assert html =~ "Tell us about your outdoor space"
     end
 
-    test "shows all five form sections", %{conn: conn} do
+    test "shows all four form sections", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/design-garden")
       assert html =~ "Garden size"
-      assert html =~ "Garden shape"
       assert html =~ "Maximum plant height"
       assert html =~ "Height structure"
       assert html =~ "Sun exposure"
-    end
-
-    test "shows all five shape options", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/design-garden")
-      assert html =~ "Rectangular"
-      assert html =~ "Square"
-      assert html =~ "Triangular"
-      assert html =~ "Circular"
-      assert html =~ "Irregular"
     end
 
     test "shows all four height structure options", %{conn: conn} do
@@ -56,7 +46,6 @@ defmodule ShelleyPlantsWeb.GardenLiveTest do
         |> form("form", %{
           "width" => "4",
           "length" => "6",
-          "shape" => "rectangular",
           "max_height" => "120",
           "height_structure" => "layered",
           "sun" => "full_sun"
@@ -65,7 +54,6 @@ defmodule ShelleyPlantsWeb.GardenLiveTest do
 
       assert html =~ "Your garden plan is ready"
       assert html =~ "Plant List"
-      assert html =~ "Planting Diagram"
       assert html =~ "4m × 6m garden"
     end
 

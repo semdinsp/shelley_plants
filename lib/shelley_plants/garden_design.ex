@@ -121,26 +121,6 @@ defmodule ShelleyPlants.GardenDesign do
   """
   def category_colors, do: @category_colors
 
-  @doc """
-  Builds SVG planting diagram data: a list of plant circles with x/y/r positions
-  within the garden shape bounds. Returns {width_px, height_px, circles}.
-  """
-  def diagram_data(plants, inputs) do
-    width_m = parse_float(inputs["width"])
-    length_m = parse_float(inputs["length"])
-    shape = inputs["shape"] || "rectangular"
-
-    # Scale to fit in ~500px wide canvas, maintaining aspect ratio
-    scale = if width_m > 0, do: min(500 / (width_m * 100), 3.0), else: 1.0
-    canvas_w = round(width_m * 100 * scale)
-    canvas_h = round(length_m * 100 * scale)
-
-    structure = inputs["height_structure"] || "mixed"
-    circles = place_plants(plants, canvas_w, canvas_h, scale, shape, structure)
-
-    {canvas_w, canvas_h, circles}
-  end
-
   # ── Selection logic ───────────────────────────────────────────────────────────
 
   defp select_by_structure(candidates, "low_uniform", limit) do
@@ -213,76 +193,6 @@ defmodule ShelleyPlants.GardenDesign do
     qty = ceil(area_per_species / (spread_m * spread_m))
     qty |> max(1) |> min(20)
   end
-
-  # ── Diagram placement ─────────────────────────────────────────────────────────
-
-  defp place_plants(plants, canvas_w, canvas_h, scale, _shape, structure) do
-    # Expand each species into individual instances, one circle per plant
-    instances =
-      plants
-      |> Enum.flat_map(fn plant ->
-        Enum.map(1..plant.quantity, fn _ ->
-          %{
-            spread_cm: plant.spread_cm || 40,
-            color: plant.color || "#4ade80",
-            label: plant.common_name,
-            height_min_cm: plant.height_min_cm || 60
-          }
-        end)
-      end)
-
-    # Sort by height for layered structure (tallest first = back of diagram)
-    instances =
-      if structure == "layered" do
-        Enum.sort_by(instances, & &1.height_min_cm, :desc)
-      else
-        instances
-      end
-
-    total = length(instances)
-
-    # Use the smallest spread to set circle radius — keeps diagram readable
-    # Cap radius so circles fit the canvas even for large quantities
-    min_spread = instances |> Enum.map(& &1.spread_cm) |> Enum.min(fn -> 40 end)
-    r_from_spread = max(round(min_spread * scale / 100 / 2 * 80), 6)
-
-    # Also cap radius so all circles fit: grid cell size = canvas / sqrt(total)
-    r_from_grid =
-      if total > 0 do
-        cell = :math.sqrt(canvas_w * canvas_h / total)
-        max(round(cell / 2 * 0.85), 6)
-      else
-        r_from_spread
-      end
-
-    r = min(r_from_spread, r_from_grid)
-    margin = r + 3
-
-    usable_w = max(canvas_w - margin * 2, 1)
-    usable_h = max(canvas_h - margin * 2, 1)
-    cols = max(ceil(:math.sqrt(total * canvas_w / max(canvas_h, 1))), 1)
-    rows = max(ceil(total / cols), 1)
-
-    Enum.with_index(instances)
-    |> Enum.map(fn {inst, idx} ->
-      row = div(idx, cols)
-      col = rem(idx, cols)
-      # Offset every other row for a natural staggered look
-      offset = if rem(row, 2) == 1, do: round(usable_w / cols / 2), else: 0
-      x = margin + offset + round(col * usable_w / cols + usable_w / (cols * 2))
-      y = margin + round(row * usable_h / max(rows, 1) + usable_h / (rows * 2))
-
-      %{
-        x: clamp(x, margin, canvas_w - margin),
-        y: clamp(y, margin, canvas_h - margin),
-        r: r,
-        color: inst.color,
-        label: inst.label
-      }
-    end)
-  end
-
-  defp clamp(val, lo, hi), do: val |> max(lo) |> min(hi)
 
   # ── Helpers ───────────────────────────────────────────────────────────────────
 
