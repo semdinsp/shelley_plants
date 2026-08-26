@@ -59,24 +59,25 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-12">
-        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-base-content/50 mb-8">
-          <span>
-            Created by <span class="font-medium text-base-content/70">Biosphere Native Plants</span>
-          </span>
-          <a
-            href="https://shelley-plants.fly.dev/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-1 text-primary hover:text-primary/80 underline underline-offset-2"
-          >
-            <.icon name="hero-globe-alt" class="size-3.5" /> shelley-plants.fly.dev
-          </a>
-          <a
-            href="tel:+16136176524"
-            class="inline-flex items-center gap-1 text-primary hover:text-primary/80 underline underline-offset-2"
-          >
-            <.icon name="hero-phone" class="size-3.5" /> 613-617-6524
-          </a>
+        <div class="text-sm mb-8">
+          <p class="text-base-content/50">Created by:</p>
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
+            <span class="font-medium text-base-content/70">Biosphere Native Plants</span>
+            <a
+              href="https://shelley-plants.fly.dev/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1 text-primary hover:text-primary/80 underline underline-offset-2"
+            >
+              <.icon name="hero-globe-alt" class="size-3.5" /> shelley-plants.fly.dev
+            </a>
+            <a
+              href="tel:+16136176524"
+              class="inline-flex items-center gap-1 text-primary hover:text-primary/80 underline underline-offset-2"
+            >
+              <.icon name="hero-phone" class="size-3.5" /> 613-617-6524
+            </a>
+          </div>
         </div>
 
         <div class="mb-10">
