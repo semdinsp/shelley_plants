@@ -40,6 +40,17 @@ defmodule ShelleyPlantsWeb.GardenExportControllerTest do
       assert Enum.any?(lines, &String.contains?(&1, "Full sun"))
     end
 
+    test "ends with a blank row then a Created by row with business info", %{conn: conn} do
+      conn = get(conn, ~p"/design-garden/export", %{"sun" => "full_sun"})
+
+      body = response(conn, 200)
+
+      assert String.ends_with?(
+               body,
+               "\r\n\r\nCreated by:,Biosphere Native Plants,shelley-plants.fly.dev,613-617-6524\r\n"
+             )
+    end
+
     test "quotes fields containing commas", %{conn: conn} do
       plant_fixture(%{
         common_name: "Aster, New England",
