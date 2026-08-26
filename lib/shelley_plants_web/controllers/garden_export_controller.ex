@@ -16,7 +16,16 @@ defmodule ShelleyPlantsWeb.GardenExportController do
 
     csv_data =
       [csv_row(["Common Name", "Latin Name", "Category", "Quantity", "Height (cm)", "Sun"])] ++
-        Enum.map(plants, &plant_csv_row/1)
+        Enum.map(plants, &plant_csv_row/1) ++
+        [
+          csv_row([]),
+          csv_row([
+            "Created by:",
+            "Biosphere Native Plants",
+            "shelley-plants.fly.dev",
+            "613-617-6524"
+          ])
+        ]
 
     csv_data = Enum.join(csv_data, "")
 
