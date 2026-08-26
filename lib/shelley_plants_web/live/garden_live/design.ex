@@ -3,44 +3,6 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
 
   alias ShelleyPlants.GardenDesign
 
-  @shapes [
-    %{
-      id: "rectangular",
-      label: "Rectangular",
-      svg: """
-        <rect x="4" y="10" width="40" height="28" rx="1" stroke="currentColor" stroke-width="2" fill="none"/>
-      """
-    },
-    %{
-      id: "square",
-      label: "Square",
-      svg: """
-        <rect x="9" y="9" width="30" height="30" rx="1" stroke="currentColor" stroke-width="2" fill="none"/>
-      """
-    },
-    %{
-      id: "triangular",
-      label: "Triangular",
-      svg: """
-        <polygon points="24,6 44,42 4,42" stroke="currentColor" stroke-width="2" fill="none"/>
-      """
-    },
-    %{
-      id: "circular",
-      label: "Circular / Oval",
-      svg: """
-        <ellipse cx="24" cy="24" rx="20" ry="16" stroke="currentColor" stroke-width="2" fill="none"/>
-      """
-    },
-    %{
-      id: "irregular",
-      label: "Irregular / L-shaped",
-      svg: """
-        <polyline points="4,8 30,8 30,22 44,22 44,44 4,44 4,8" stroke="currentColor" stroke-width="2" fill="none"/>
-      """
-    }
-  ]
-
   @height_structures [
     %{
       id: "low_uniform",
@@ -76,13 +38,11 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
     {:ok,
      socket
      |> assign(:page_title, "Design Your Garden")
-     |> assign(:shapes, @shapes)
      |> assign(:height_structures, @height_structures)
      |> assign(:sun_options, @sun_options)
      |> assign(:form_data, %{
        "width" => "",
        "length" => "",
-       "shape" => nil,
        "max_height" => "",
        "height_structure" => nil,
        "sun" => nil
@@ -91,7 +51,6 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
      |> assign(:loading, false)
      |> assign(:plants, [])
      |> assign(:alternates, %{})
-     |> assign(:diagram, nil)
      |> assign(:expanded_alternates, MapSet.new())}
   end
 
@@ -142,7 +101,6 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
         <%= if @state == :form do %>
           <.garden_form
             form_data={@form_data}
-            shapes={@shapes}
             height_structures={@height_structures}
             sun_options={@sun_options}
             loading={@loading}
@@ -151,7 +109,6 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
           <.results_section
             plants={@plants}
             alternates={@alternates}
-            diagram={@diagram}
             form_data={@form_data}
             expanded_alternates={@expanded_alternates}
           />
@@ -169,7 +126,6 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
   # ── Form component ────────────────────────────────────────────────────────────
 
   attr :form_data, :map, required: true
-  attr :shapes, :list, required: true
   attr :height_structures, :list, required: true
   attr :sun_options, :list, required: true
   attr :loading, :boolean, required: true
@@ -218,39 +174,7 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
       </section>
 
       <section class="bg-base-100 border border-base-200 rounded-2xl p-6 sm:p-8 shadow-sm">
-        <.section_heading number="2" title="Garden shape" />
-        <p class="text-sm text-base-content/50 mb-6">
-          Choose the shape that best describes your space.
-        </p>
-        <div class="grid grid-cols-3 sm:grid-cols-5 gap-3">
-          <%= for shape <- @shapes do %>
-            <label class="cursor-pointer group">
-              <input
-                type="radio"
-                name="shape"
-                value={shape.id}
-                class="sr-only peer"
-                checked={@form_data["shape"] == shape.id}
-              />
-              <div class="flex flex-col items-center gap-2 p-3 rounded-xl border-2 border-base-200 peer-checked:border-primary peer-checked:bg-primary/5 hover:border-primary/50 transition-colors">
-                <svg
-                  viewBox="0 0 48 48"
-                  class="w-10 h-10 text-base-content/40 group-has-[:checked]:text-primary"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  {Phoenix.HTML.raw(shape.svg)}
-                </svg>
-                <span class="text-xs text-center text-base-content/60 leading-tight">
-                  {shape.label}
-                </span>
-              </div>
-            </label>
-          <% end %>
-        </div>
-      </section>
-
-      <section class="bg-base-100 border border-base-200 rounded-2xl p-6 sm:p-8 shadow-sm">
-        <.section_heading number="3" title="Maximum plant height" />
+        <.section_heading number="2" title="Maximum plant height" />
         <div class="max-w-xs">
           <label class="block text-sm font-medium text-base-content mb-1.5">Max height (cm)</label>
           <input
@@ -270,7 +194,7 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
       </section>
 
       <section class="bg-base-100 border border-base-200 rounded-2xl p-6 sm:p-8 shadow-sm">
-        <.section_heading number="4" title="Height structure" />
+        <.section_heading number="3" title="Height structure" />
         <p class="text-sm text-base-content/50 mb-6">How do you want the heights to work together?</p>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <%= for hs <- @height_structures do %>
@@ -296,7 +220,7 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
       </section>
 
       <section class="bg-base-100 border border-base-200 rounded-2xl p-6 sm:p-8 shadow-sm">
-        <.section_heading number="5" title="Sun exposure" />
+        <.section_heading number="4" title="Sun exposure" />
         <p class="text-sm text-base-content/50 mb-6">How much direct sunlight does this spot get?</p>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <%= for sun <- @sun_options do %>
@@ -339,7 +263,6 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
 
   attr :plants, :list, required: true
   attr :alternates, :map, required: true
-  attr :diagram, :any, required: true
   attr :form_data, :map, required: true
   attr :expanded_alternates, :any, required: true
 
@@ -490,77 +413,6 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
           <% end %>
         </div>
       </section>
-
-      <%!-- Planting diagram — after the plant list --%>
-      <%= if @diagram do %>
-        <section>
-          <h2 class="text-lg font-semibold text-base-content mb-1">Planting Diagram</h2>
-          <p class="text-sm text-base-content/50 mb-4">
-            A bird's-eye view of how your plants might be arranged. Each circle represents one plant, sized by its spread.
-          </p>
-
-          <div class="bg-base-200/60 rounded-2xl p-4 overflow-x-auto">
-            <% {cw, ch, circles} = @diagram %>
-            <svg
-              viewBox={"0 0 #{cw} #{ch}"}
-              width={min(cw, 520)}
-              height={round(ch * min(cw, 520) / max(cw, 1))}
-              class="block mx-auto"
-              style="max-width: 100%"
-            >
-              <rect
-                x="1"
-                y="1"
-                width={cw - 2}
-                height={ch - 2}
-                rx="6"
-                fill="#e8f5ee"
-                fill-opacity="0.3"
-                stroke="#2d6a4f"
-                stroke-width="2"
-                stroke-dasharray="6,3"
-              />
-              <%= for circle <- circles do %>
-                <g>
-                  <circle
-                    cx={circle.x}
-                    cy={circle.y}
-                    r={circle.r}
-                    fill={circle.color}
-                    fill-opacity="0.85"
-                    stroke="white"
-                    stroke-width="1.5"
-                  />
-                  <%= if circle.r >= 14 do %>
-                    <text
-                      x={circle.x}
-                      y={circle.y + 4}
-                      text-anchor="middle"
-                      font-size="8"
-                      fill="white"
-                      font-family="sans-serif"
-                      font-weight="600"
-                    >
-                      {String.split(circle.label, " ") |> List.first()}
-                    </text>
-                  <% end %>
-                </g>
-              <% end %>
-            </svg>
-          </div>
-
-          <div class="mt-4 flex flex-wrap gap-x-5 gap-y-2">
-            <%= for plant <- @plants do %>
-              <div class="flex items-center gap-2 text-sm">
-                <span class="size-3 rounded-full shrink-0" style={"background-color: #{plant.color}"}>
-                </span>
-                <span class="text-base-content/70">{plant.common_name}</span>
-                <span class="text-base-content/40 text-xs">×{plant.quantity}</span>
-              </div>
-            <% end %>
-          </div>
-        </section>
-      <% end %>
     </div>
     """
   end
@@ -625,7 +477,7 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
     form_data =
       Map.merge(
         socket.assigns.form_data,
-        Map.take(params, ["width", "length", "shape", "max_height", "height_structure", "sun"])
+        Map.take(params, ["width", "length", "max_height", "height_structure", "sun"])
       )
 
     {:noreply, assign(socket, :form_data, form_data)}
@@ -636,18 +488,16 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
     form_data =
       Map.merge(
         socket.assigns.form_data,
-        Map.take(params, ["width", "length", "shape", "max_height", "height_structure", "sun"])
+        Map.take(params, ["width", "length", "max_height", "height_structure", "sun"])
       )
 
     {plants, alternates} = GardenDesign.recommend(form_data)
-    diagram = GardenDesign.diagram_data(plants, form_data)
 
     {:noreply,
      socket
      |> assign(:form_data, form_data)
      |> assign(:plants, plants)
      |> assign(:alternates, alternates)
-     |> assign(:diagram, diagram)
      |> assign(:state, :results)}
   end
 
@@ -670,7 +520,6 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
      |> assign(:state, :form)
      |> assign(:plants, [])
      |> assign(:alternates, %{})
-     |> assign(:diagram, nil)
      |> assign(:expanded_alternates, MapSet.new())}
   end
 end
