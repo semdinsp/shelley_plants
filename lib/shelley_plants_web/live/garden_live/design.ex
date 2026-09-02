@@ -228,8 +228,6 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
                 checked={@form_data["height_structure"] == hs.id}
               />
               <div class="flex items-start gap-3 p-4 rounded-xl border-2 border-base-200 peer-checked:border-primary peer-checked:bg-primary/5 hover:border-primary/50 transition-colors h-full">
-                <div class="mt-0.5 size-4 rounded-full border-2 border-base-300 peer-checked:border-primary peer-checked:bg-primary shrink-0">
-                </div>
                 <div>
                   <p class="text-sm font-semibold text-base-content">{hs.label}</p>
                   <p class="text-xs text-base-content/50 mt-0.5 leading-relaxed">{hs.desc}</p>
