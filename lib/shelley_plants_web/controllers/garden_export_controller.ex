@@ -22,7 +22,7 @@ defmodule ShelleyPlantsWeb.GardenExportController do
           csv_row([
             "Created by:",
             "Biosphere Native Plants",
-            "shelley-plants.fly.dev",
+            "biosphere-native-plants.ca",
             "613-617-6524"
           ])
         ]
