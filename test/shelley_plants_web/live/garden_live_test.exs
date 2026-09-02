@@ -13,7 +13,7 @@ defmodule ShelleyPlantsWeb.GardenLiveTest do
     test "shows created-by attribution with website and phone links", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/design-garden")
       assert html =~ "Biosphere Native Plants"
-      assert html =~ "https://shelley-plants.fly.dev/"
+      assert html =~ "https://biosphere-native-plants.ca/"
       assert html =~ "tel:+16136176524"
       assert html =~ "613-617-6524"
     end

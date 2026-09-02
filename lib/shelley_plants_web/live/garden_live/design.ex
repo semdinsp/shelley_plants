@@ -64,12 +64,12 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
           <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
             <span class="font-medium text-base-content/70">Biosphere Native Plants</span>
             <a
-              href="https://shelley-plants.fly.dev/"
+              href="https://biosphere-native-plants.ca/"
               target="_blank"
               rel="noopener noreferrer"
               class="inline-flex items-center gap-1 text-primary hover:text-primary/80 underline underline-offset-2"
             >
-              <.icon name="hero-globe-alt" class="size-3.5" /> shelley-plants.fly.dev
+              <.icon name="hero-globe-alt" class="size-3.5" /> biosphere-native-plants.ca
             </a>
             <a
               href="tel:+16136176524"

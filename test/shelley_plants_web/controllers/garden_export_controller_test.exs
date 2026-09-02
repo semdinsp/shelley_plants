@@ -47,7 +47,7 @@ defmodule ShelleyPlantsWeb.GardenExportControllerTest do
 
       assert String.ends_with?(
                body,
-               "\r\n\r\nCreated by:,Biosphere Native Plants,shelley-plants.fly.dev,613-617-6524\r\n"
+               "\r\n\r\nCreated by:,Biosphere Native Plants,biosphere-native-plants.ca,613-617-6524\r\n"
              )
     end
 
