@@ -74,7 +74,8 @@ defmodule ShelleyPlants.MixProject do
       # stripe support
       # end exasw3
       {:dns_cluster, "~> 0.2.0"},
-      {:bandit, "~> 1.5"}
+      {:bandit, "~> 1.5"},
+      {:anubis_mcp, "~> 2.0"}
     ]
   end
 
