@@ -3,9 +3,9 @@ defmodule ShelleyPlantsWeb.GardenExportControllerTest do
 
   import ShelleyPlants.CatalogFixtures
 
-  describe "GET /design-garden/export" do
+  describe "GET /garden-planner/export" do
     test "returns a CSV file", %{conn: conn} do
-      conn = get(conn, ~p"/design-garden/export", %{"sun" => "full_sun"})
+      conn = get(conn, ~p"/garden-planner/export", %{"sun" => "full_sun"})
 
       assert response_content_type(conn, :csv)
       assert get_resp_header(conn, "content-disposition") |> hd() =~ "attachment"
@@ -25,7 +25,7 @@ defmodule ShelleyPlantsWeb.GardenExportControllerTest do
       })
 
       conn =
-        get(conn, ~p"/design-garden/export", %{
+        get(conn, ~p"/garden-planner/export", %{
           "sun" => "full_sun",
           "width" => "3",
           "length" => "3"
@@ -41,7 +41,7 @@ defmodule ShelleyPlantsWeb.GardenExportControllerTest do
     end
 
     test "ends with a blank row then a Created by row with business info", %{conn: conn} do
-      conn = get(conn, ~p"/design-garden/export", %{"sun" => "full_sun"})
+      conn = get(conn, ~p"/garden-planner/export", %{"sun" => "full_sun"})
 
       body = response(conn, 200)
 
@@ -60,7 +60,7 @@ defmodule ShelleyPlantsWeb.GardenExportControllerTest do
         height_max_cm: 120
       })
 
-      conn = get(conn, ~p"/design-garden/export", %{"sun" => "full_sun"})
+      conn = get(conn, ~p"/garden-planner/export", %{"sun" => "full_sun"})
 
       body = response(conn, 200)
       assert body =~ ~s("Aster, New England")

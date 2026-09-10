@@ -37,7 +37,7 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
   def mount(_params, _session, socket) do
     {:ok,
      socket
-     |> assign(:page_title, "Design Your Garden")
+     |> assign(:page_title, "Garden Planner")
      |> assign(:height_structures, @height_structures)
      |> assign(:sun_options, @sun_options)
      |> assign(:form_data, %{
@@ -85,7 +85,7 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
             Plan your space
           </p>
           <h1 class="text-4xl font-bold font-serif tracking-tight text-base-content mb-4">
-            Design Your Garden
+            Garden Planner
           </h1>
           <p class="text-lg text-base-content/60 leading-relaxed max-w-xl">
             Tell us about your outdoor space and we'll suggest native Ontario plants
@@ -309,7 +309,7 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
             </p>
           </div>
           <a
-            href={~p"/design-garden/export?#{@form_data}"}
+            href={~p"/garden-planner/export?#{@form_data}"}
             class="btn btn-outline btn-sm gap-2 shrink-0"
           >
             <.icon name="hero-arrow-down-tray" class="size-4" /> Download CSV

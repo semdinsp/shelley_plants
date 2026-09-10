@@ -27,6 +27,7 @@ defmodule ShelleyPlantsWeb.Router do
 
     get "/", PageController, :home
     get "/about", PageController, :about
+    get "/garden-planner/export", GardenExportController, :export
     get "/design-garden/export", GardenExportController, :export
   end
 
@@ -44,8 +45,11 @@ defmodule ShelleyPlantsWeb.Router do
       live "/plants/new", PlantLive.Form, :new
       live "/plants/:id", PlantLive.Show, :show
       live "/plants/:id/edit", PlantLive.Form, :edit
-      live "/design-garden", GardenLive.Design, :index
+      live "/garden-planner", GardenLive.Design, :index
     end
+
+    # Old URL, kept as a redirect so existing links/bookmarks still work.
+    get "/design-garden", GardenPlannerRedirectController, :index
   end
 
   ## MCP server
