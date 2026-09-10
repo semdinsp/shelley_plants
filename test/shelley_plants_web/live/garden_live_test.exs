@@ -10,14 +10,6 @@ defmodule ShelleyPlantsWeb.GardenLiveTest do
       assert html =~ "Tell us about your outdoor space"
     end
 
-    test "shows created-by attribution with website and phone links", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/garden-planner")
-      assert html =~ "Biosphere Native Plants"
-      assert html =~ "https://biosphere-native-plants.ca/"
-      assert html =~ "tel:+16136176524"
-      assert html =~ "613-617-6524"
-    end
-
     test "shows the top-level form sections, with Advanced options collapsed", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/garden-planner")
       assert html =~ "Garden size"

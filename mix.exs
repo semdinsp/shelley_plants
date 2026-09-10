@@ -75,7 +75,8 @@ defmodule ShelleyPlants.MixProject do
       # end exasw3
       {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.5"},
-      {:anubis_mcp, "~> 2.0"}
+      {:anubis_mcp, "~> 2.0"},
+      {:mdex, "~> 0.8"}
     ]
   end
 
