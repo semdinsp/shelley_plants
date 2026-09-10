@@ -381,4 +381,19 @@ defmodule ShelleyPlants.Accounts do
     |> Ecto.Changeset.change(revoked_at: DateTime.utc_now() |> DateTime.truncate(:second))
     |> Repo.update()
   end
+
+  @doc """
+  Looks up the user and token for an active (non-revoked) raw MCP token value.
+
+  Returns `{:ok, user, mcp_token}` or `:error`.
+  """
+  def get_user_by_mcp_token(raw_token) when is_binary(raw_token) do
+    raw_token
+    |> McpToken.by_raw_token_query()
+    |> Repo.one()
+    |> case do
+      nil -> :error
+      mcp_token -> {:ok, get_user!(mcp_token.user_id), mcp_token}
+    end
+  end
 end

@@ -17,6 +17,11 @@ defmodule ShelleyPlantsWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :mcp do
+    plug :accepts, ["json"]
+    plug ShelleyPlantsWeb.Plugs.McpAuth
+  end
+
   scope "/", ShelleyPlantsWeb do
     pipe_through :browser
 
@@ -43,10 +48,15 @@ defmodule ShelleyPlantsWeb.Router do
     end
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", ShelleyPlantsWeb do
-  #   pipe_through :api
-  # end
+  ## MCP server
+  ## Authenticated via a bearer token created on /settings (Accounts.McpToken).
+
+  scope "/mcp" do
+    pipe_through :mcp
+
+    forward "/", Anubis.Server.Transport.StreamableHTTP.Plug,
+      server: ShelleyPlants.MCP.PlantsServer
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:shelley_plants, :dev_routes) do

@@ -23,6 +23,11 @@ config :shelley_plants, ShelleyPlantsWeb.Endpoint,
   secret_key_base: "gt7R/nvTdRk9JdYsIpYZ3NR9Y6PNTgGuSarSJjrSImvRuWR1pL5Rbfqu6MS3eIx3",
   server: false
 
+# Anubis's MCP transport auto-detects whether a real HTTP server is running
+# and skips starting itself otherwise. Phoenix.ConnTest dispatches straight
+# to the plug pipeline without a listening socket, so force it on here.
+config :shelley_plants, mcp_force_start: true
+
 # In test we don't send emails
 config :shelley_plants, ShelleyPlants.Mailer, adapter: Swoosh.Adapters.Test
 

@@ -151,5 +151,25 @@ defmodule ShelleyPlants.CatalogTest do
       changeset = Catalog.change_plant(plant, %{plant_type: "shrub"})
       assert %{plant_type: ["must be perennial or annual"]} = errors_on(changeset)
     end
+
+    test "defaults moisture_unacceptable to an empty list" do
+      plant = plant_fixture()
+      assert plant.moisture_unacceptable == []
+    end
+
+    test "accepts a valid moisture_unacceptable list" do
+      plant = plant_fixture()
+      changeset = Catalog.change_plant(plant, %{moisture_unacceptable: ["wet", "dry"]})
+      assert changeset.valid?
+      assert Ecto.Changeset.get_change(changeset, :moisture_unacceptable) == ["wet", "dry"]
+    end
+
+    test "rejects an invalid moisture_unacceptable value" do
+      plant = plant_fixture()
+      changeset = Catalog.change_plant(plant, %{moisture_unacceptable: ["soggy"]})
+
+      assert %{moisture_unacceptable: ["must be dry, average, moist, or wet"]} =
+               errors_on(changeset)
+    end
   end
 end
