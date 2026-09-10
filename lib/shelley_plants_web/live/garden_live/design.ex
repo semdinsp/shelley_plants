@@ -337,6 +337,19 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
         </div>
       </div>
 
+      <%!-- Weak moisture match note --%>
+      <div
+        :if={weak_moisture_match?(@form_data, @plants)}
+        class="bg-warning/10 border border-warning/20 rounded-2xl p-5 flex items-start gap-4"
+      >
+        <.icon name="hero-exclamation-triangle" class="size-5 text-warning shrink-0 mt-0.5" />
+        <p class="text-sm text-base-content/70 leading-relaxed">
+          Few plants in the catalog are confirmed {human_moisture(@form_data["moisture"])
+          |> String.downcase()}-tolerant for this light level, so some suggestions below are the
+          closest available match rather than a confirmed fit for that moisture level.
+        </p>
+      </div>
+
       <%!-- Plant purchase list --%>
       <section>
         <div class="flex items-start justify-between gap-4">
@@ -530,6 +543,22 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
   defp human_moisture("moist"), do: "Moist"
   defp human_moisture("wet"), do: "Wet"
   defp human_moisture(_), do: ""
+
+  # True when a moisture level was requested but fewer than half of the
+  # recommended plants actually carry that moisture_level — meaning most of
+  # what's shown is the closest available fallback, not a confirmed match.
+  defp weak_moisture_match?(_form_data, []), do: false
+
+  defp weak_moisture_match?(form_data, plants) do
+    case form_data["moisture"] do
+      moisture when moisture in [nil, ""] ->
+        false
+
+      moisture ->
+        matches = Enum.count(plants, &(&1.moisture_level == moisture))
+        matches < length(plants) / 2
+    end
+  end
 
   defp summary_text(form_data, plants) do
     w = form_data["width"]

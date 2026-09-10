@@ -2,6 +2,7 @@ defmodule ShelleyPlantsWeb.GardenLiveTest do
   use ShelleyPlantsWeb.ConnCase
 
   import Phoenix.LiveViewTest
+  import ShelleyPlants.CatalogFixtures
 
   describe "Garden Planner page" do
     test "renders the page for guests", %{conn: conn} do
@@ -104,6 +105,76 @@ defmodule ShelleyPlantsWeb.GardenLiveTest do
         |> render_submit()
 
       assert html =~ "wet soil"
+    end
+
+    test "shows a weak-match note when most results don't share the requested moisture",
+         %{conn: conn} do
+      plant_fixture(%{
+        common_name: "Weak Match Wet Plant",
+        latin_name: "Weakmatchus wetus",
+        sun_level: "full_sun",
+        moisture_level: "wet"
+      })
+
+      for n <- 1..3 do
+        plant_fixture(%{
+          common_name: "Weak Match Dry Plant #{n}",
+          latin_name: "Weakmatchus dryus#{n}",
+          sun_level: "full_sun",
+          moisture_level: "dry"
+        })
+      end
+
+      {:ok, lv, _html} = live(conn, ~p"/garden-planner")
+
+      html =
+        lv
+        |> form("form", %{
+          "width" => "1",
+          "length" => "2",
+          "sun" => "full_sun",
+          "moisture" => "wet"
+        })
+        |> render_submit()
+
+      assert html =~ "closest available match"
+    end
+
+    test "does not show the weak-match note when most results share the requested moisture",
+         %{conn: conn} do
+      for n <- 1..3 do
+        plant_fixture(%{
+          common_name: "Strong Match Wet Plant #{n}",
+          latin_name: "Strongmatchus wetus#{n}",
+          sun_level: "full_sun",
+          moisture_level: "wet"
+        })
+      end
+
+      {:ok, lv, _html} = live(conn, ~p"/garden-planner")
+
+      html =
+        lv
+        |> form("form", %{
+          "width" => "1",
+          "length" => "2",
+          "sun" => "full_sun",
+          "moisture" => "wet"
+        })
+        |> render_submit()
+
+      refute html =~ "closest available match"
+    end
+
+    test "does not show the weak-match note when no moisture is selected", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/garden-planner")
+
+      html =
+        lv
+        |> form("form", %{"width" => "3", "length" => "3"})
+        |> render_submit()
+
+      refute html =~ "closest available match"
     end
 
     test "results show the Start over button", %{conn: conn} do
