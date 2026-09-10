@@ -58,6 +58,20 @@ defmodule ShelleyPlantsWeb.Admin.DashboardLive do
           </div>
         </div>
       </section>
+
+      <%!-- Guides --%>
+      <section class="mt-12">
+        <h2 class="text-lg font-semibold mb-4">Guides</h2>
+        <div class="flex flex-col sm:flex-row flex-wrap gap-3">
+          <a
+            :for={{slug, title} <- @guides}
+            href={~p"/admin/guides/#{slug}"}
+            class="btn btn-outline gap-2"
+          >
+            <.icon name="hero-book-open" /> {title}
+          </a>
+        </div>
+      </section>
     </Layouts.app>
     """
   end
@@ -71,7 +85,8 @@ defmodule ShelleyPlantsWeb.Admin.DashboardLive do
      assign(socket,
        plant_count: length(plants),
        with_picture_count: with_picture,
-       without_picture_count: length(plants) - with_picture
+       without_picture_count: length(plants) - with_picture,
+       guides: ShelleyPlantsWeb.Admin.GuideController.index()
      )}
   end
 end

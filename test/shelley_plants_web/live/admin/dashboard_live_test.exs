@@ -53,5 +53,16 @@ defmodule ShelleyPlantsWeb.Admin.DashboardLiveTest do
       assert html =~ ~p"/plants/new"
       assert html =~ ~p"/admin/plants/export"
     end
+
+    test "links to the admin guides", %{conn: conn} do
+      {:ok, _lv, html} = live(conn, ~p"/admin")
+      assert html =~ "Guides"
+      assert html =~ ~p"/admin/guides/editing-plants-and-mcp"
+      assert html =~ ~p"/admin/guides/plant-data-fields"
+      assert html =~ ~p"/admin/guides/user-administration"
+      assert html =~ "Editing Plants and Using Claude Desktop"
+      assert html =~ "Plant Data Entry Guide"
+      assert html =~ "User Administration"
+    end
   end
 end

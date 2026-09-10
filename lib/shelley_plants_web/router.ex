@@ -85,6 +85,7 @@ defmodule ShelleyPlantsWeb.Router do
     pipe_through [:browser, :require_authenticated_user, :require_admin_user]
 
     get "/plants/export", Admin.PlantExportController, :export
+    get "/guides/:slug", Admin.GuideController, :show
 
     live_session :require_admin,
       on_mount: [{ShelleyPlantsWeb.UserAuth, :require_admin}] do
