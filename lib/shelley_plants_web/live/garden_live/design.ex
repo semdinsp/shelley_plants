@@ -146,7 +146,7 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
 
   defp garden_form(assigns) do
     ~H"""
-    <form phx-submit="submit" phx-change="validate" class="space-y-10">
+    <form id="garden-planner-form" phx-submit="submit" phx-change="validate" class="space-y-10">
       <section class="bg-base-100 border border-base-200 rounded-2xl p-6 sm:p-8 shadow-sm">
         <.section_heading number="1" title="Garden size" />
         <p class="text-sm text-base-content/50 mb-6">
@@ -375,6 +375,32 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
           </span>
         </div>
 
+        <%!-- Fit legend — sorted best fit first --%>
+        <div class="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs text-base-content/50 mb-4">
+          <span class="font-medium text-base-content/60">Sorted by best fit:</span>
+          <span class="flex items-center gap-1.5">
+            <span
+              class="size-2.5 rounded-full shrink-0"
+              style={"background-color: #{fit_color(:great)}"}
+            ></span>
+            Great fit
+          </span>
+          <span class="flex items-center gap-1.5">
+            <span
+              class="size-2.5 rounded-full shrink-0"
+              style={"background-color: #{fit_color(:good)}"}
+            ></span>
+            Good fit
+          </span>
+          <span class="flex items-center gap-1.5">
+            <span
+              class="size-2.5 rounded-full shrink-0"
+              style={"background-color: #{fit_color(:fallback)}"}
+            ></span>
+            Fallback match
+          </span>
+        </div>
+
         <div class="space-y-3">
           <%= for plant <- @plants do %>
             <% alts = Map.get(@alternates, plant.id, []) %>
@@ -543,6 +569,8 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
   defp human_moisture("moist"), do: "Moist"
   defp human_moisture("wet"), do: "Wet"
   defp human_moisture(_), do: ""
+
+  defp fit_color(level), do: Map.fetch!(GardenDesign.fit_colors(), level)
 
   # True when a moisture level was requested but fewer than half of the
   # recommended plants actually carry that moisture_level — meaning most of
