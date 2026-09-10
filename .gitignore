@@ -46,3 +46,6 @@ npm-debug.log
 # Local Elixir formatter config and GitHub workflows, not tracked in this repo.
 /.formatter.exs
 /.github/
+
+# Local environment secrets.
+/.env
