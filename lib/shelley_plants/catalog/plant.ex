@@ -30,6 +30,7 @@ defmodule ShelleyPlants.Catalog.Plant do
     field :spread_cm, :integer
     field :sun_level, :string
     field :moisture_level, :string
+    field :moisture_unacceptable, {:array, :string}, default: []
     field :picture, :string
 
     timestamps(type: :utc_datetime)
@@ -39,7 +40,8 @@ defmodule ShelleyPlants.Catalog.Plant do
                       light_requirements moisture plant_type native_ontario locally_native
                       deer_resistant)a
   @optional_fields ~w(ecological_benefit notes picture category
-                      height_min_cm height_max_cm spread_cm sun_level moisture_level)a
+                      height_min_cm height_max_cm spread_cm sun_level moisture_level
+                      moisture_unacceptable)a
 
   @doc false
   def changeset(plant, attrs) do
@@ -57,6 +59,9 @@ defmodule ShelleyPlants.Catalog.Plant do
       message: "must be full_sun, part_shade, or full_shade"
     )
     |> validate_inclusion(:moisture_level, @moisture_levels ++ [nil],
+      message: "must be dry, average, moist, or wet"
+    )
+    |> validate_subset(:moisture_unacceptable, @moisture_levels,
       message: "must be dry, average, moist, or wet"
     )
     |> validate_number(:height_min_cm, greater_than: 0, less_than: 2000)
