@@ -52,6 +52,10 @@ COPY priv priv
 
 COPY lib lib
 
+# Admin guides are read from here at compile time (see
+# ShelleyPlantsWeb.Admin.GuideController); must be present before `mix compile`.
+COPY docs docs
+
 # Compile the release
 RUN mix compile
 
