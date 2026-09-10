@@ -18,16 +18,23 @@ defmodule ShelleyPlantsWeb.GardenLiveTest do
       assert html =~ "613-617-6524"
     end
 
-    test "shows all four form sections", %{conn: conn} do
+    test "shows the top-level form sections, with Advanced options collapsed", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/garden-planner")
       assert html =~ "Garden size"
-      assert html =~ "Maximum plant height"
-      assert html =~ "Height structure"
       assert html =~ "Sun exposure"
+      assert html =~ "Moisture level"
+      assert html =~ "Advanced options"
+      refute html =~ "Maximum plant height"
+      refute html =~ "Height structure"
     end
 
-    test "shows all four height structure options", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/garden-planner")
+    test "expanding Advanced options reveals max height and height structure", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/garden-planner")
+
+      html = lv |> element("button", "Advanced options") |> render_click()
+
+      assert html =~ "Maximum plant height"
+      assert html =~ "Height structure"
       assert html =~ "Low &amp; uniform"
       assert html =~ "Layered"
       assert html =~ "Mixed / naturalistic"
@@ -41,6 +48,14 @@ defmodule ShelleyPlantsWeb.GardenLiveTest do
       assert html =~ "Full shade"
     end
 
+    test "shows all four moisture level options", %{conn: conn} do
+      {:ok, _lv, html} = live(conn, ~p"/garden-planner")
+      assert html =~ "Dry"
+      assert html =~ "Average"
+      assert html =~ "Moist"
+      assert html =~ "Wet"
+    end
+
     test "shows the Generate My Garden Plan CTA button", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/garden-planner")
       assert html =~ "Generate My Garden Plan"
@@ -48,6 +63,25 @@ defmodule ShelleyPlantsWeb.GardenLiveTest do
 
     test "submitting the form shows results", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/garden-planner")
+
+      html =
+        lv
+        |> form("form", %{"width" => "4", "length" => "6", "sun" => "full_sun"})
+        |> render_submit()
+
+      assert html =~ "Your garden plan is ready"
+      assert html =~ "Plant List"
+      assert html =~ "4m × 6m garden"
+      assert html =~ "/garden-planner/export?"
+      assert html =~ "Download CSV"
+    end
+
+    test "submitting with advanced options set (height structure, max height) shows results", %{
+      conn: conn
+    } do
+      {:ok, lv, _html} = live(conn, ~p"/garden-planner")
+
+      lv |> element("button", "Advanced options") |> render_click()
 
       html =
         lv
@@ -61,10 +95,23 @@ defmodule ShelleyPlantsWeb.GardenLiveTest do
         |> render_submit()
 
       assert html =~ "Your garden plan is ready"
-      assert html =~ "Plant List"
-      assert html =~ "4m × 6m garden"
-      assert html =~ "/garden-planner/export?"
-      assert html =~ "Download CSV"
+      assert html =~ "layered from front to back"
+    end
+
+    test "submitting the form with moisture selected mentions it in the summary", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/garden-planner")
+
+      html =
+        lv
+        |> form("form", %{
+          "width" => "4",
+          "length" => "6",
+          "sun" => "full_sun",
+          "moisture" => "wet"
+        })
+        |> render_submit()
+
+      assert html =~ "wet soil"
     end
 
     test "results show the Start over button", %{conn: conn} do
