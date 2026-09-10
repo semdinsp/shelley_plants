@@ -43,26 +43,41 @@ defmodule ShelleyPlants.GardenDesign do
 
   @doc """
   Returns a list of recommended %Plant{} structs based on garden inputs,
-  sorted and filtered by sun, max height, and height structure preference.
-  Each plant is decorated with a :quantity and :color key for display.
-  Also returns a parallel list of :alternates (2-3 plants per primary).
+  sorted and filtered by sun, moisture, max height, and height structure
+  preference. Each plant is decorated with a :quantity and :color key for
+  display. Also returns a parallel list of :alternates (2-3 plants per
+  primary).
+
+  Moisture affects selection two ways: plants that explicitly can't
+  tolerate the garden's moisture (`moisture_unacceptable`) are excluded
+  entirely, and among the rest, plants whose `moisture_level` matches are
+  preferred.
   """
   def recommend(inputs) do
     area = garden_area(inputs)
     sun = inputs["sun"]
+    moisture = inputs["moisture"]
     max_h = parse_int(inputs["max_height"])
     structure = inputs["height_structure"] || "mixed"
 
     compatible_sun = Map.get(@sun_compat, sun, ["full_sun", "part_shade", "full_shade"])
     species_limit = species_limit_for_area(area)
 
-    # Fetch all compatible plants
-    candidates =
-      Repo.all(
-        from p in Plant,
-          where: p.sun_level in ^compatible_sun,
-          order_by: [asc: p.height_min_cm]
-      )
+    # Fetch all compatible plants, excluding those that can't tolerate the
+    # garden's moisture
+    base_query =
+      from p in Plant,
+        where: p.sun_level in ^compatible_sun,
+        order_by: [asc: p.height_min_cm]
+
+    query =
+      if moisture in [nil, ""] do
+        base_query
+      else
+        from p in base_query, where: ^moisture not in p.moisture_unacceptable
+      end
+
+    candidates = Repo.all(query)
 
     # Apply max height filter
     candidates =
@@ -73,6 +88,10 @@ defmodule ShelleyPlants.GardenDesign do
       else
         candidates
       end
+
+    # Prefer plants whose moisture_level matches the garden's moisture,
+    # without excluding the rest
+    candidates = prefer_moisture_match(candidates, moisture)
 
     # Sort and select by height structure
     selected = select_by_structure(candidates, structure, species_limit)
@@ -183,6 +202,15 @@ defmodule ShelleyPlants.GardenDesign do
 
   defp fallback_if_empty([], candidates, limit), do: diverse_sample(candidates, limit)
   defp fallback_if_empty(list, _candidates, _limit), do: list
+
+  # Stable-sorts candidates so plants whose moisture_level matches the
+  # garden's moisture come first, without dropping non-matching plants.
+  defp prefer_moisture_match(candidates, nil), do: candidates
+  defp prefer_moisture_match(candidates, ""), do: candidates
+
+  defp prefer_moisture_match(candidates, moisture) do
+    Enum.sort_by(candidates, fn p -> if p.moisture_level == moisture, do: 0, else: 1 end)
+  end
 
   # ── Quantity calculation ──────────────────────────────────────────────────────
 

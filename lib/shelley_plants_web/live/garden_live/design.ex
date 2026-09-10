@@ -33,6 +33,13 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
     }
   ]
 
+  @moisture_options [
+    %{id: "dry", label: "Dry", desc: "Drains quickly, rarely stays wet"},
+    %{id: "average", label: "Average", desc: "Typical garden soil moisture"},
+    %{id: "moist", label: "Moist", desc: "Stays consistently damp"},
+    %{id: "wet", label: "Wet", desc: "Poor drainage or low-lying"}
+  ]
+
   @impl true
   def mount(_params, _session, socket) do
     {:ok,
@@ -40,15 +47,18 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
      |> assign(:page_title, "Garden Planner")
      |> assign(:height_structures, @height_structures)
      |> assign(:sun_options, @sun_options)
+     |> assign(:moisture_options, @moisture_options)
      |> assign(:form_data, %{
        "width" => "",
        "length" => "",
        "max_height" => "",
        "height_structure" => nil,
-       "sun" => nil
+       "sun" => nil,
+       "moisture" => nil
      })
      |> assign(:state, :form)
      |> assign(:loading, false)
+     |> assign(:advanced_expanded, false)
      |> assign(:plants, [])
      |> assign(:alternates, %{})
      |> assign(:expanded_alternates, MapSet.new())}
@@ -124,6 +134,8 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
             form_data={@form_data}
             height_structures={@height_structures}
             sun_options={@sun_options}
+            moisture_options={@moisture_options}
+            advanced_expanded={@advanced_expanded}
             loading={@loading}
           />
         <% else %>
@@ -149,6 +161,8 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
   attr :form_data, :map, required: true
   attr :height_structures, :list, required: true
   attr :sun_options, :list, required: true
+  attr :moisture_options, :list, required: true
+  attr :advanced_expanded, :boolean, required: true
   attr :loading, :boolean, required: true
 
   defp garden_form(assigns) do
@@ -195,51 +209,7 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
       </section>
 
       <section class="bg-base-100 border border-base-200 rounded-2xl p-6 sm:p-8 shadow-sm">
-        <.section_heading number="2" title="Maximum plant height" />
-        <div class="max-w-xs">
-          <label class="block text-sm font-medium text-base-content mb-1.5">Max height (cm)</label>
-          <input
-            type="number"
-            name="max_height"
-            value={@form_data["max_height"]}
-            min="10"
-            max="500"
-            step="10"
-            placeholder="e.g. 120"
-            class="input input-bordered w-full"
-          />
-          <p class="text-xs text-base-content/40 mt-2 leading-relaxed">
-            Think about fences, windowsills, or a neighbour's view. Leave blank for no constraint.
-          </p>
-        </div>
-      </section>
-
-      <section class="bg-base-100 border border-base-200 rounded-2xl p-6 sm:p-8 shadow-sm">
-        <.section_heading number="3" title="Height structure" />
-        <p class="text-sm text-base-content/50 mb-6">How do you want the heights to work together?</p>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <%= for hs <- @height_structures do %>
-            <label class="cursor-pointer">
-              <input
-                type="radio"
-                name="height_structure"
-                value={hs.id}
-                class="sr-only peer"
-                checked={@form_data["height_structure"] == hs.id}
-              />
-              <div class="flex items-start gap-3 p-4 rounded-xl border-2 border-base-200 peer-checked:border-primary peer-checked:bg-primary/5 hover:border-primary/50 transition-colors h-full">
-                <div>
-                  <p class="text-sm font-semibold text-base-content">{hs.label}</p>
-                  <p class="text-xs text-base-content/50 mt-0.5 leading-relaxed">{hs.desc}</p>
-                </div>
-              </div>
-            </label>
-          <% end %>
-        </div>
-      </section>
-
-      <section class="bg-base-100 border border-base-200 rounded-2xl p-6 sm:p-8 shadow-sm">
-        <.section_heading number="4" title="Sun exposure" />
+        <.section_heading number="2" title="Sun exposure" />
         <p class="text-sm text-base-content/50 mb-6">How much direct sunlight does this spot get?</p>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <%= for sun <- @sun_options do %>
@@ -258,6 +228,95 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
               </div>
             </label>
           <% end %>
+        </div>
+      </section>
+
+      <section class="bg-base-100 border border-base-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+        <.section_heading number="3" title="Moisture level" />
+        <p class="text-sm text-base-content/50 mb-6">
+          How much moisture does this spot typically hold?
+        </p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <%= for moisture <- @moisture_options do %>
+            <label class="cursor-pointer">
+              <input
+                type="radio"
+                name="moisture"
+                value={moisture.id}
+                class="sr-only peer"
+                checked={@form_data["moisture"] == moisture.id}
+              />
+              <div class="flex flex-col items-center gap-1 p-4 rounded-xl border-2 border-base-200 peer-checked:border-primary peer-checked:bg-primary/5 hover:border-primary/50 transition-colors text-center">
+                <p class="text-sm font-semibold text-base-content">{moisture.label}</p>
+                <p class="text-xs text-base-content/50 leading-tight">{moisture.desc}</p>
+              </div>
+            </label>
+          <% end %>
+        </div>
+      </section>
+
+      <section class="bg-base-100 border border-base-200 rounded-2xl overflow-hidden shadow-sm">
+        <button
+          type="button"
+          phx-click="toggle_advanced"
+          class="w-full flex items-center justify-between gap-3 p-6 sm:p-8 text-left"
+        >
+          <span class="text-base font-semibold text-base-content">Advanced options</span>
+          <.icon
+            name={if @advanced_expanded, do: "hero-chevron-up", else: "hero-chevron-down"}
+            class="size-5 text-base-content/40 shrink-0"
+          />
+        </button>
+
+        <div
+          :if={@advanced_expanded}
+          class="px-6 sm:px-8 pb-6 sm:pb-8 space-y-8 border-t border-base-200 pt-6"
+        >
+          <div>
+            <p class="text-sm font-medium text-base-content mb-1.5">Maximum plant height</p>
+            <div class="max-w-xs">
+              <label class="block text-sm font-medium text-base-content mb-1.5">Max height (cm)</label>
+              <input
+                type="number"
+                name="max_height"
+                value={@form_data["max_height"]}
+                min="10"
+                max="500"
+                step="10"
+                placeholder="e.g. 120"
+                class="input input-bordered w-full"
+              />
+              <p class="text-xs text-base-content/40 mt-2 leading-relaxed">
+                Think about fences, windowsills, or a neighbour's view. Leave blank for no constraint.
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <p class="text-sm font-medium text-base-content mb-1.5">Height structure</p>
+            <p class="text-sm text-base-content/50 mb-4">
+              How do you want the heights to work together?
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <%= for hs <- @height_structures do %>
+                <label class="cursor-pointer">
+                  <input
+                    type="radio"
+                    name="height_structure"
+                    value={hs.id}
+                    class="sr-only peer"
+                    checked={@form_data["height_structure"] == hs.id}
+                  />
+                  <div class="flex items-start gap-3 p-4 rounded-xl border-2 border-base-200 peer-checked:border-primary peer-checked:bg-primary/5 hover:border-primary/50 transition-colors h-full">
+                    <div>
+                      <p class="text-sm font-semibold text-base-content">{hs.label}</p>
+                      <p class="text-xs text-base-content/50 mt-0.5 leading-relaxed">{hs.desc}</p>
+                    </div>
+                  </div>
+                </label>
+              <% end %>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -377,6 +436,11 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
                     <%= if plant.sun_level do %>
                       <span class="badge badge-ghost badge-xs">{human_sun(plant.sun_level)}</span>
                     <% end %>
+                    <%= if plant.moisture_level do %>
+                      <span class="badge badge-ghost badge-xs">
+                        {human_moisture(plant.moisture_level)}
+                      </span>
+                    <% end %>
                   </div>
                 </div>
 
@@ -475,15 +539,25 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
   defp human_sun("full_shade"), do: "Full shade"
   defp human_sun(_), do: ""
 
+  defp human_moisture("dry"), do: "Dry"
+  defp human_moisture("average"), do: "Average"
+  defp human_moisture("moist"), do: "Moist"
+  defp human_moisture("wet"), do: "Wet"
+  defp human_moisture(_), do: ""
+
   defp summary_text(form_data, plants) do
     w = form_data["width"]
     l = form_data["length"]
     sun = human_sun(form_data["sun"])
+    moisture = human_moisture(form_data["moisture"])
     structure = form_data["height_structure"]
     total = Enum.sum(Enum.map(plants, & &1.quantity))
 
     size_str = if w != "" and l != "", do: "#{w}m × #{l}m garden", else: "your garden"
     sun_str = if sun != "", do: " in #{String.downcase(sun)}", else: ""
+
+    moisture_str =
+      if moisture != "", do: ", #{String.downcase(moisture)} soil", else: ""
 
     struct_str =
       case structure do
@@ -494,7 +568,7 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
         _ -> ""
       end
 
-    "#{length(plants)} species recommended for your #{size_str}#{sun_str}#{struct_str}. " <>
+    "#{length(plants)} species recommended for your #{size_str}#{sun_str}#{moisture_str}#{struct_str}. " <>
       "#{total} plants in total."
   end
 
@@ -505,7 +579,7 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
     form_data =
       Map.merge(
         socket.assigns.form_data,
-        Map.take(params, ["width", "length", "max_height", "height_structure", "sun"])
+        Map.take(params, ["width", "length", "max_height", "height_structure", "sun", "moisture"])
       )
 
     {:noreply, assign(socket, :form_data, form_data)}
@@ -516,7 +590,7 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
     form_data =
       Map.merge(
         socket.assigns.form_data,
-        Map.take(params, ["width", "length", "max_height", "height_structure", "sun"])
+        Map.take(params, ["width", "length", "max_height", "height_structure", "sun", "moisture"])
       )
 
     {plants, alternates} = GardenDesign.recommend(form_data)
@@ -527,6 +601,11 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
      |> assign(:plants, plants)
      |> assign(:alternates, alternates)
      |> assign(:state, :results)}
+  end
+
+  @impl true
+  def handle_event("toggle_advanced", _params, socket) do
+    {:noreply, assign(socket, :advanced_expanded, !socket.assigns.advanced_expanded)}
   end
 
   @impl true
