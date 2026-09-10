@@ -333,8 +333,7 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
               <%!-- Main plant row --%>
               <div class="flex items-center gap-3 p-4">
                 <%!-- Colour dot --%>
-                <span class="size-3 rounded-full shrink-0" style={"background-color: #{plant.color}"}>
-                </span>
+                <span class="size-3 rounded-full shrink-0" style={"background-color: #{plant.color}"}></span>
 
                 <%!-- Photo thumbnail --%>
                 <div class="size-14 rounded-xl overflow-hidden bg-base-200 shrink-0">

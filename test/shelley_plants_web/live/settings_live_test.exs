@@ -63,4 +63,112 @@ defmodule ShelleyPlantsWeb.SettingsLiveTest do
       assert html =~ "View all plants"
     end
   end
+
+  describe "MCP tokens" do
+    setup :register_and_log_in_user
+
+    test "shows empty state with no tokens", %{conn: conn} do
+      {:ok, _lv, html} = live(conn, ~p"/settings")
+      assert html =~ "No MCP tokens yet."
+    end
+
+    test "creates a token, shows it in the list, and triggers a client-side copy", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/settings")
+
+      html =
+        lv
+        |> form("#create-mcp-token-form", mcp_token: %{name: "claude-desktop"})
+        |> render_submit()
+
+      assert html =~ "claude-desktop"
+      assert html =~ "copied to your clipboard"
+      assert_push_event(lv, "copy-mcp-token", %{token: token})
+      assert is_binary(token) and byte_size(token) > 0
+    end
+
+    test "rejects a blank token name", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/settings")
+
+      html =
+        lv
+        |> form("#create-mcp-token-form", mcp_token: %{name: ""})
+        |> render_submit()
+
+      assert html =~ "can&#39;t be blank"
+    end
+
+    test "defaults to read scope only", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/settings")
+
+      html =
+        lv
+        |> form("#create-mcp-token-form", mcp_token: %{name: "read-only-client"})
+        |> render_submit()
+
+      assert html =~ "read-only-client"
+      assert html =~ "read"
+      refute html =~ "read, write"
+    end
+
+    test "creates a token with both read and write scopes", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/settings")
+
+      html =
+        lv
+        |> form("#create-mcp-token-form",
+          mcp_token: %{name: "full-access", read: "true", write: "true"}
+        )
+        |> render_submit()
+
+      assert html =~ "read, write"
+    end
+
+    test "rejects a token with no scopes selected", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/settings")
+
+      html =
+        lv
+        |> form("#create-mcp-token-form",
+          mcp_token: %{name: "no-scopes", read: "false", write: "false"}
+        )
+        |> render_submit()
+
+      assert html =~ "select at least one scope"
+    end
+
+    test "revokes a token", %{conn: conn, user: user} do
+      {:ok, _raw_token, mcp_token} =
+        ShelleyPlants.Accounts.create_mcp_token(user, %{
+          "name" => "old-laptop",
+          "scopes" => ["read"]
+        })
+
+      {:ok, lv, _html} = live(conn, ~p"/settings")
+
+      html =
+        lv
+        |> element("[phx-value-id='#{mcp_token.id}']")
+        |> render_click()
+
+      assert html =~ "Revoked"
+      assert html =~ "Token revoked."
+    end
+
+    test "cannot revoke another user's token", %{conn: conn} do
+      other_user = user_fixture()
+
+      {:ok, _raw_token, mcp_token} =
+        ShelleyPlants.Accounts.create_mcp_token(other_user, %{
+          "name" => "not-mine",
+          "scopes" => ["read"]
+        })
+
+      {:ok, lv, _html} = live(conn, ~p"/settings")
+
+      render_hook(lv, "revoke_mcp_token", %{"id" => mcp_token.id})
+
+      [reloaded] = ShelleyPlants.Accounts.list_mcp_tokens(other_user)
+      assert is_nil(reloaded.revoked_at)
+    end
+  end
 end

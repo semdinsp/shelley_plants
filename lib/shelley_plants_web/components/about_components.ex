@@ -198,8 +198,7 @@ defmodule ShelleyPlantsWeb.AboutComponents do
           loading="lazy"
           referrerpolicy="no-referrer-when-downgrade"
           src="https://maps.google.com/maps?q=1107+Althorpe+Road,+Westport,+ON,+K0G+1X0&output=embed"
-        >
-        </iframe>
+        ></iframe>
       </div>
     </div>
     """
