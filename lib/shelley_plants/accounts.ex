@@ -6,7 +6,7 @@ defmodule ShelleyPlants.Accounts do
   import Ecto.Query, warn: false
   alias ShelleyPlants.Repo
 
-  alias ShelleyPlants.Accounts.{User, UserToken, UserNotifier}
+  alias ShelleyPlants.Accounts.{User, UserToken, UserNotifier, McpToken}
 
   ## Database getters
 
@@ -335,5 +335,50 @@ defmodule ShelleyPlants.Accounts do
         {:ok, {user, tokens_to_expire}}
       end
     end)
+  end
+
+  ## MCP tokens
+
+  @doc """
+  Returns the user's MCP tokens, most recently created first.
+
+  Revoked tokens are included (with `revoked_at` set) so the settings page
+  can still show their history; callers that need only active tokens should
+  filter on `revoked_at`.
+  """
+  def list_mcp_tokens(%User{} = user) do
+    Repo.all(
+      from t in McpToken,
+        where: t.user_id == ^user.id,
+        order_by: [desc: t.inserted_at]
+    )
+  end
+
+  @doc """
+  Creates a new MCP token for `user`.
+
+  Returns `{:ok, raw_token, %McpToken{}}` on success. `raw_token` is shown to
+  the user once; it cannot be recovered afterwards since only its hash is
+  stored.
+  """
+  def create_mcp_token(%User{} = user, %{"name" => name} = attrs) do
+    {raw_token, mcp_token} = McpToken.build(user, name)
+
+    case mcp_token |> McpToken.changeset(attrs) |> Repo.insert() do
+      {:ok, mcp_token} -> {:ok, raw_token, mcp_token}
+      {:error, changeset} -> {:error, changeset}
+    end
+  end
+
+  @doc """
+  Revokes an MCP token belonging to `user`.
+
+  Scoped to the given user so one user can never revoke another's token.
+  """
+  def revoke_mcp_token(%User{} = user, %McpToken{} = mcp_token)
+      when mcp_token.user_id == user.id do
+    mcp_token
+    |> Ecto.Changeset.change(revoked_at: DateTime.utc_now() |> DateTime.truncate(:second))
+    |> Repo.update()
   end
 end
