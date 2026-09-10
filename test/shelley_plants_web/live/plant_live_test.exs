@@ -99,6 +99,31 @@ defmodule ShelleyPlantsWeb.PlantLiveTest do
       assert has_element?(lv, "#plants-#{plant.id} a", "Edit")
       assert has_element?(lv, "#plants-#{plant.id} a", "Delete")
     end
+
+    test "shows Sun and Moisture columns with human-readable values", %{conn: conn} do
+      plant_fixture(%{
+        common_name: "Sun Moisture Test",
+        latin_name: "Testus sunmoisturus",
+        sun_level: "part_shade",
+        moisture_level: "moist"
+      })
+
+      {:ok, _lv, html} = live(conn, ~p"/plants")
+
+      assert html =~ "Sun"
+      assert html =~ "Moisture"
+      assert html =~ "Part shade"
+      assert html =~ "Moist"
+    end
+
+    test "shows a dash for plants without sun or moisture level set", %{conn: conn, plant: plant} do
+      refute plant.sun_level
+      refute plant.moisture_level
+
+      {:ok, _lv, html} = live(conn, ~p"/plants")
+
+      assert html =~ "—"
+    end
   end
 
   describe "Index — admin CRUD" do

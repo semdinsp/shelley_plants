@@ -56,6 +56,8 @@ defmodule ShelleyPlantsWeb.PlantLive.Index do
         <:col :let={{_id, plant}} label="Bloom time">{plant.bloom_time}</:col>
         <:col :let={{_id, plant}} label="Height">{plant.height}</:col>
         <:col :let={{_id, plant}} label="Light">{plant.light_requirements}</:col>
+        <:col :let={{_id, plant}} label="Sun">{human_sun(plant.sun_level)}</:col>
+        <:col :let={{_id, plant}} label="Moisture">{human_moisture(plant.moisture_level)}</:col>
         <:col :let={{_id, plant}} label="Native (ON)">
           {cond do
             plant.locally_native -> "Yes (local)"
@@ -125,4 +127,15 @@ defmodule ShelleyPlantsWeb.PlantLive.Index do
        reset: true
      )}
   end
+
+  defp human_sun("full_sun"), do: "Full sun"
+  defp human_sun("part_shade"), do: "Part shade"
+  defp human_sun("full_shade"), do: "Full shade"
+  defp human_sun(_), do: "—"
+
+  defp human_moisture("dry"), do: "Dry"
+  defp human_moisture("average"), do: "Average"
+  defp human_moisture("moist"), do: "Moist"
+  defp human_moisture("wet"), do: "Wet"
+  defp human_moisture(_), do: "—"
 end
