@@ -3,15 +3,15 @@ defmodule ShelleyPlantsWeb.GardenLiveTest do
 
   import Phoenix.LiveViewTest
 
-  describe "Design Your Garden page" do
+  describe "Garden Planner page" do
     test "renders the page for guests", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/design-garden")
-      assert html =~ "Design Your Garden"
+      {:ok, _lv, html} = live(conn, ~p"/garden-planner")
+      assert html =~ "Garden Planner"
       assert html =~ "Tell us about your outdoor space"
     end
 
     test "shows created-by attribution with website and phone links", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/design-garden")
+      {:ok, _lv, html} = live(conn, ~p"/garden-planner")
       assert html =~ "Biosphere Native Plants"
       assert html =~ "https://biosphere-native-plants.ca/"
       assert html =~ "tel:+16136176524"
@@ -19,7 +19,7 @@ defmodule ShelleyPlantsWeb.GardenLiveTest do
     end
 
     test "shows all four form sections", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/design-garden")
+      {:ok, _lv, html} = live(conn, ~p"/garden-planner")
       assert html =~ "Garden size"
       assert html =~ "Maximum plant height"
       assert html =~ "Height structure"
@@ -27,7 +27,7 @@ defmodule ShelleyPlantsWeb.GardenLiveTest do
     end
 
     test "shows all four height structure options", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/design-garden")
+      {:ok, _lv, html} = live(conn, ~p"/garden-planner")
       assert html =~ "Low &amp; uniform"
       assert html =~ "Layered"
       assert html =~ "Mixed / naturalistic"
@@ -35,19 +35,19 @@ defmodule ShelleyPlantsWeb.GardenLiveTest do
     end
 
     test "shows all three sun exposure options", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/design-garden")
+      {:ok, _lv, html} = live(conn, ~p"/garden-planner")
       assert html =~ "Full sun"
       assert html =~ "Part shade"
       assert html =~ "Full shade"
     end
 
     test "shows the Generate My Garden Plan CTA button", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/design-garden")
+      {:ok, _lv, html} = live(conn, ~p"/garden-planner")
       assert html =~ "Generate My Garden Plan"
     end
 
     test "submitting the form shows results", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/design-garden")
+      {:ok, lv, _html} = live(conn, ~p"/garden-planner")
 
       html =
         lv
@@ -63,12 +63,12 @@ defmodule ShelleyPlantsWeb.GardenLiveTest do
       assert html =~ "Your garden plan is ready"
       assert html =~ "Plant List"
       assert html =~ "4m × 6m garden"
-      assert html =~ "/design-garden/export?"
+      assert html =~ "/garden-planner/export?"
       assert html =~ "Download CSV"
     end
 
     test "results show the Start over button", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/design-garden")
+      {:ok, lv, _html} = live(conn, ~p"/garden-planner")
 
       lv |> form("form", %{"width" => "3", "length" => "3"}) |> render_submit()
 
@@ -76,7 +76,7 @@ defmodule ShelleyPlantsWeb.GardenLiveTest do
     end
 
     test "clicking Start over returns to the form", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/design-garden")
+      {:ok, lv, _html} = live(conn, ~p"/garden-planner")
 
       lv |> form("form", %{"width" => "3", "length" => "3"}) |> render_submit()
 
@@ -87,9 +87,16 @@ defmodule ShelleyPlantsWeb.GardenLiveTest do
       refute html =~ "Your garden plan is ready"
     end
 
-    test "nav contains Design Your Garden link", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/design-garden")
-      assert html =~ "Design Your Garden"
+    test "nav contains Garden Planner link", %{conn: conn} do
+      {:ok, _lv, html} = live(conn, ~p"/garden-planner")
+      assert html =~ "Garden Planner"
+    end
+  end
+
+  describe "old /design-garden URL" do
+    test "redirects to /garden-planner", %{conn: conn} do
+      conn = get(conn, ~p"/design-garden")
+      assert redirected_to(conn) == ~p"/garden-planner"
     end
   end
 end
