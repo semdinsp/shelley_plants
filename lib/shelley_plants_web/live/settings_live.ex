@@ -49,7 +49,7 @@ defmodule ShelleyPlantsWeb.SettingsLive do
         </div>
       </section>
 
-      <section class="mt-12" id="mcp-tokens" phx-hook=".CopyMcpToken">
+      <section :if={@current_scope.admin?} class="mt-12" id="mcp-tokens" phx-hook=".CopyMcpToken">
         <h2 class="text-lg font-semibold mb-4">MCP tokens</h2>
         <p class="text-sm text-zinc-600 mb-4">
           Create a token to let an MCP client (e.g. Claude) act as you. Each token

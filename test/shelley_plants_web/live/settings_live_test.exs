@@ -4,6 +4,12 @@ defmodule ShelleyPlantsWeb.SettingsLiveTest do
   import Phoenix.LiveViewTest
   import ShelleyPlants.AccountsFixtures
 
+  defp register_and_log_in_admin(%{conn: conn}) do
+    user = user_fixture()
+    {:ok, admin_user} = ShelleyPlants.Accounts.set_user_admin(user, true)
+    %{conn: log_in_user(conn, admin_user), user: admin_user}
+  end
+
   describe "Settings page — access" do
     test "guest is redirected to login", %{conn: conn} do
       assert {:error, {:redirect, %{to: "/users/log-in"}}} = live(conn, ~p"/settings")
@@ -64,8 +70,25 @@ defmodule ShelleyPlantsWeb.SettingsLiveTest do
     end
   end
 
+  describe "MCP tokens visibility" do
+    test "non-admin does not see MCP tokens section", %{conn: conn} do
+      user = user_fixture()
+      conn = log_in_user(conn, user)
+      {:ok, _lv, html} = live(conn, ~p"/settings")
+      refute html =~ "MCP tokens"
+    end
+
+    test "admin sees MCP tokens section", %{conn: conn} do
+      user = user_fixture()
+      {:ok, admin_user} = ShelleyPlants.Accounts.set_user_admin(user, true)
+      conn = log_in_user(conn, admin_user)
+      {:ok, _lv, html} = live(conn, ~p"/settings")
+      assert html =~ "MCP tokens"
+    end
+  end
+
   describe "MCP tokens" do
-    setup :register_and_log_in_user
+    setup :register_and_log_in_admin
 
     test "shows empty state with no tokens", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/settings")
