@@ -76,8 +76,8 @@
               </.link>
             <% else %>
               <div class="w-px h-4 bg-base-300 mx-1"></div>
-              <.link href={~p"/users/log-in"} class="btn btn-primary">
-                <.icon name="hero-arrow-right-on-rectangle" class="size-5" /> Log in
+              <.link href={~p"/users/log-in"} class="btn btn-ghost btn-square" aria-label="Log in">
+                <.icon name="hero-arrow-left-on-rectangle" class="size-5" />
               </.link>
             <% end %>
             <div class="ml-2">
@@ -133,7 +133,7 @@
               <% else %>
                 <li>
                   <.link href={~p"/users/log-in"}>
-                    <.icon name="hero-arrow-right-on-rectangle" class="size-5" /> Log in
+                    <.icon name="hero-arrow-left-on-rectangle" class="size-5" /> Log in
                   </.link>
                 </li>
               <% end %>
