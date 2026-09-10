@@ -390,62 +390,69 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
 
             <div class="border border-base-200 rounded-2xl overflow-hidden bg-base-100">
               <%!-- Main plant row --%>
-              <div class="flex items-center gap-3 p-4">
-                <%!-- Colour dot --%>
-                <span class="size-3 rounded-full shrink-0" style={"background-color: #{plant.color}"}></span>
+              <div class="flex flex-col sm:flex-row sm:items-center gap-3 p-4">
+                <div class="flex items-center gap-3 min-w-0">
+                  <%!-- Colour dot --%>
+                  <span
+                    class="size-3 rounded-full shrink-0 hidden sm:block"
+                    style={"background-color: #{plant.color}"}
+                  ></span>
 
-                <%!-- Photo thumbnail --%>
-                <div class="size-14 rounded-xl overflow-hidden bg-base-200 shrink-0">
-                  <%= if plant.picture do %>
-                    <img
-                      src={plant.picture}
-                      alt={plant.common_name}
-                      class="w-full h-full object-cover"
-                    />
-                  <% else %>
-                    <div class="w-full h-full flex items-center justify-center text-base-content/20">
-                      <.icon name="hero-photo" class="size-6" />
-                    </div>
-                  <% end %>
-                </div>
-
-                <%!-- Plant info --%>
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-start justify-between gap-2">
-                    <div class="min-w-0">
-                      <p class="font-semibold text-sm text-base-content leading-tight truncate">
-                        {plant.common_name}
-                      </p>
-                      <p class="text-xs italic text-base-content/50 truncate">{plant.latin_name}</p>
-                    </div>
-                    <div class="text-right shrink-0">
-                      <p class="text-lg font-bold text-primary leading-none">×{plant.quantity}</p>
-                      <p class="text-xs text-base-content/40 mt-0.5">plants</p>
-                    </div>
+                  <%!-- Photo thumbnail --%>
+                  <div class="size-14 rounded-xl overflow-hidden bg-base-200 shrink-0">
+                    <%= if plant.picture do %>
+                      <img
+                        src={plant.picture}
+                        alt={plant.common_name}
+                        class="w-full h-full object-cover"
+                      />
+                    <% else %>
+                      <div class="w-full h-full flex items-center justify-center text-base-content/20">
+                        <.icon name="hero-photo" class="size-6" />
+                      </div>
+                    <% end %>
                   </div>
-                  <div class="flex flex-wrap gap-1.5 mt-2">
-                    <%= if plant.height_min_cm && plant.height_max_cm do %>
-                      <span class="badge badge-ghost badge-xs gap-1">
-                        <.icon name="hero-arrows-up-down" class="size-2.5" />
-                        {plant.height_min_cm}–{plant.height_max_cm} cm
-                      </span>
-                    <% end %>
-                    <%= if plant.category do %>
-                      <span class="badge badge-ghost badge-xs">{plant.category}</span>
-                    <% end %>
-                    <%= if plant.sun_level do %>
-                      <span class="badge badge-ghost badge-xs">{human_sun(plant.sun_level)}</span>
-                    <% end %>
-                    <%= if plant.moisture_level do %>
-                      <span class="badge badge-ghost badge-xs">
-                        {human_moisture(plant.moisture_level)}
-                      </span>
-                    <% end %>
+
+                  <%!-- Plant info --%>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-start justify-between gap-2">
+                      <div class="min-w-0">
+                        <p class="font-semibold text-sm text-base-content leading-tight">
+                          {plant.common_name}
+                        </p>
+                        <p class="text-xs italic text-base-content/50 truncate">
+                          {plant.latin_name}
+                        </p>
+                      </div>
+                      <div class="text-right shrink-0">
+                        <p class="text-lg font-bold text-primary leading-none">×{plant.quantity}</p>
+                        <p class="text-xs text-base-content/40 mt-0.5">plants</p>
+                      </div>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5 mt-2">
+                      <%= if plant.height_min_cm && plant.height_max_cm do %>
+                        <span class="badge badge-ghost badge-xs gap-1">
+                          <.icon name="hero-arrows-up-down" class="size-2.5" />
+                          {plant.height_min_cm}–{plant.height_max_cm} cm
+                        </span>
+                      <% end %>
+                      <%= if plant.category do %>
+                        <span class="badge badge-ghost badge-xs">{plant.category}</span>
+                      <% end %>
+                      <%= if plant.sun_level do %>
+                        <span class="badge badge-ghost badge-xs">{human_sun(plant.sun_level)}</span>
+                      <% end %>
+                      <%= if plant.moisture_level do %>
+                        <span class="badge badge-ghost badge-xs">
+                          {human_moisture(plant.moisture_level)}
+                        </span>
+                      <% end %>
+                    </div>
                   </div>
                 </div>
 
                 <%!-- View + Alternates toggle --%>
-                <div class="flex flex-col items-end gap-2 shrink-0">
+                <div class="flex items-center justify-end gap-2 shrink-0 sm:flex-col sm:items-end">
                   <.link navigate={~p"/plants/#{plant}"} class="btn btn-ghost btn-xs gap-1">
                     <.icon name="hero-eye" class="size-3" /> View
                   </.link>
