@@ -27,7 +27,11 @@ import topbar from "../vendor/topbar"
 
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
-  longPollFallbackMs: 2500,
+  // Default (2500ms) was too aggressive on Fly.io: the WebSocket upgrade
+  // was consistently taking longer than that even to an already-warm
+  // machine, so every connection silently fell back to long-polling.
+  // Give the handshake more room before giving up.
+  longPollFallbackMs: 8000,
   params: {_csrf_token: csrfToken},
   hooks: {...colocatedHooks},
 })
