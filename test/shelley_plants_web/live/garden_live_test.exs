@@ -69,6 +69,20 @@ defmodule ShelleyPlantsWeb.GardenLiveTest do
       assert html =~ "Download CSV"
     end
 
+    test "results show the fit legend", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/garden-planner")
+
+      html =
+        lv
+        |> form("form", %{"width" => "4", "length" => "6", "sun" => "full_sun"})
+        |> render_submit()
+
+      assert html =~ "Sorted by best fit"
+      assert html =~ "Great fit"
+      assert html =~ "Good fit"
+      assert html =~ "Fallback match"
+    end
+
     test "submitting with advanced options set (height structure, max height) shows results", %{
       conn: conn
     } do

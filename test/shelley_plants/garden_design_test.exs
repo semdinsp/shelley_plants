@@ -92,4 +92,95 @@ defmodule ShelleyPlants.GardenDesignTest do
       assert match_index < other_index
     end
   end
+
+  describe "recommend/1 fit scoring and sort order" do
+    test "a plant matching both sun and moisture is a great fit, sorted first" do
+      plant_fixture(%{
+        common_name: "Great Fit Plant",
+        latin_name: "Greatus fitus",
+        sun_level: "full_sun",
+        moisture_level: "wet"
+      })
+
+      plant_fixture(%{
+        common_name: "Fallback Plant",
+        latin_name: "Fallbackus plantus",
+        sun_level: "part_shade",
+        moisture_level: "dry"
+      })
+
+      {plants, _alternates} =
+        GardenDesign.recommend(%{
+          "width" => "4",
+          "length" => "6",
+          "sun" => "full_sun",
+          "moisture" => "wet"
+        })
+
+      great = Enum.find(plants, &(&1.common_name == "Great Fit Plant"))
+      fallback = Enum.find(plants, &(&1.common_name == "Fallback Plant"))
+
+      assert great.fit == :great
+      assert fallback.fit == :fallback
+
+      great_index = Enum.find_index(plants, &(&1.common_name == "Great Fit Plant"))
+      fallback_index = Enum.find_index(plants, &(&1.common_name == "Fallback Plant"))
+      assert great_index < fallback_index
+    end
+
+    test "a plant matching only sun (not moisture) is a good fit" do
+      plant_fixture(%{
+        common_name: "Sun Only Match",
+        latin_name: "Sunonlyus matchus",
+        sun_level: "full_sun",
+        moisture_level: "dry"
+      })
+
+      {plants, _alternates} =
+        GardenDesign.recommend(%{
+          "width" => "4",
+          "length" => "6",
+          "sun" => "full_sun",
+          "moisture" => "wet"
+        })
+
+      plant = Enum.find(plants, &(&1.common_name == "Sun Only Match"))
+      assert plant.fit == :good
+    end
+
+    test "fit is great for sun match alone when no moisture was requested" do
+      plant_fixture(%{
+        common_name: "No Moisture Requested",
+        latin_name: "Nomoisturus requestus",
+        sun_level: "full_sun",
+        moisture_level: "dry"
+      })
+
+      {plants, _alternates} =
+        GardenDesign.recommend(%{"width" => "4", "length" => "6", "sun" => "full_sun"})
+
+      plant = Enum.find(plants, &(&1.common_name == "No Moisture Requested"))
+      assert plant.fit == :great
+    end
+
+    test "each plant's :color matches its :fit level", %{} do
+      plant_fixture(%{
+        common_name: "Colour Check Plant",
+        latin_name: "Colourus checkus",
+        sun_level: "full_sun",
+        moisture_level: "wet"
+      })
+
+      {plants, _alternates} =
+        GardenDesign.recommend(%{
+          "width" => "4",
+          "length" => "6",
+          "sun" => "full_sun",
+          "moisture" => "wet"
+        })
+
+      plant = Enum.find(plants, &(&1.common_name == "Colour Check Plant"))
+      assert plant.color == Map.fetch!(GardenDesign.fit_colors(), plant.fit)
+    end
+  end
 end

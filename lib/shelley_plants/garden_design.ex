@@ -7,31 +7,6 @@ defmodule ShelleyPlants.GardenDesign do
   alias ShelleyPlants.Repo
   alias ShelleyPlants.Catalog.Plant
 
-  # Category colours used in the legend (when category is populated)
-  @category_colors %{
-    "Wildflower" => "#f43f5e",
-    "Grass" => "#f59e0b",
-    "Shrub" => "#8b5cf6",
-    "Tree" => "#06b6d4",
-    nil => "#94a3b8"
-  }
-
-  # Vibrant per-plant palette — cycles through when category is nil or repeated
-  @plant_palette [
-    "#f43f5e",
-    "#f97316",
-    "#f59e0b",
-    "#84cc16",
-    "#10b981",
-    "#06b6d4",
-    "#3b82f6",
-    "#8b5cf6",
-    "#ec4899",
-    "#14b8a6",
-    "#eab308",
-    "#ef4444"
-  ]
-
   # Sun levels that are compatible with a given garden sun input
   @sun_compat %{
     "full_sun" => ["full_sun", "part_shade"],
@@ -41,17 +16,35 @@ defmodule ShelleyPlants.GardenDesign do
 
   # ── Public API ────────────────────────────────────────────────────────────────
 
+  # Fit levels, best to worst — drives both the sort order and the colour
+  # dot/legend shown next to each recommended plant.
+  @fit_colors %{great: "#16a34a", good: "#f59e0b", fallback: "#dc2626"}
+  @fit_rank %{great: 0, good: 1, fallback: 2}
+
   @doc """
   Returns a list of recommended %Plant{} structs based on garden inputs,
-  sorted and filtered by sun, moisture, max height, and height structure
-  preference. Each plant is decorated with a :quantity and :color key for
-  display. Also returns a parallel list of :alternates (2-3 plants per
-  primary).
+  sorted by best fit first, then filtered by sun, moisture, max height, and
+  height structure preference. Each plant is decorated with a :quantity,
+  :color, and :fit key (:great, :good, or :fallback) for display. Also
+  returns a parallel list of :alternates (2-3 plants per primary).
 
   Moisture affects selection two ways: plants that explicitly can't
   tolerate the garden's moisture (`moisture_unacceptable`) are excluded
   entirely, and among the rest, plants whose `moisture_level` matches are
   preferred.
+
+  Fit is a combination of sun and moisture match:
+
+    * `:great` — sun is an exact match for what was requested, and moisture
+      either wasn't requested or matches exactly
+    * `:good` — matches on exactly one of sun or moisture (the other is
+      only tolerated, not an exact match)
+    * `:fallback` — sun is only tolerated (not exact) and moisture doesn't
+      match either — the plant is included to fill out the list, not
+      because it's a confirmed fit
+
+  Height and structure aren't factored into fit, since candidates outside
+  those constraints are already excluded before fit is scored.
   """
   def recommend(inputs) do
     area = garden_area(inputs)
@@ -89,12 +82,17 @@ defmodule ShelleyPlants.GardenDesign do
         candidates
       end
 
-    # Prefer plants whose moisture_level matches the garden's moisture,
-    # without excluding the rest
-    candidates = prefer_moisture_match(candidates, moisture)
+    # Prefer plants whose moisture_level matches the garden's moisture when
+    # narrowing the candidate pool down to species_limit, without excluding
+    # the rest
+    ranked_candidates = prefer_moisture_match(candidates, sun, moisture)
 
-    # Sort and select by height structure
-    selected = select_by_structure(candidates, structure, species_limit)
+    # Select by height structure, then sort the final list by fit (best
+    # first) so the displayed order always reflects match quality
+    selected =
+      ranked_candidates
+      |> select_by_structure(structure, species_limit)
+      |> Enum.sort_by(&Map.fetch!(@fit_rank, fit_level(&1, sun, moisture)))
 
     # Build alternates map: for each selected plant, find similar plants not in selection
     selected_ids = MapSet.new(selected, & &1.id)
@@ -110,35 +108,22 @@ defmodule ShelleyPlants.GardenDesign do
         {plant.id, alts}
       end)
 
-    # Decorate each plant with quantity and colour
-    palette_size = length(@plant_palette)
-
+    # Decorate each plant with quantity, fit, and the fit colour
     decorated =
-      Enum.with_index(selected)
-      |> Enum.map(fn {plant, idx} ->
+      Enum.map(selected, fn plant ->
         qty = suggested_quantity(plant, area, length(selected))
+        fit = fit_level(plant, sun, moisture)
 
-        color =
-          if plant.category && plant.category != "" do
-            Map.get(
-              @category_colors,
-              plant.category,
-              Enum.at(@plant_palette, rem(idx, palette_size))
-            )
-          else
-            Enum.at(@plant_palette, rem(idx, palette_size))
-          end
-
-        Map.merge(plant, %{quantity: qty, color: color})
+        Map.merge(plant, %{quantity: qty, fit: fit, color: Map.fetch!(@fit_colors, fit)})
       end)
 
     {decorated, alternates}
   end
 
   @doc """
-  Returns the category colour map for use in the diagram legend.
+  Returns the fit colour map for use in the results legend.
   """
-  def category_colors, do: @category_colors
+  def fit_colors, do: @fit_colors
 
   # ── Selection logic ───────────────────────────────────────────────────────────
 
@@ -203,13 +188,24 @@ defmodule ShelleyPlants.GardenDesign do
   defp fallback_if_empty([], candidates, limit), do: diverse_sample(candidates, limit)
   defp fallback_if_empty(list, _candidates, _limit), do: list
 
-  # Stable-sorts candidates so plants whose moisture_level matches the
-  # garden's moisture come first, without dropping non-matching plants.
-  defp prefer_moisture_match(candidates, nil), do: candidates
-  defp prefer_moisture_match(candidates, ""), do: candidates
+  # Stable-sorts candidates so the best-fitting plants (see fit_level/3) come
+  # first, without dropping worse-fitting ones — used to bias which plants
+  # get selected when the candidate pool is larger than species_limit.
+  defp prefer_moisture_match(candidates, sun, moisture) do
+    Enum.sort_by(candidates, &Map.fetch!(@fit_rank, fit_level(&1, sun, moisture)))
+  end
 
-  defp prefer_moisture_match(candidates, moisture) do
-    Enum.sort_by(candidates, fn p -> if p.moisture_level == moisture, do: 0, else: 1 end)
+  # Combined sun + moisture fit for a single plant against the requested
+  # garden conditions. See the `fit` field doc on recommend/1 for the rules.
+  defp fit_level(plant, sun, moisture) do
+    sun_exact? = sun in [nil, ""] or plant.sun_level == sun
+    moisture_exact? = moisture in [nil, ""] or plant.moisture_level == moisture
+
+    cond do
+      sun_exact? and moisture_exact? -> :great
+      sun_exact? or moisture_exact? -> :good
+      true -> :fallback
+    end
   end
 
   # ── Quantity calculation ──────────────────────────────────────────────────────
