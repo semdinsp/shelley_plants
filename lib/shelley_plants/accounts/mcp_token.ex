@@ -14,12 +14,14 @@ defmodule ShelleyPlants.Accounts.McpToken do
 
   @hash_algorithm :sha256
   @rand_size 32
+  @scopes ~w(read write)
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "mcp_tokens" do
     field :name, :string
     field :token_hash, :binary
+    field :scopes, {:array, :string}, default: ["read"]
     field :revoked_at, :utc_datetime
     belongs_to :user, User
 
@@ -27,10 +29,22 @@ defmodule ShelleyPlants.Accounts.McpToken do
   end
 
   @doc """
+  The set of valid scope values a token can be granted.
+  """
+  def scopes, do: @scopes
+
+  @doc """
   Builds a new token for `user`.
 
   Returns `{raw_token, %McpToken{}}`. `raw_token` is the value to show the
   user (once); the struct carries only the hash and is ready to insert.
+
+  `scopes` is intentionally left for `changeset/2` to cast rather than set
+  here: Ecto's `cast` only registers a field as "changed" when it differs
+  from the struct's current value, and `validate_length`/`validate_subset`
+  only run against changed fields — pre-setting `scopes` on the struct would
+  let a value equal to the default (e.g. an empty list) silently skip
+  validation.
   """
   def build(user, name) do
     raw_token = :crypto.strong_rand_bytes(@rand_size) |> Base.url_encode64(padding: false)
@@ -45,9 +59,11 @@ defmodule ShelleyPlants.Accounts.McpToken do
 
   def changeset(mcp_token, attrs) do
     mcp_token
-    |> cast(attrs, [:name])
-    |> validate_required([:name])
+    |> cast(attrs, [:name, :scopes])
+    |> validate_required([:name, :scopes])
     |> validate_length(:name, min: 1, max: 100)
+    |> validate_subset(:scopes, @scopes)
+    |> validate_length(:scopes, min: 1, message: "select at least one scope")
   end
 
   @doc """
@@ -57,6 +73,11 @@ defmodule ShelleyPlants.Accounts.McpToken do
     from t in __MODULE__,
       where: t.token_hash == ^hash_token(raw_token) and is_nil(t.revoked_at)
   end
+
+  @doc """
+  Whether `mcp_token` was granted the given `scope` ("read" or "write").
+  """
+  def has_scope?(%__MODULE__{scopes: scopes}, scope), do: scope in scopes
 
   defp hash_token(raw_token) do
     case Base.url_decode64(raw_token, padding: false) do

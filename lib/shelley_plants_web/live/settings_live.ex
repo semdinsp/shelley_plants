@@ -60,6 +60,7 @@ defmodule ShelleyPlantsWeb.SettingsLive do
           <thead>
             <tr class="text-left border-b border-zinc-200">
               <th class="py-2">Name</th>
+              <th class="py-2">Scopes</th>
               <th class="py-2">Created</th>
               <th class="py-2">Status</th>
               <th class="py-2"></th>
@@ -68,6 +69,7 @@ defmodule ShelleyPlantsWeb.SettingsLive do
           <tbody>
             <tr :for={token <- @mcp_tokens} class="border-b border-zinc-100">
               <td class="py-2">{token.name}</td>
+              <td class="py-2">{Enum.join(token.scopes, ", ")}</td>
               <td class="py-2">{Calendar.strftime(token.inserted_at, "%Y-%m-%d %H:%M UTC")}</td>
               <td class="py-2">
                 <span :if={token.revoked_at} class="text-zinc-400">Revoked</span>
@@ -91,14 +93,18 @@ defmodule ShelleyPlantsWeb.SettingsLive do
         </p>
 
         <.form for={@mcp_token_form} id="create-mcp-token-form" phx-submit="create_mcp_token">
-          <div class="flex items-end gap-4">
-            <div class="flex-1">
+          <div class="flex items-end gap-4 flex-wrap">
+            <div class="flex-1 min-w-48">
               <.input
                 field={@mcp_token_form[:name]}
                 type="text"
                 label="Token name"
                 placeholder="claude-desktop"
               />
+            </div>
+            <div class="flex gap-4">
+              <.input field={@mcp_token_form[:read]} type="checkbox" label="Read" />
+              <.input field={@mcp_token_form[:write]} type="checkbox" label="Write" />
             </div>
             <.button variant="primary" phx-disable-with="Creating...">
               <.icon name="hero-key" /> Create token
@@ -129,8 +135,10 @@ defmodule ShelleyPlantsWeb.SettingsLive do
      |> assign(:page_title, "Settings")
      |> assign(:language_form, to_form(Accounts.change_user_preferences(user)))
      |> assign(:mcp_tokens, Accounts.list_mcp_tokens(user))
-     |> assign(:mcp_token_form, to_form(%{"name" => ""}, as: "mcp_token"))}
+     |> assign(:mcp_token_form, to_form(mcp_token_form_params(), as: "mcp_token"))}
   end
+
+  defp mcp_token_form_params, do: %{"name" => "", "read" => "true", "write" => "false"}
 
   @impl true
   def handle_event("validate_language", %{"user" => params}, socket) do
@@ -153,13 +161,14 @@ defmodule ShelleyPlantsWeb.SettingsLive do
 
   def handle_event("create_mcp_token", %{"mcp_token" => params}, socket) do
     user = socket.assigns.current_scope.user
+    attrs = Map.put(params, "scopes", scopes_from_params(params))
 
-    case Accounts.create_mcp_token(user, params) do
+    case Accounts.create_mcp_token(user, attrs) do
       {:ok, raw_token, _mcp_token} ->
         {:noreply,
          socket
          |> assign(:mcp_tokens, Accounts.list_mcp_tokens(user))
-         |> assign(:mcp_token_form, to_form(%{"name" => ""}, as: "mcp_token"))
+         |> assign(:mcp_token_form, to_form(mcp_token_form_params(), as: "mcp_token"))
          |> push_event("copy-mcp-token", %{token: raw_token})
          |> put_flash(
            :info,
@@ -167,7 +176,10 @@ defmodule ShelleyPlantsWeb.SettingsLive do
          )}
 
       {:error, changeset} ->
-        {:noreply, assign(socket, :mcp_token_form, to_form(changeset, as: "mcp_token"))}
+        {:noreply,
+         socket
+         |> assign(:mcp_token_form, to_form(changeset, as: "mcp_token"))
+         |> put_flash(:error, mcp_token_error_message(changeset))}
     end
   end
 
@@ -185,5 +197,23 @@ defmodule ShelleyPlantsWeb.SettingsLive do
       _ ->
         {:noreply, put_flash(socket, :error, "Token not found.")}
     end
+  end
+
+  defp mcp_token_error_message(changeset) do
+    changeset
+    |> Ecto.Changeset.traverse_errors(fn {msg, opts} ->
+      Regex.replace(~r"%{(\w+)}", msg, fn _, key ->
+        opts |> Keyword.get(String.to_existing_atom(key), key) |> to_string()
+      end)
+    end)
+    |> Map.values()
+    |> List.flatten()
+    |> Enum.join(" ")
+  end
+
+  defp scopes_from_params(params) do
+    [{"read", "read"}, {"write", "write"}]
+    |> Enum.filter(fn {key, _scope} -> Map.get(params, key) == "true" end)
+    |> Enum.map(fn {_key, scope} -> scope end)
   end
 end
