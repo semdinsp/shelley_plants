@@ -23,6 +23,20 @@ end
 config :shelley_plants, ShelleyPlantsWeb.Endpoint,
   http: [port: String.to_integer(System.get_env("PORT", "4000"))]
 
+# In dev, send real email through Amazon SES (instead of the local
+# /dev/mailbox preview) whenever AWS credentials are in the environment:
+#
+#     source .env && iex -S mix phx.server
+if config_env() == :dev and System.get_env("AWS_ACCESS_KEY_ID") do
+  config :shelley_plants, ShelleyPlants.Mailer,
+    adapter: Swoosh.Adapters.AmazonSES,
+    access_key: System.get_env("AWS_ACCESS_KEY_ID"),
+    secret: System.get_env("AWS_SECRET_ACCESS_KEY"),
+    region: System.get_env("AWS_REGION", "us-east-1")
+
+  config :swoosh, api_client: Swoosh.ApiClient.Req
+end
+
 if config_env() == :prod do
   database_url =
     System.get_env("DATABASE_URL") ||
@@ -61,7 +75,7 @@ if config_env() == :prod do
     adapter: Swoosh.Adapters.AmazonSES,
     access_key: System.get_env("AWS_ACCESS_KEY_ID"),
     secret: System.get_env("AWS_SECRET_ACCESS_KEY"),
-    region: "us-east-1"
+    region: System.get_env("AWS_REGION", "us-east-1")
 
   # Accept LiveView socket connections from both the custom domain and the
   # underlying Fly.io app URL, since both are used to reach the app.
