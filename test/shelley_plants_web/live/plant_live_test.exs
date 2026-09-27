@@ -268,6 +268,26 @@ defmodule ShelleyPlantsWeb.PlantLiveTest do
     end
   end
 
+  describe "Gallery — categories" do
+    setup do
+      %{plant: plant_fixture(%{category: "Wildflower"})}
+    end
+
+    test "shows a coming soon panel for a category with no plants", %{conn: conn} do
+      {:ok, view, html} = live(conn, ~p"/plants/gallery?category=Shrub")
+
+      assert has_element?(view, "#coming-soon")
+      assert html =~ "Native shrubs — coming soon"
+    end
+
+    test "shows plants for a category that has them", %{conn: conn, plant: plant} do
+      {:ok, view, html} = live(conn, ~p"/plants/gallery?category=Wildflower")
+
+      refute has_element?(view, "#coming-soon")
+      assert html =~ plant.common_name
+    end
+  end
+
   describe "Form — photo upload UI" do
     setup :register_and_log_in_admin
 

@@ -34,9 +34,13 @@ defmodule ShelleyPlantsWeb.PlantLive.Gallery do
           </.link>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <.plant_card :for={plant <- @plants} plant={plant} />
-        </div>
+        <%= if @plants == [] and @category do %>
+          <.coming_soon category={@category} />
+        <% else %>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <.plant_card :for={plant <- @plants} plant={plant} />
+          </div>
+        <% end %>
       </div>
     </Layouts.app>
     """
@@ -61,6 +65,37 @@ defmodule ShelleyPlantsWeb.PlantLive.Gallery do
      socket
      |> assign(:category, category)
      |> assign(:plants, Catalog.list_plants_by_category(category))}
+  end
+
+  # ── Coming soon (category with no plants yet) ─────────────────────────────────
+
+  attr :category, :string, required: true
+
+  defp coming_soon(assigns) do
+    assigns = assign(assigns, :label, String.downcase(assigns.category) <> "s")
+
+    ~H"""
+    <div
+      id="coming-soon"
+      class="rounded-box border border-dashed border-base-300 bg-base-200/50 px-6 py-16 text-center"
+    >
+      <.icon name="hero-sparkles" class="size-12 text-success" />
+      <h2 class="mt-4 text-2xl font-serif font-semibold text-base-content">
+        Native {@label} — coming soon
+      </h2>
+      <p class="mt-3 max-w-xl mx-auto text-base-content/70">
+        We currently grow Ontario native wildflowers and grasses. Native {@label} are on the way — check back soon.
+      </p>
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <.link patch={~p"/plants/gallery?category=Wildflower"} class="btn btn-primary btn-sm">
+          Browse wildflowers
+        </.link>
+        <.link patch={~p"/plants/gallery?category=Grass"} class="btn btn-outline btn-sm">
+          Browse grasses
+        </.link>
+      </div>
+    </div>
+    """
   end
 
   # ── Card component ────────────────────────────────────────────────────────────
