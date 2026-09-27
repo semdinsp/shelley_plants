@@ -8,10 +8,13 @@ defmodule ShelleyPlants.Accounts.UserNotifier do
 
   # Delivers the email using the application mailer.
   defp deliver(recipient, subject, body) do
+    sender = Application.fetch_env!(:shelley_plants, :mail_sender)
+
     email =
       new()
       |> to(recipient)
-      |> from({"ShelleyPlants", "scott.sproule@gmail.com"})
+      |> from({sender[:name], sender[:address]})
+      |> reply_to(sender[:reply_to])
       |> subject(subject)
       |> text_body(body)
 

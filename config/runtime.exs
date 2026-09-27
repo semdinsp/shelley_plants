@@ -23,6 +23,14 @@ end
 config :shelley_plants, ShelleyPlantsWeb.Endpoint,
   http: [port: String.to_integer(System.get_env("PORT", "4000"))]
 
+# Sender for outgoing email. MAIL_FROM must be an identity verified in SES
+# (e.g. noreply@biosphere-native-plants.ca once the domain is verified).
+# Replies go to reply_to, since the domain itself has no mailbox.
+config :shelley_plants, :mail_sender,
+  name: "Biosphere Native Plants",
+  address: System.get_env("MAIL_FROM", "scott.sproule@gmail.com"),
+  reply_to: "scott.sproule@gmail.com"
+
 # In dev, send real email through Amazon SES (instead of the local
 # /dev/mailbox preview) whenever AWS credentials are in the environment:
 #
