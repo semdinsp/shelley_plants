@@ -105,27 +105,30 @@ defmodule ShelleyPlantsWeb.PlantLive.Gallery do
   defp plant_card(assigns) do
     ~H"""
     <article class="card bg-base-100 shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden group">
-      <%!-- Photo --%>
-      <figure class="relative h-56 overflow-hidden bg-base-200">
-        <%= if @plant.picture do %>
-          <img
-            src={@plant.picture}
-            alt={@plant.common_name}
-            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-        <% else %>
-          <div class="w-full h-full flex flex-col items-center justify-center text-base-content/30">
-            <.icon name="hero-photo" class="size-16" />
-            <span class="mt-2 text-sm">No photo yet</span>
-          </div>
-        <% end %>
-        <%!-- Native badge --%>
-        <%= if @plant.native_ontario do %>
-          <span class="absolute top-3 right-3 badge badge-success badge-sm gap-1 shadow">
-            <.icon name="hero-map-pin" class="size-3" /> Ontario Native
-          </span>
-        <% end %>
-      </figure>
+      <%!-- Photo (links to the plant page, like "Learn more"; kept out of the
+           tab order so keyboard users don't hit the same link twice) --%>
+      <.link navigate={~p"/plants/#{@plant}"} tabindex="-1" class="block">
+        <figure class="relative h-56 overflow-hidden bg-base-200">
+          <%= if @plant.picture do %>
+            <img
+              src={@plant.picture}
+              alt={@plant.common_name}
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+          <% else %>
+            <div class="w-full h-full flex flex-col items-center justify-center text-base-content/30">
+              <.icon name="hero-photo" class="size-16" />
+              <span class="mt-2 text-sm">No photo yet</span>
+            </div>
+          <% end %>
+          <%!-- Native badge --%>
+          <%= if @plant.native_ontario do %>
+            <span class="absolute top-3 right-3 badge badge-success badge-sm gap-1 shadow">
+              <.icon name="hero-map-pin" class="size-3" /> Ontario Native
+            </span>
+          <% end %>
+        </figure>
+      </.link>
 
       <div class="card-body p-4 gap-3">
         <%!-- Names --%>
