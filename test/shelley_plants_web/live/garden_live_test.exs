@@ -4,10 +4,10 @@ defmodule ShelleyPlantsWeb.GardenLiveTest do
   import Phoenix.LiveViewTest
   import ShelleyPlants.CatalogFixtures
 
-  describe "Garden Planner page" do
+  describe "Plan Your Garden page" do
     test "renders the page for guests", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/garden-planner")
-      assert html =~ "Garden Planner"
+      assert html =~ "Plan Your Garden"
       assert html =~ "Tell us about your outdoor space"
     end
 
@@ -211,9 +211,9 @@ defmodule ShelleyPlantsWeb.GardenLiveTest do
       refute html =~ "Your garden plan is ready"
     end
 
-    test "nav contains Garden Planner link", %{conn: conn} do
+    test "nav contains Plan Your Garden link", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/garden-planner")
-      assert html =~ "Garden Planner"
+      assert html =~ "Plan Your Garden"
     end
   end
 

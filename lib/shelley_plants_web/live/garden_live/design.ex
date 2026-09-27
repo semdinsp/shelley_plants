@@ -44,7 +44,7 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
   def mount(_params, _session, socket) do
     {:ok,
      socket
-     |> assign(:page_title, "Garden Planner")
+     |> assign(:page_title, "Plan Your Garden")
      |> assign(:height_structures, @height_structures)
      |> assign(:sun_options, @sun_options)
      |> assign(:moisture_options, @moisture_options)
@@ -74,7 +74,7 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
             Plan your space
           </p>
           <h1 class="text-4xl font-bold font-serif tracking-tight text-base-content mb-4">
-            Garden Planner
+            Plan Your Garden
           </h1>
           <p class="text-lg text-base-content/60 leading-relaxed max-w-xl">
             Tell us about your outdoor space and we'll suggest native Ontario plants
