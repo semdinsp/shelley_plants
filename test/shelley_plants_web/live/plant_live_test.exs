@@ -286,6 +286,15 @@ defmodule ShelleyPlantsWeb.PlantLiveTest do
       refute has_element?(view, "#coming-soon")
       assert html =~ plant.common_name
     end
+
+    test "plant photo links to the plant page", %{conn: conn, plant: plant} do
+      {:ok, view, _html} = live(conn, ~p"/plants/gallery")
+
+      assert {:error, {:live_redirect, %{to: to}}} =
+               view |> element(~s|a[tabindex="-1"][href="/plants/#{plant.id}"]|) |> render_click()
+
+      assert to == ~p"/plants/#{plant}"
+    end
   end
 
   describe "Form — photo upload UI" do
