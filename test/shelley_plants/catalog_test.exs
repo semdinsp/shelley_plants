@@ -168,7 +168,7 @@ defmodule ShelleyPlants.CatalogTest do
       plant = plant_fixture()
       changeset = Catalog.change_plant(plant, %{moisture_unacceptable: ["soggy"]})
 
-      assert %{moisture_unacceptable: ["must be dry, average, moist, or wet"]} =
+      assert %{moisture_unacceptable: ["must be wet, average, dry, or very_dry"]} =
                errors_on(changeset)
     end
   end

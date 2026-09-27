@@ -34,10 +34,10 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
   ]
 
   @moisture_options [
-    %{id: "dry", label: "Dry", desc: "Drains quickly, rarely stays wet"},
+    %{id: "wet", label: "Wet", desc: "Stays damp; poor drainage or low-lying"},
     %{id: "average", label: "Average", desc: "Typical garden soil moisture"},
-    %{id: "moist", label: "Moist", desc: "Stays consistently damp"},
-    %{id: "wet", label: "Wet", desc: "Poor drainage or low-lying"}
+    %{id: "dry", label: "Dry", desc: "Drains quickly, rarely stays wet"},
+    %{id: "very_dry", label: "Very dry", desc: "Sandy or gravelly; dries out fast"}
   ]
 
   @impl true
@@ -564,10 +564,10 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
   defp human_sun("full_shade"), do: "Full shade"
   defp human_sun(_), do: ""
 
-  defp human_moisture("dry"), do: "Dry"
-  defp human_moisture("average"), do: "Average"
-  defp human_moisture("moist"), do: "Moist"
   defp human_moisture("wet"), do: "Wet"
+  defp human_moisture("average"), do: "Average"
+  defp human_moisture("dry"), do: "Dry"
+  defp human_moisture("very_dry"), do: "Very dry"
   defp human_moisture(_), do: ""
 
   defp fit_color(level), do: Map.fetch!(GardenDesign.fit_colors(), level)

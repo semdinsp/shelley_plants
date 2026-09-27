@@ -43,10 +43,10 @@ defmodule ShelleyPlantsWeb.GardenLiveTest do
 
     test "shows all four moisture level options", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/garden-planner")
-      assert html =~ "Dry"
-      assert html =~ "Average"
-      assert html =~ "Moist"
       assert html =~ "Wet"
+      assert html =~ "Average"
+      assert html =~ "Dry"
+      assert html =~ "Very dry"
     end
 
     test "shows the Generate My Garden Plan CTA button", %{conn: conn} do
