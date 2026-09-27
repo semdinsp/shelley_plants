@@ -26,9 +26,9 @@ defmodule ShelleyPlants.MCP.Tools.CreatePlant do
     field :height_max_cm, :integer
     field :spread_cm, :integer
     field :sun_level, :enum, values: ["full_sun", "part_shade", "full_shade"]
-    field :moisture_level, :enum, values: ["dry", "average", "moist", "wet"]
+    field :moisture_level, :enum, values: ["wet", "average", "dry", "very_dry"]
 
-    field :moisture_unacceptable, {:list, {:enum, ["dry", "average", "moist", "wet"]}},
+    field :moisture_unacceptable, {:list, {:enum, ["wet", "average", "dry", "very_dry"]}},
       description: "Moisture levels this plant cannot tolerate"
   end
 

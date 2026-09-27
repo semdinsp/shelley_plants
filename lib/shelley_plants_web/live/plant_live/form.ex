@@ -67,7 +67,12 @@ defmodule ShelleyPlantsWeb.PlantLive.Form do
           field={@form[:moisture_level]}
           type="select"
           label="Moisture level"
-          options={[{"Dry", "dry"}, {"Average", "average"}, {"Moist", "moist"}, {"Wet", "wet"}]}
+          options={[
+            {"Wet", "wet"},
+            {"Average", "average"},
+            {"Dry", "dry"},
+            {"Very dry", "very_dry"}
+          ]}
           prompt="Select moisture level"
         />
         <.input field={@form[:chelsea_chop]} type="checkbox" label="Chelsea chop" />

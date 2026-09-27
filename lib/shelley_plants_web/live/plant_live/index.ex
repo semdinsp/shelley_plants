@@ -133,9 +133,9 @@ defmodule ShelleyPlantsWeb.PlantLive.Index do
   defp human_sun("full_shade"), do: "Full shade"
   defp human_sun(_), do: "—"
 
-  defp human_moisture("dry"), do: "Dry"
-  defp human_moisture("average"), do: "Average"
-  defp human_moisture("moist"), do: "Moist"
   defp human_moisture("wet"), do: "Wet"
+  defp human_moisture("average"), do: "Average"
+  defp human_moisture("dry"), do: "Dry"
+  defp human_moisture("very_dry"), do: "Very dry"
   defp human_moisture(_), do: "—"
 end

@@ -105,7 +105,7 @@ defmodule ShelleyPlantsWeb.PlantLiveTest do
         common_name: "Sun Moisture Test",
         latin_name: "Testus sunmoisturus",
         sun_level: "part_shade",
-        moisture_level: "moist"
+        moisture_level: "very_dry"
       })
 
       {:ok, _lv, html} = live(conn, ~p"/plants")
@@ -113,7 +113,7 @@ defmodule ShelleyPlantsWeb.PlantLiveTest do
       assert html =~ "Sun"
       assert html =~ "Moisture"
       assert html =~ "Part shade"
-      assert html =~ "Moist"
+      assert html =~ "Very dry"
     end
 
     test "shows a dash for plants without sun or moisture level set", %{conn: conn, plant: plant} do
@@ -285,6 +285,25 @@ defmodule ShelleyPlantsWeb.PlantLiveTest do
 
       refute has_element?(view, "#coming-soon")
       assert html =~ plant.common_name
+    end
+  end
+
+  describe "Form — moisture level" do
+    setup :register_and_log_in_admin
+
+    test "offers Wet, Average, Dry and Very dry, in that order", %{conn: conn} do
+      plant = plant_fixture(%{moisture_level: "very_dry"})
+      {:ok, lv, _html} = live(conn, ~p"/plants/#{plant}/edit")
+
+      options =
+        lv
+        |> element("#plant_moisture_level")
+        |> render()
+        |> then(&Regex.scan(~r{<option[^>]*>([^<]*)</option>}, &1, capture: :all_but_first))
+        |> Enum.map(fn [label] -> String.trim(label) end)
+
+      assert options == ["Select moisture level", "Wet", "Average", "Dry", "Very dry"]
+      assert has_element?(lv, ~s|#plant_moisture_level option[value="very_dry"][selected]|)
     end
   end
 

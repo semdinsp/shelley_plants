@@ -5,7 +5,7 @@ defmodule ShelleyPlants.Catalog.Plant do
   @plant_types ~w(perennial annual)
   @categories ~w(Wildflower Grass Shrub Tree)
   @sun_levels ~w(full_sun part_shade full_shade)
-  @moisture_levels ~w(dry average moist wet)
+  @moisture_levels ~w(wet average dry very_dry)
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -59,10 +59,10 @@ defmodule ShelleyPlants.Catalog.Plant do
       message: "must be full_sun, part_shade, or full_shade"
     )
     |> validate_inclusion(:moisture_level, @moisture_levels ++ [nil],
-      message: "must be dry, average, moist, or wet"
+      message: "must be wet, average, dry, or very_dry"
     )
     |> validate_subset(:moisture_unacceptable, @moisture_levels,
-      message: "must be dry, average, moist, or wet"
+      message: "must be wet, average, dry, or very_dry"
     )
     |> validate_number(:height_min_cm, greater_than: 0, less_than: 2000)
     |> validate_number(:height_max_cm, greater_than: 0, less_than: 2000)
