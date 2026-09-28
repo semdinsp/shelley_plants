@@ -26,12 +26,27 @@ import {hooks as colocatedHooks} from "phoenix-colocated/shelley_plants"
 import topbar from "../vendor/topbar"
 
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
+
+// Phoenix remembers a long-poll fallback (the "phx:fallback:*" keys) for the
+// rest of the tab's life. One slow WebSocket handshake (e.g. a cold Fly
+// machine) then pins the tab to long-polling, whose requests Fly drops every
+// few seconds, so the page reconnects and remounts in a loop. Ignoring those
+// keys makes every reconnect try WebSocket first. All other keys (LiveView's
+// history position, debug flags) go to the real sessionStorage.
+const isFallbackKey = key => key.startsWith("phx:fallback:")
+const sessionStorageWithoutFallback = {
+  getItem: key => isFallbackKey(key) ? null : window.sessionStorage.getItem(key),
+  setItem: (key, value) => isFallbackKey(key) || window.sessionStorage.setItem(key, value),
+  removeItem: key => window.sessionStorage.removeItem(key),
+}
+
 const liveSocket = new LiveSocket("/live", Socket, {
   // Default (2500ms) was too aggressive on Fly.io: the WebSocket upgrade
   // was consistently taking longer than that even to an already-warm
   // machine, so every connection silently fell back to long-polling.
   // Give the handshake more room before giving up.
   longPollFallbackMs: 8000,
+  sessionStorage: sessionStorageWithoutFallback,
   params: {_csrf_token: csrfToken},
   hooks: {...colocatedHooks},
 })
