@@ -90,3 +90,7 @@ config :phoenix_live_view,
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
+
+# Emails sent from dev link to (and load images from) production, since
+# mail clients can't reach localhost.
+config :shelley_plants, :email_site_url, "https://biosphere-native-plants.ca"
