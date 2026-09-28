@@ -9,7 +9,7 @@ defmodule ShelleyPlantsWeb.PlantLive.Gallery do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="max-w-7xl mx-auto">
         <div class="mb-8">
           <h1 class="text-3xl font-serif font-semibold text-base-content">Shop Plants</h1>
           <p class="mt-2 text-base-content/70">

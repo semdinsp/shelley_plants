@@ -68,7 +68,7 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-12">
+      <div class="mx-auto max-w-3xl">
         <div class="mb-10">
           <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-3">
             Plan your space
