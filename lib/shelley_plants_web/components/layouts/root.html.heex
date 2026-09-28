@@ -4,7 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title default="Biosphere Native Plants" suffix=" · Biosphere Native Plants">
+    <.live_title
+      default="Biosphere Native Plants"
+      suffix={assigns[:page_title] && " · Biosphere Native Plants"}
+    >
       {assigns[:page_title]}
     </.live_title>
     <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -37,50 +40,72 @@
   </head>
   <body>
     <header class="sticky top-0 z-40 border-b border-base-200/60 bg-base-100/80 backdrop-blur-md">
-      <div class="mx-auto max-w-5xl px-6 lg:px-8">
-        <div class="flex h-14 items-center justify-between">
+      <%!-- Same padding/width structure as the page body (Layouts.app) so the
+           logo lines up with page content at every width --%>
+      <div class="px-4 sm:px-6 lg:px-8">
+        <div class="mx-auto flex h-14 max-w-5xl items-center justify-between">
           <a
             href="/"
             class="flex items-center gap-2 text-primary"
             aria-label="Biosphere Native Plants"
           >
             <img src="/images/biologo.jpg" alt="" class="size-8 rounded-full object-cover" />
-            <span class="hidden md:inline font-semibold text-base-content">
+            <span class="hidden sm:inline whitespace-nowrap font-semibold text-base-content">
               Biosphere Native Plants
             </span>
           </a>
-          <nav class="hidden md:flex items-center gap-1 text-base">
-            <.link href={~p"/plants/gallery"} class="btn btn-ghost">
+          <nav class="hidden lg:flex items-center gap-1 text-base">
+            <.link href={~p"/plants/gallery"} class="btn btn-ghost px-3">
               <.icon name="hero-photo" class="size-5" /> Shop Plants
             </.link>
-            <.link href={~p"/garden-planner"} class="btn btn-ghost">
+            <.link href={~p"/garden-planner"} class="btn btn-ghost px-3">
               <.icon name="hero-sparkles" class="size-5" /> Plan Your Garden
             </.link>
-            <.link href={~p"/plants"} class="btn btn-ghost">
+            <.link href={~p"/plants"} class="btn btn-ghost px-3">
               <.icon name="hero-squares-2x2" class="size-5" /> Species List
             </.link>
-            <.link href={~p"/about"} class="btn btn-ghost">
+            <.link href={~p"/about"} class="btn btn-ghost px-3">
               <.icon name="hero-information-circle" class="size-5" /> About
             </.link>
+            <div class="w-px h-4 bg-base-300 mx-1"></div>
             <%= if @current_scope do %>
-              <%= if @current_scope.admin? do %>
-                <.link href={~p"/admin"} class="btn btn-ghost">
-                  <.icon name="hero-cog-6-tooth" class="size-5" /> Admin
-                </.link>
-              <% end %>
-              <.link href={~p"/settings"} class="btn btn-ghost">
-                <.icon name="hero-user-circle" class="size-5" /> Settings
-              </.link>
               <.link
-                href={~p"/users/log-out"}
-                method="delete"
+                :if={@current_scope.admin?}
+                href={~p"/admin"}
                 class="btn btn-ghost btn-square"
-                aria-label="Log out"
+                aria-label="Admin"
+                title="Admin"
               >
-                <.icon name="hero-arrow-right-on-rectangle" class="size-5" />
+                <.icon name="hero-cog-6-tooth" class="size-5" />
               </.link>
+              <%!-- Settings and log out share one menu so the header fits --%>
+              <div class="dropdown dropdown-end">
+                <div
+                  tabindex="0"
+                  role="button"
+                  class="btn btn-ghost btn-square"
+                  aria-label="Account menu"
+                  title="Account"
+                >
+                  <.icon name="hero-user-circle" class="size-5" />
+                </div>
+                <ul
+                  tabindex="0"
+                  class="menu dropdown-content z-50 mt-3 w-52 rounded-box bg-base-100 p-2 shadow"
+                >
+                  <li>
+                    <.link href={~p"/settings"}>
+                      <.icon name="hero-user-circle" class="size-5" /> Settings
+                    </.link>
+                  </li>
+                  <li>
+                    <.link href={~p"/users/log-out"} method="delete">
+                      <.icon name="hero-arrow-right-on-rectangle" class="size-5" /> Log out
+                    </.link>
+                  </li>
+                </ul>
+              </div>
             <% else %>
-              <div class="w-px h-4 bg-base-300 mx-1"></div>
               <.link href={~p"/users/log-in"} class="btn btn-ghost btn-square" aria-label="Log in">
                 <.icon name="hero-arrow-left-on-rectangle" class="size-5" />
               </.link>
@@ -89,7 +114,7 @@
               <Layouts.theme_toggle />
             </div>
           </nav>
-          <div class="dropdown dropdown-end md:hidden">
+          <div class="dropdown dropdown-end lg:hidden">
             <div tabindex="0" role="button" class="btn btn-ghost btn-sm" aria-label="Open menu">
               <.icon name="hero-bars-3" class="size-5" />
             </div>

@@ -7,7 +7,7 @@ defmodule ShelleyPlantsWeb.PlantLive.Show do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="max-w-3xl mx-auto">
         <div class="flex items-center justify-between gap-4 mb-6">
           <.button navigate={~p"/plants"}>
             <.icon name="hero-arrow-left" /> Back to plants

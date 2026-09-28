@@ -141,16 +141,20 @@ Icons are added inside the button tag using the `<.icon>` component. The icon si
 
 ## Navigation
 
-### Desktop (≥ 768px / `md` breakpoint)
+### Desktop (≥ 1024px / `lg` breakpoint)
 - Sticky header, `max-w-5xl` centred, `h-14`
-- Left: leaf SVG icon + "Shelley's Native Plants" text (font-semibold)
-- Right: nav links as ghost buttons (`text-base`) + theme toggle
+- Left: logo + "Biosphere Native Plants" (font-semibold, never wraps)
+- Middle: Shop Plants, Plan Your Garden, Species List, About as ghost buttons (`text-base`, `px-3`)
+- Right: account controls as icon-only square buttons, then the theme toggle
+  - Logged out: log-in icon
+  - Logged in: cog icon linking to Admin (admins only), and a user-circle icon that opens an account menu (Settings, Log out)
 - Frosted glass effect: `bg-base-100/80 backdrop-blur-md`
+- The header is capped at `max-w-5xl`, so wider screens don't add room. Keep the desktop nav to its current width; new top-level items belong in the menus.
 
-### Mobile (< 768px)
-- Same header, but site name text is hidden
+### Tablet and mobile (< 1024px)
+- Same header; site name shows from `sm` (640px) up, logo only below that
 - Right: hamburger icon (`hero-bars-3`) triggers a daisyUI dropdown
-- Dropdown menu (`w-52`) shows icon + text for each link
+- Dropdown menu (`w-52`) shows icon + text for each link, including Admin, Settings and Log out
 - Theme toggle appears at the bottom of the dropdown
 
 ---

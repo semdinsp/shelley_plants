@@ -100,7 +100,7 @@ defmodule ShelleyPlantsWeb.UserLive.Login do
 
     form = to_form(%{"email" => email}, as: "user")
 
-    {:ok, assign(socket, form: form, trigger_submit: false)}
+    {:ok, assign(socket, form: form, trigger_submit: false, page_title: "Log in")}
   end
 
   @impl true

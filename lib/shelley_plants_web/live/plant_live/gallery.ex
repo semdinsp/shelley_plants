@@ -9,7 +9,7 @@ defmodule ShelleyPlantsWeb.PlantLive.Gallery do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="max-w-7xl mx-auto">
         <div class="mb-8">
           <h1 class="text-3xl font-serif font-semibold text-base-content">Shop Plants</h1>
           <p class="mt-2 text-base-content/70">
@@ -144,8 +144,8 @@ defmodule ShelleyPlantsWeb.PlantLive.Gallery do
           <.fact icon="hero-swatch" label="Colour" value={@plant.flower_color} />
           <.fact icon="hero-tag" label="Type" value={capitalize(@plant.plant_type)} />
           <.fact icon="hero-arrows-up-down" label="Height" value={@plant.height} />
-          <.fact icon="hero-sun" label="Light" value={short_light(@plant.light_requirements)} />
-          <.fact icon="hero-beaker" label="Moisture" value={@plant.moisture} />
+          <.fact icon="hero-sun" label="Light" value={light_label(@plant)} />
+          <.fact icon="hero-beaker" label="Moisture" value={moisture_label(@plant)} />
           <.fact
             icon="hero-shield-check"
             label="Deer resistant"
@@ -190,13 +190,17 @@ defmodule ShelleyPlantsWeb.PlantLive.Gallery do
   defp capitalize(nil), do: "—"
   defp capitalize(str), do: String.capitalize(str)
 
-  defp short_light(nil), do: "—"
+  # Cards use the short structured sun/moisture values (the free-text
+  # descriptions are too long for the card and get truncated), falling back
+  # to the free text for plants that don't have them set.
+  defp light_label(%{sun_level: "full_sun"}), do: "Full sun"
+  defp light_label(%{sun_level: "part_shade"}), do: "Part shade"
+  defp light_label(%{sun_level: "full_shade"}), do: "Full shade"
+  defp light_label(%{light_requirements: light}), do: light || "—"
 
-  defp short_light(light) do
-    light
-    |> String.replace("to part shade", "/ part shade")
-    |> String.replace("to full shade", "/ full shade")
-    |> String.replace("Full sun", "Full sun")
-    |> String.replace("Part shade", "Part shade")
-  end
+  defp moisture_label(%{moisture_level: "wet"}), do: "Wet"
+  defp moisture_label(%{moisture_level: "average"}), do: "Average"
+  defp moisture_label(%{moisture_level: "dry"}), do: "Dry"
+  defp moisture_label(%{moisture_level: "very_dry"}), do: "Very dry"
+  defp moisture_label(%{moisture: moisture}), do: moisture || "—"
 end

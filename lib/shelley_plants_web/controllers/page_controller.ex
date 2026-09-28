@@ -9,6 +9,6 @@ defmodule ShelleyPlantsWeb.PageController do
   end
 
   def about(conn, _params) do
-    render(conn, :about)
+    render(conn, :about, page_title: "About")
   end
 end
