@@ -85,8 +85,9 @@ if config_env() == :prod do
     secret: System.get_env("AWS_SECRET_ACCESS_KEY"),
     region: System.get_env("AWS_REGION", "us-east-1")
 
-  # Accept LiveView socket connections from both the custom domain and the
-  # underlying Fly.io app URL, since both are used to reach the app.
+  # Accept LiveView socket connections from the custom domain (with and
+  # without www) and the underlying Fly.io app URL, since all are used to
+  # reach the app.
   # FLY_APP_NAME is automatically set by Fly.io on every deployed machine.
   fly_app_host =
     case System.get_env("FLY_APP_NAME") do
@@ -95,7 +96,7 @@ if config_env() == :prod do
     end
 
   check_origin =
-    ["https://#{host}", fly_app_host && "https://#{fly_app_host}"]
+    ["https://#{host}", "https://www.#{host}", fly_app_host && "https://#{fly_app_host}"]
     |> Enum.reject(&is_nil/1)
 
   config :shelley_plants, ShelleyPlantsWeb.Endpoint,
