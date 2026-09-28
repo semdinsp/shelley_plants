@@ -50,15 +50,29 @@ defmodule ShelleyPlantsWeb.PlantLive.Index do
         </:col>
         <:col :let={{_id, plant}} label="Common name">{plant.common_name}</:col>
         <:col :let={{_id, plant}} label="Latin name"><em>{plant.latin_name}</em></:col>
-        <:col :let={{_id, plant}} label="Category">{plant.category}</:col>
-        <:col :let={{_id, plant}} label="Plant type">{plant.plant_type}</:col>
-        <:col :let={{_id, plant}} label="Flower color">{plant.flower_color}</:col>
-        <:col :let={{_id, plant}} label="Bloom time">{plant.bloom_time}</:col>
-        <:col :let={{_id, plant}} label="Height">{plant.height}</:col>
-        <:col :let={{_id, plant}} label="Light">{plant.light_requirements}</:col>
-        <:col :let={{_id, plant}} label="Sun">{human_sun(plant.sun_level)}</:col>
-        <:col :let={{_id, plant}} label="Moisture">{human_moisture(plant.moisture_level)}</:col>
-        <:col :let={{_id, plant}} label="Native (ON)">
+        <:col :let={{_id, plant}} label="Category" class="hidden md:table-cell">
+          {plant.category}
+        </:col>
+        <:col :let={{_id, plant}} label="Plant type" class="hidden md:table-cell">
+          {plant.plant_type}
+        </:col>
+        <:col :let={{_id, plant}} label="Flower color" class="hidden md:table-cell">
+          {plant.flower_color}
+        </:col>
+        <:col :let={{_id, plant}} label="Bloom time" class="hidden md:table-cell">
+          {plant.bloom_time}
+        </:col>
+        <:col :let={{_id, plant}} label="Height" class="hidden md:table-cell">{plant.height}</:col>
+        <:col :let={{_id, plant}} label="Light" class="hidden md:table-cell">
+          {plant.light_requirements}
+        </:col>
+        <:col :let={{_id, plant}} label="Sun" class="hidden md:table-cell">
+          {human_sun(plant.sun_level)}
+        </:col>
+        <:col :let={{_id, plant}} label="Moisture" class="hidden md:table-cell">
+          {human_moisture(plant.moisture_level)}
+        </:col>
+        <:col :let={{_id, plant}} label="Native (ON)" class="hidden md:table-cell">
           {cond do
             plant.locally_native -> "Yes (local)"
             plant.native_ontario -> "Yes"
