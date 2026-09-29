@@ -9,22 +9,32 @@ defmodule ShelleyPlants.Application do
 
   @impl true
   def start(_type, _args) do
-    children = [
-      ShelleyPlantsWeb.Telemetry,
-      ShelleyPlants.Repo,
-      {DNSCluster, query: Application.get_env(:shelley_plants, :dns_cluster_query) || :ignore},
-      {Phoenix.PubSub, name: ShelleyPlants.PubSub},
-      {ShelleyPlants.MCP.PlantsServer, transport: mcp_transport()},
-      # Start a worker by calling: ShelleyPlants.Worker.start_link(arg)
-      # {ShelleyPlants.Worker, arg},
-      # Start to serve requests, typically the last entry
-      ShelleyPlantsWeb.Endpoint
-    ]
+    children =
+      [
+        ShelleyPlantsWeb.Telemetry,
+        ShelleyPlants.Repo,
+        {DNSCluster, query: Application.get_env(:shelley_plants, :dns_cluster_query) || :ignore},
+        {Phoenix.PubSub, name: ShelleyPlants.PubSub},
+        {ShelleyPlants.MCP.PlantsServer, transport: mcp_transport()}
+      ] ++
+        mcp_sse_reaper() ++
+        [
+          # Start to serve requests, typically the last entry
+          ShelleyPlantsWeb.Endpoint
+        ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: ShelleyPlants.Supervisor]
     Supervisor.start_link(children, opts)
+  end
+
+  # Works around an anubis_mcp SSE stream leak; see the module docs. Off in
+  # test so the MCP integration tests' streams get no unexpected writes.
+  defp mcp_sse_reaper do
+    if Application.get_env(:shelley_plants, :mcp_sse_reaper, true),
+      do: [ShelleyPlants.MCP.SseStreamReaper],
+      else: []
   end
 
   # Tell Phoenix to update the endpoint configuration

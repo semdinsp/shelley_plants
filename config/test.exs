@@ -28,6 +28,10 @@ config :shelley_plants, ShelleyPlantsWeb.Endpoint,
 # to the plug pipeline without a listening socket, so force it on here.
 config :shelley_plants, mcp_force_start: true
 
+# The MCP SSE stream reaper would send keepalives into the MCP integration
+# tests' streams; its own tests start it directly.
+config :shelley_plants, :mcp_sse_reaper, false
+
 # In test we don't send emails
 config :shelley_plants, ShelleyPlants.Mailer, adapter: Swoosh.Adapters.Test
 
