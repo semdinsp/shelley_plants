@@ -78,6 +78,7 @@ defmodule ShelleyPlantsWeb.PlantLive.Form do
         <.input field={@form[:chelsea_chop]} type="checkbox" label="Chelsea chop" />
         <.input field={@form[:native_ontario]} type="checkbox" label="Native to Ontario" />
         <.input field={@form[:locally_native]} type="checkbox" label="Locally native" />
+        <.input field={@form[:near_native]} type="checkbox" label="Near native" />
         <.input field={@form[:deer_resistant]} type="checkbox" label="Deer resistant" />
         <.input field={@form[:ecological_benefit]} type="textarea" label="Ecological benefit" />
         <.input field={@form[:notes]} type="textarea" label="Notes" />

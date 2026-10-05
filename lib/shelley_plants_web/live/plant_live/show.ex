@@ -40,6 +40,12 @@ defmodule ShelleyPlantsWeb.PlantLive.Show do
               <span class="absolute top-3 right-3 badge badge-success badge-sm gap-1 shadow">
                 <.icon name="hero-map-pin" class="size-3" /> Ontario Native
               </span>
+            <% else %>
+              <%= if @plant.near_native do %>
+                <span class="absolute top-3 right-3 badge badge-info badge-sm gap-1 shadow">
+                  <.icon name="hero-map-pin" class="size-3" /> Near Native
+                </span>
+              <% end %>
             <% end %>
           </figure>
 
@@ -77,7 +83,13 @@ defmodule ShelleyPlantsWeb.PlantLive.Show do
               <.fact
                 icon="hero-globe-americas"
                 label="Native to Ontario"
-                value={if @plant.native_ontario, do: "Yes", else: "Non-native"}
+                value={
+                  cond do
+                    @plant.native_ontario -> "Yes"
+                    @plant.near_native -> "Near Native"
+                    true -> "Non-native"
+                  end
+                }
               />
             </div>
 
@@ -96,6 +108,15 @@ defmodule ShelleyPlantsWeb.PlantLive.Show do
               <h2 class="text-sm font-semibold text-base-content mb-2">Notes</h2>
               <p class="text-sm text-base-content/70 leading-relaxed">{@plant.notes}</p>
             </div>
+
+            <%!-- Near Native definition --%>
+            <p
+              :if={@plant.near_native && !@plant.native_ontario}
+              class="text-xs text-base-content/50 leading-relaxed border-t border-base-200 pt-4"
+            >
+              Species listed as <span class="font-medium">Near Native</span>
+              are ones that occur in the American states bordering Ontario, but the species may not necessarily naturally occur in Ontario.
+            </p>
           </div>
         </article>
       </div>
