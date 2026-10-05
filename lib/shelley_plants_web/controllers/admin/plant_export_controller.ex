@@ -39,6 +39,7 @@ defmodule ShelleyPlantsWeb.Admin.PlantExportController do
       "chelsea_chop" => plant.chelsea_chop,
       "native_ontario" => plant.native_ontario,
       "locally_native" => plant.locally_native,
+      "near_native" => plant.near_native,
       "deer_resistant" => plant.deer_resistant,
       "ecological_benefit" => plant.ecological_benefit,
       "notes" => plant.notes,

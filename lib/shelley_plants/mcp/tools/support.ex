@@ -71,6 +71,7 @@ defmodule ShelleyPlants.MCP.Tools.Support do
       plant_type: plant.plant_type,
       native_ontario: plant.native_ontario,
       locally_native: plant.locally_native,
+      near_native: plant.near_native,
       ecological_benefit: plant.ecological_benefit,
       deer_resistant: plant.deer_resistant,
       notes: plant.notes,

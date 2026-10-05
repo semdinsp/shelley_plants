@@ -18,7 +18,7 @@ defmodule ShelleyPlants.PlantImporter do
 
   @replaceable_fields ~w(
     common_name flower_color bloom_time height chelsea_chop
-    light_requirements moisture plant_type native_ontario locally_native
+    light_requirements moisture plant_type native_ontario locally_native near_native
     ecological_benefit deer_resistant notes picture updated_at
   )a
 

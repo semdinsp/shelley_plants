@@ -126,6 +126,12 @@ defmodule ShelleyPlantsWeb.PlantLive.Gallery do
             <span class="absolute top-3 right-3 badge badge-success badge-sm gap-1 shadow">
               <.icon name="hero-map-pin" class="size-3" /> Ontario Native
             </span>
+          <% else %>
+            <%= if @plant.near_native do %>
+              <span class="absolute top-3 right-3 badge badge-info badge-sm gap-1 shadow">
+                <.icon name="hero-map-pin" class="size-3" /> Near Native
+              </span>
+            <% end %>
           <% end %>
         </figure>
       </.link>

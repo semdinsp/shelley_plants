@@ -18,6 +18,7 @@ defmodule ShelleyPlants.MCP.Tools.CreatePlant do
     field :plant_type, :enum, required: true, values: ["perennial", "annual"]
     field :native_ontario, :boolean, required: true
     field :locally_native, :boolean, required: true
+    field :near_native, :boolean
     field :deer_resistant, :boolean, required: true
     field :ecological_benefit, :string
     field :notes, :string

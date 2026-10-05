@@ -21,6 +21,7 @@ defmodule ShelleyPlants.Catalog.Plant do
     field :plant_type, :string
     field :native_ontario, :boolean, default: false
     field :locally_native, :boolean, default: false
+    field :near_native, :boolean, default: false
     field :ecological_benefit, :string
     field :deer_resistant, :boolean, default: false
     field :notes, :string
@@ -39,7 +40,7 @@ defmodule ShelleyPlants.Catalog.Plant do
   @required_fields ~w(common_name latin_name flower_color bloom_time height chelsea_chop
                       light_requirements moisture plant_type native_ontario locally_native
                       deer_resistant)a
-  @optional_fields ~w(ecological_benefit notes picture category
+  @optional_fields ~w(ecological_benefit notes picture category near_native
                       height_min_cm height_max_cm spread_cm sun_level moisture_level
                       moisture_unacceptable)a
 

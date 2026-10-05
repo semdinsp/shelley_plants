@@ -76,6 +76,7 @@ defmodule ShelleyPlantsWeb.PlantLive.Index do
           {cond do
             plant.locally_native -> "Yes (local)"
             plant.native_ontario -> "Yes"
+            plant.near_native -> "Near Native"
             true -> "Non-native to Ontario"
           end}
         </:col>

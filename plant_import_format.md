@@ -32,6 +32,7 @@ Rules:
 | `chelsea_chop` | boolean | **yes** | `true` if plant benefits from the Chelsea Chop pruning technique |
 | `native_ontario` | boolean | **yes** | `true` if native to Ontario |
 | `locally_native` | boolean | **yes** | `true` if locally native to the immediate region |
+| `near_native` | boolean | no | `true` if not native to Ontario but native nearby (shown as "Near Native"); defaults to `false` |
 | `deer_resistant` | boolean | **yes** | `true` if the plant is deer resistant |
 | `ecological_benefit` | string | no | Description of ecological value, e.g. `"Host plant for monarch butterfly"` |
 | `notes` | string | no | Any additional growing tips or observations |

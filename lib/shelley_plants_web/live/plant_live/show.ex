@@ -40,6 +40,12 @@ defmodule ShelleyPlantsWeb.PlantLive.Show do
               <span class="absolute top-3 right-3 badge badge-success badge-sm gap-1 shadow">
                 <.icon name="hero-map-pin" class="size-3" /> Ontario Native
               </span>
+            <% else %>
+              <%= if @plant.near_native do %>
+                <span class="absolute top-3 right-3 badge badge-info badge-sm gap-1 shadow">
+                  <.icon name="hero-map-pin" class="size-3" /> Near Native
+                </span>
+              <% end %>
             <% end %>
           </figure>
 
@@ -77,7 +83,13 @@ defmodule ShelleyPlantsWeb.PlantLive.Show do
               <.fact
                 icon="hero-globe-americas"
                 label="Native to Ontario"
-                value={if @plant.native_ontario, do: "Yes", else: "Non-native"}
+                value={
+                  cond do
+                    @plant.native_ontario -> "Yes"
+                    @plant.near_native -> "Near Native"
+                    true -> "Non-native"
+                  end
+                }
               />
             </div>
 

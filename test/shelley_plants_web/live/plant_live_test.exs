@@ -217,6 +217,20 @@ defmodule ShelleyPlantsWeb.PlantLiveTest do
       {:ok, lv, _html} = live(conn, ~p"/plants/#{plant}")
       assert has_element?(lv, "a", "Edit plant")
     end
+
+    test "labels a near-native plant as Near Native", %{conn: conn} do
+      plant =
+        plant_fixture(%{
+          latin_name: "Rudbeckia triloba",
+          native_ontario: false,
+          locally_native: false,
+          near_native: true
+        })
+
+      {:ok, _lv, html} = live(conn, ~p"/plants/#{plant}")
+      assert html =~ "Near Native"
+      refute html =~ "Non-native"
+    end
   end
 
   describe "Show — admin edit from show" do
