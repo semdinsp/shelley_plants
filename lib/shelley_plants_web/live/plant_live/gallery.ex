@@ -2,6 +2,7 @@ defmodule ShelleyPlantsWeb.PlantLive.Gallery do
   use ShelleyPlantsWeb, :live_view
 
   alias ShelleyPlants.Catalog
+  alias ShelleyPlantsWeb.PlantImages
 
   @categories ~w(Wildflower Grass Shrub Tree)
 
@@ -111,8 +112,10 @@ defmodule ShelleyPlantsWeb.PlantLive.Gallery do
         <figure class="relative h-56 overflow-hidden bg-base-200">
           <%= if @plant.picture do %>
             <img
-              src={@plant.picture}
+              src={PlantImages.thumb_url(@plant.picture)}
               alt={@plant.common_name}
+              loading="lazy"
+              decoding="async"
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           <% else %>
