@@ -1,34 +1,14 @@
 <Layouts.flash_group flash={@flash} />
 
-<%!-- Hero section — full-bleed photo collage with gradient overlay --%>
+<%!-- Hero section — full-bleed photo with gradient overlay --%>
 <section class="relative overflow-hidden min-h-[600px] sm:min-h-[680px] flex items-center">
-  <%!-- Photo collage background --%>
-  <div class="absolute inset-0 grid grid-cols-3 gap-0">
-    <div class="relative overflow-hidden">
-      <img
-        src="/images/home/penstemon_digitalis_hero.jpg"
-        alt="Foxglove Beardtongue"
-        class="w-full h-full object-cover scale-105"
-        style="transform-origin: center; object-position: center top;"
-      />
-    </div>
-    <div class="relative overflow-hidden">
-      <img
-        src="/images/home/asclepias_tuberosa_hero.jpg"
-        alt="Butterfly Milkweed"
-        class="w-full h-full object-cover scale-105"
-        style="object-position: center center;"
-      />
-    </div>
-    <div class="relative overflow-hidden">
-      <img
-        src="/images/home/echinacea_purpurea_hero.jpg"
-        alt="Purple Coneflower"
-        class="w-full h-full object-cover scale-105"
-        style="object-position: center top;"
-      />
-    </div>
-  </div>
+  <%!-- Photo background --%>
+  <img
+    src="/images/home/echinacea_purpurea_hero.jpg"
+    alt="Purple Coneflower"
+    class="absolute inset-0 w-full h-full object-cover"
+    style="object-position: 40% 70%;"
+  />
 
   <%!-- Multi-layer gradient: strong left fade + overall dark overlay for readability --%>
   <div class="absolute inset-0 bg-black/30"></div>
