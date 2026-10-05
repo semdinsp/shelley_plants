@@ -229,7 +229,16 @@ defmodule ShelleyPlantsWeb.PlantLiveTest do
 
       {:ok, _lv, html} = live(conn, ~p"/plants/#{plant}")
       assert html =~ "Near Native"
+      assert html =~ "American states bordering Ontario"
       refute html =~ "Non-native"
+    end
+
+    test "does not show the Near Native definition for other plants", %{
+      conn: conn,
+      plant: plant
+    } do
+      {:ok, _lv, html} = live(conn, ~p"/plants/#{plant}")
+      refute html =~ "American states bordering Ontario"
     end
   end
 

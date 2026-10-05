@@ -108,6 +108,15 @@ defmodule ShelleyPlantsWeb.PlantLive.Show do
               <h2 class="text-sm font-semibold text-base-content mb-2">Notes</h2>
               <p class="text-sm text-base-content/70 leading-relaxed">{@plant.notes}</p>
             </div>
+
+            <%!-- Near Native definition --%>
+            <p
+              :if={@plant.near_native && !@plant.native_ontario}
+              class="text-xs text-base-content/50 leading-relaxed border-t border-base-200 pt-4"
+            >
+              Species listed as <span class="font-medium">Near Native</span>
+              are ones that occur in the American states bordering Ontario, but the species may not necessarily naturally occur in Ontario.
+            </p>
           </div>
         </article>
       </div>
