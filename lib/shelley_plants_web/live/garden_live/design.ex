@@ -2,6 +2,7 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
   use ShelleyPlantsWeb, :live_view
 
   alias ShelleyPlants.GardenDesign
+  alias ShelleyPlantsWeb.PlantImages
 
   @height_structures [
     %{
@@ -420,8 +421,10 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
                   <div class="size-14 rounded-xl overflow-hidden bg-base-200 shrink-0">
                     <%= if plant.picture do %>
                       <img
-                        src={plant.picture}
+                        src={PlantImages.thumb_url(plant.picture)}
                         alt={plant.common_name}
+                        loading="lazy"
+                        decoding="async"
                         class="w-full h-full object-cover"
                       />
                     <% else %>
@@ -502,8 +505,10 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
                         <div class="size-10 rounded-lg overflow-hidden bg-base-200 shrink-0">
                           <%= if alt.picture do %>
                             <img
-                              src={alt.picture}
+                              src={PlantImages.thumb_url(alt.picture)}
                               alt={alt.common_name}
+                              loading="lazy"
+                              decoding="async"
                               class="w-full h-full object-cover"
                             />
                           <% else %>

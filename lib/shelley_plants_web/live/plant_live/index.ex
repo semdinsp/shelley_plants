@@ -2,6 +2,7 @@ defmodule ShelleyPlantsWeb.PlantLive.Index do
   use ShelleyPlantsWeb, :live_view
 
   alias ShelleyPlants.Catalog
+  alias ShelleyPlantsWeb.PlantImages
 
   @categories ~w(Wildflower Grass Shrub Tree)
 
@@ -43,8 +44,10 @@ defmodule ShelleyPlantsWeb.PlantLive.Index do
         <:col :let={{_id, plant}} label="Photo">
           <img
             :if={plant.picture}
-            src={plant.picture}
+            src={PlantImages.thumb_url(plant.picture)}
             alt={plant.common_name}
+            loading="lazy"
+            decoding="async"
             class="h-12 w-12 rounded object-cover"
           />
         </:col>

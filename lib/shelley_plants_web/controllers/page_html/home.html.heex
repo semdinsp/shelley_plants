@@ -179,8 +179,10 @@
           <div class="relative rounded-xl overflow-hidden aspect-[3/4] bg-base-200 shadow-sm group-hover:shadow-md transition-shadow">
             <%= if plant.picture do %>
               <img
-                src={plant.picture}
+                src={ShelleyPlantsWeb.PlantImages.thumb_url(plant.picture)}
                 alt={plant.common_name}
+                loading="lazy"
+                decoding="async"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
             <% else %>
