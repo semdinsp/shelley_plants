@@ -21,13 +21,19 @@ defmodule ShelleyPlantsWeb.ContactHTML do
   end
 
   attr :site_key, :string, required: true
+
+  attr :action, :string,
+    required: true,
+    doc: "checked server-side, so one form's token can't be used on the other"
+
   attr :error, :string, default: nil
 
   @doc "Cloudflare Turnstile widget plus any verification error."
   def turnstile(assigns) do
     ~H"""
     <div>
-      <div class="cf-turnstile" data-sitekey={@site_key} data-theme="auto"></div>
+      <div class="cf-turnstile" data-sitekey={@site_key} data-action={@action} data-theme="auto">
+      </div>
       <p :if={@error} class="mt-1.5 flex gap-2 items-center text-sm text-error">
         <.icon name="hero-exclamation-circle" class="size-5" /> {@error}
       </p>

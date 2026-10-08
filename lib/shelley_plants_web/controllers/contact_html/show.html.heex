@@ -38,7 +38,11 @@
             <.input field={f[:email]} type="email" label="Email" autocomplete="email" required />
             <.input field={f[:message]} type="textarea" label="Message" rows="6" required />
             <div class="pt-2">
-              <.turnstile site_key={@turnstile_site_key} error={@contact_captcha_error} />
+              <.turnstile
+                site_key={@turnstile_site_key}
+                action="contact"
+                error={@contact_captcha_error}
+              />
             </div>
             <div class="pt-4">
               <.button class="btn btn-primary gap-2">
@@ -81,7 +85,11 @@
                 required
               />
               <div class="pt-2">
-                <.turnstile site_key={@turnstile_site_key} error={@newsletter_captcha_error} />
+                <.turnstile
+                  site_key={@turnstile_site_key}
+                  action="newsletter"
+                  error={@newsletter_captcha_error}
+                />
               </div>
               <div class="pt-4">
                 <.button class="btn btn-primary w-full gap-2">

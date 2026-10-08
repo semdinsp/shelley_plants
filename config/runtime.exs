@@ -44,17 +44,25 @@ config :shelley_plants, :outreach,
     |> Enum.map(&String.trim/1)
 
 # Cloudflare Turnstile (bot check on the contact and newsletter forms).
-# Outside prod, default to Cloudflare's test keys, which always pass:
+# In prod, TURNSTILE_SECRET_KEY must be set (Fly secret) or the forms reject
+# every submission; tokens must come from one of TURNSTILE_HOSTNAMES.
+# Elsewhere, default to Cloudflare's test keys, which always pass:
 # https://developers.cloudflare.com/turnstile/troubleshooting/testing/
-# In prod both must be set, or the forms reject every submission.
-{turnstile_site_key, turnstile_secret_key} =
+{turnstile_site_key, turnstile_secret_key, turnstile_hostnames} =
   if config_env() == :prod,
-    do: {nil, nil},
-    else: {"1x00000000000000000000AA", "1x0000000000000000000000000000000AA"}
+    do:
+      {"0x4AAAAAAFQ5SLpLNaKeNtzw", nil,
+       "biosphere-native-plants.ca,www.biosphere-native-plants.ca,shelley-plants.fly.dev"},
+    else: {"1x00000000000000000000AA", "1x0000000000000000000000000000000AA", ""}
 
 config :shelley_plants, :turnstile,
   site_key: System.get_env("TURNSTILE_SITE_KEY", turnstile_site_key),
-  secret_key: System.get_env("TURNSTILE_SECRET_KEY", turnstile_secret_key)
+  secret_key: System.get_env("TURNSTILE_SECRET_KEY", turnstile_secret_key),
+  hostnames:
+    "TURNSTILE_HOSTNAMES"
+    |> System.get_env(turnstile_hostnames)
+    |> String.split(",", trim: true)
+    |> Enum.map(&String.trim/1)
 
 # In dev, send real email through Amazon SES (instead of the local
 # /dev/mailbox preview) whenever AWS credentials are in the environment:

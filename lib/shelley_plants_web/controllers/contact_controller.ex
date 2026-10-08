@@ -15,7 +15,7 @@ defmodule ShelleyPlantsWeb.ContactController do
       bot?(all_params) ->
         message_sent(conn)
 
-      verified?(conn, all_params) ->
+      verified?(conn, all_params, "contact") ->
         case Outreach.submit_contact_message(params) do
           {:ok, _message} ->
             message_sent(conn)
@@ -39,7 +39,7 @@ defmodule ShelleyPlantsWeb.ContactController do
       bot?(all_params) ->
         subscribed(conn)
 
-      verified?(conn, all_params) ->
+      verified?(conn, all_params, "newsletter") ->
         case Outreach.subscribe(params) do
           {:error, changeset} ->
             conn |> put_status(:unprocessable_entity) |> render_page(newsletter_form: changeset)
@@ -91,8 +91,8 @@ defmodule ShelleyPlantsWeb.ContactController do
 
   defp bot?(params), do: params["website"] not in [nil, ""]
 
-  defp verified?(conn, params) do
-    Turnstile.verify(params["cf-turnstile-response"], client_ip(conn)) == :ok
+  defp verified?(conn, params, action) do
+    Turnstile.verify(params["cf-turnstile-response"], action, client_ip(conn)) == :ok
   end
 
   # Fly's proxy passes the visitor's IP in Fly-Client-IP.
