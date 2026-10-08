@@ -7,7 +7,7 @@ defmodule ShelleyPlants.Outreach.Notifier do
   to `:bcc`.
   """
 
-  alias ShelleyPlants.EmailLayout
+  alias ShelleyPlants.{EmailLayout, Outreach}
   alias ShelleyPlants.Outreach.{ContactMessage, NewsletterSubscriber}
 
   @site_name EmailLayout.site_name()
@@ -66,11 +66,20 @@ defmodule ShelleyPlants.Outreach.Notifier do
       url: EmailLayout.site_url() <> "/plants/gallery",
       footnotes: [
         "You're receiving this because #{subscriber.email} was signed up on our website.",
-        "Didn't sign up, or want to unsubscribe? Just reply to this email and we'll remove you."
-      ]
+        "Didn't sign up, or changed your mind? Use the Unsubscribe link below."
+      ],
+      unsubscribe_url: unsubscribe_url(subscriber)
     }
     |> EmailLayout.build(to: subscriber.email, bcc: config(:bcc))
     |> EmailLayout.deliver()
+  end
+
+  @doc """
+  The subscriber's personal unsubscribe link. Every newsletter email must
+  include it (Canada's anti-spam law, CASL).
+  """
+  def unsubscribe_url(%NewsletterSubscriber{} = subscriber) do
+    EmailLayout.site_url() <> "/newsletter/unsubscribe/" <> Outreach.unsubscribe_token(subscriber)
   end
 
   defp config(key), do: Application.fetch_env!(:shelley_plants, :outreach)[key]

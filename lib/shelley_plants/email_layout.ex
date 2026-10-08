@@ -10,6 +10,9 @@ defmodule ShelleyPlants.EmailLayout do
       form; values keep their line breaks
     * `:button` and `:url` — optional call-to-action button
     * `:footnotes` — optional list of small print lines
+    * `:unsubscribe_url` — optional; adds an Unsubscribe link to the footer
+      and `List-Unsubscribe` headers so mail apps can offer one-click
+      unsubscribe
 
   Everything interpolated into the HTML is escaped, so user-submitted text is
   safe to include.
@@ -24,7 +27,14 @@ defmodule ShelleyPlants.EmailLayout do
 
   @site_name "Biosphere Native Plants"
 
-  @defaults %{paragraphs: [], details: [], button: nil, url: nil, footnotes: []}
+  @defaults %{
+    paragraphs: [],
+    details: [],
+    button: nil,
+    url: nil,
+    footnotes: [],
+    unsubscribe_url: nil
+  }
 
   def site_name, do: @site_name
 
@@ -46,6 +56,16 @@ defmodule ShelleyPlants.EmailLayout do
     |> subject(content.subject)
     |> html_body(render_html(content))
     |> text_body(render_text(content))
+    |> put_unsubscribe_headers(content.unsubscribe_url)
+  end
+
+  # RFC 8058 one-click unsubscribe: mail apps POST to the URL directly.
+  defp put_unsubscribe_headers(email, nil), do: email
+
+  defp put_unsubscribe_headers(email, url) do
+    email
+    |> header("List-Unsubscribe", "<#{url}>")
+    |> header("List-Unsubscribe-Post", "List-Unsubscribe=One-Click")
   end
 
   @doc "Delivers an email, logging (and returning) any delivery error."
@@ -72,7 +92,8 @@ defmodule ShelleyPlants.EmailLayout do
       details,
       c.url,
       Enum.join(c.footnotes, "\n"),
-      "--\n#{@site_name}\nOntario native wildflowers and grasses\n#{site_url()}\n"
+      "--\n#{@site_name}\nOntario native wildflowers and grasses\n#{site_url()}\n",
+      c.unsubscribe_url && "Unsubscribe: #{c.unsubscribe_url}\n"
     ]
     |> Enum.reject(&(&1 in [nil, ""]))
     |> Enum.join("\n\n")
@@ -188,6 +209,9 @@ defmodule ShelleyPlants.EmailLayout do
                   Ontario native wildflowers and grasses<br>
                   <a href="<%= @site_url %>" style="color:#006017;text-decoration:none;"><%= String.replace(@site_url, ~r{^https?://}, "") %></a><br>
                   <span style="color:#8a8f86;">Questions? Just reply to this email.</span>
+                  <%= if @unsubscribe_url do %>
+                  <br><a href="<%= @unsubscribe_url %>" style="color:#8a8f86;text-decoration:underline;">Unsubscribe</a>
+                  <% end %>
                 </td>
               </tr>
             </table>

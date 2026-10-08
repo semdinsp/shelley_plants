@@ -73,6 +73,55 @@ defmodule ShelleyPlants.OutreachTest do
     end
   end
 
+  describe "unsubscribe" do
+    test "the welcome email has an unsubscribe link and one-click headers" do
+      {:ok, sub} = Outreach.subscribe(%{"email" => "sam@example.com"})
+
+      assert_email_sent(fn email ->
+        assert ["<" <> url] =
+                 Regex.run(
+                   ~r{<[^>]+/newsletter/unsubscribe/[^>]+},
+                   email.headers["List-Unsubscribe"]
+                 )
+
+        assert email.headers["List-Unsubscribe-Post"] == "List-Unsubscribe=One-Click"
+        assert email.html_body =~ ~s(href="#{url}")
+        assert email.text_body =~ "Unsubscribe: #{url}"
+
+        token = url |> String.split("/") |> List.last()
+
+        assert {:ok, %NewsletterSubscriber{id: id}} =
+                 Outreach.subscriber_for_unsubscribe_token(token)
+
+        assert id == sub.id
+      end)
+    end
+
+    test "a token removes its subscriber, and is safe to use twice" do
+      {:ok, sub} = Outreach.subscribe(%{"email" => "sam@example.com"})
+      token = Outreach.unsubscribe_token(sub)
+
+      assert {:ok, %NewsletterSubscriber{id: id}} =
+               Outreach.subscriber_for_unsubscribe_token(token)
+
+      assert id == sub.id
+
+      assert Outreach.unsubscribe(token) == :ok
+      assert Outreach.list_subscribers(@admin) == []
+      assert Outreach.subscriber_for_unsubscribe_token(token) == {:ok, nil}
+      assert Outreach.unsubscribe(token) == :ok
+    end
+
+    test "a tampered token is rejected" do
+      {:ok, sub} = Outreach.subscribe(%{"email" => "sam@example.com"})
+      token = Outreach.unsubscribe_token(sub)
+
+      assert Outreach.unsubscribe(token <> "x") == {:error, :invalid}
+      assert Outreach.unsubscribe("not-a-token") == {:error, :invalid}
+      assert length(Outreach.list_subscribers(@admin)) == 1
+    end
+  end
+
   describe "admin functions" do
     test "list and delete require an admin scope" do
       {:ok, message} =

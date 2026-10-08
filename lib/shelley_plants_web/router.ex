@@ -13,6 +13,18 @@ defmodule ShelleyPlantsWeb.Router do
     plug :fetch_current_scope_for_user
   end
 
+  # Like :browser but without CSRF protection, for the newsletter unsubscribe
+  # POST: mail apps send one-click unsubscribes (RFC 8058) with no CSRF
+  # token. The signed token in the URL authorizes the request instead.
+  pipeline :unsubscribe do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :put_root_layout, html: {ShelleyPlantsWeb.Layouts, :root}
+    plug :put_secure_browser_headers
+    plug :fetch_current_scope_for_user
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -30,8 +42,15 @@ defmodule ShelleyPlantsWeb.Router do
     get "/contact", ContactController, :show
     post "/contact", ContactController, :create_message
     post "/newsletter", ContactController, :subscribe
+    get "/newsletter/unsubscribe/:token", UnsubscribeController, :show
     get "/garden-planner/export", GardenExportController, :export
     get "/design-garden/export", GardenExportController, :export
+  end
+
+  scope "/", ShelleyPlantsWeb do
+    pipe_through :unsubscribe
+
+    post "/newsletter/unsubscribe/:token", UnsubscribeController, :create
   end
 
   ## Plant catalog routes
