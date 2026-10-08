@@ -35,29 +35,38 @@ defmodule ShelleyPlantsWeb.ContactController do
   end
 
   def subscribe(conn, %{"newsletter_subscriber" => params} = all_params) do
+    home? = all_params["return_to"] == "home"
+
     cond do
       bot?(all_params) ->
-        subscribed(conn)
+        subscribed(conn, home?)
 
       verified?(conn, all_params, "newsletter") ->
         case Outreach.subscribe(params) do
           {:error, changeset} ->
-            conn |> put_status(:unprocessable_entity) |> render_page(newsletter_form: changeset)
+            subscribe_failed(conn, home?, newsletter_form: changeset)
 
           # Same response for new and existing subscribers, so the form
           # doesn't reveal who is on the list.
           _ok_or_existing ->
-            subscribed(conn)
+            subscribed(conn, home?)
         end
 
       true ->
-        conn
-        |> put_status(:unprocessable_entity)
-        |> render_page(
+        subscribe_failed(conn, home?,
           newsletter_form: Outreach.change_subscriber(%NewsletterSubscriber{}, params),
           newsletter_captcha_error: @captcha_error
         )
     end
+  end
+
+  # Re-show the form (with errors) on the page it was submitted from.
+  defp subscribe_failed(conn, home?, assigns) do
+    conn = put_status(conn, :unprocessable_entity)
+
+    if home?,
+      do: ShelleyPlantsWeb.PageController.render_home(conn, assigns),
+      else: render_page(conn, assigns)
   end
 
   defp message_sent(conn) do
@@ -66,10 +75,10 @@ defmodule ShelleyPlantsWeb.ContactController do
     |> redirect(to: ~p"/contact")
   end
 
-  defp subscribed(conn) do
+  defp subscribed(conn, home?) do
     conn
     |> put_flash(:info, "You're signed up! Check your inbox for a welcome email.")
-    |> redirect(to: ~p"/contact")
+    |> redirect(to: if(home?, do: ~p"/" <> "#newsletter", else: ~p"/contact"))
   end
 
   defp render_page(conn, assigns \\ []) do

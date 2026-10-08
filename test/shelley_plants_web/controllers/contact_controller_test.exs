@@ -29,8 +29,28 @@ defmodule ShelleyPlantsWeb.ContactControllerTest do
     assert html =~ "challenges.cloudflare.com/turnstile"
   end
 
+  test "the home page has a newsletter signup form", %{conn: conn} do
+    html = conn |> get(~p"/") |> html_response(200)
+
+    assert html =~ ~s(id="home-newsletter-form")
+    assert html =~ ~s(name="return_to" value="home")
+    assert html =~ ~s(data-action="newsletter")
+  end
+
   describe "when the bot check passes" do
     setup :turnstile_passes
+
+    test "a signup from the home page returns to the home page", %{conn: conn} do
+      conn =
+        post(conn, ~p"/newsletter", %{
+          "newsletter_subscriber" => %{"email" => "home@example.com"},
+          "return_to" => "home",
+          "cf-turnstile-response" => "t"
+        })
+
+      assert redirected_to(conn) == "/#newsletter"
+      assert [%{email: "home@example.com"}] = Outreach.list_subscribers(@admin)
+    end
 
     test "a contact message is saved and emailed", %{conn: conn} do
       conn =
@@ -92,6 +112,20 @@ defmodule ShelleyPlantsWeb.ContactControllerTest do
       assert html =~ "jane@example.com"
       assert Outreach.list_contact_messages(@admin) == []
       assert_no_email_sent()
+    end
+
+    test "a failed signup from the home page re-shows the home page", %{conn: conn} do
+      conn =
+        post(conn, ~p"/newsletter", %{
+          "newsletter_subscriber" => %{"email" => "home@example.com"},
+          "return_to" => "home"
+        })
+
+      html = html_response(conn, 422)
+      assert html =~ ~s(id="home-newsletter-form")
+      assert html =~ "Please complete the verification check"
+      assert html =~ "home@example.com"
+      assert Outreach.list_subscribers(@admin) == []
     end
 
     test "the newsletter signup is not saved", %{conn: conn} do

@@ -84,6 +84,51 @@ defmodule ShelleyPlants.Outreach do
 
   def get_subscriber!(%Scope{admin?: true}, id), do: Repo.get!(NewsletterSubscriber, id)
 
+  @unsubscribe_salt "newsletter unsubscribe"
+
+  @doc """
+  A signed, non-expiring token identifying a subscriber, for the unsubscribe
+  link in newsletter emails. It can't be guessed or altered.
+  """
+  def unsubscribe_token(%NewsletterSubscriber{id: id}) do
+    Phoenix.Token.sign(secret_key_base(), @unsubscribe_salt, id)
+  end
+
+  @doc """
+  Looks up the subscriber an unsubscribe token belongs to.
+
+  Returns `{:ok, subscriber}`, `{:ok, nil}` if they've already been removed,
+  or `{:error, :invalid}` for a bad token.
+  """
+  def subscriber_for_unsubscribe_token(token) when is_binary(token) do
+    case Phoenix.Token.verify(secret_key_base(), @unsubscribe_salt, token, max_age: :infinity) do
+      {:ok, id} -> {:ok, Repo.get(NewsletterSubscriber, id)}
+      {:error, _} -> {:error, :invalid}
+    end
+  end
+
+  @doc """
+  Removes the subscriber an unsubscribe token belongs to. Safe to call more
+  than once: an already-removed subscriber still returns `:ok`.
+  """
+  def unsubscribe(token) when is_binary(token) do
+    case subscriber_for_unsubscribe_token(token) do
+      {:ok, nil} ->
+        :ok
+
+      {:ok, subscriber} ->
+        Repo.delete!(subscriber, allow_stale: true)
+        :ok
+
+      error ->
+        error
+    end
+  end
+
+  defp secret_key_base do
+    Application.fetch_env!(:shelley_plants, ShelleyPlantsWeb.Endpoint)[:secret_key_base]
+  end
+
   @doc "Removes someone from the newsletter list. Requires an admin scope."
   def delete_subscriber(%Scope{admin?: true}, %NewsletterSubscriber{} = subscriber) do
     Repo.delete(subscriber)
