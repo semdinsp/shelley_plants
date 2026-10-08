@@ -27,6 +27,9 @@ defmodule ShelleyPlantsWeb.Router do
 
     get "/", PageController, :home
     get "/about", PageController, :about
+    get "/contact", ContactController, :show
+    post "/contact", ContactController, :create_message
+    post "/newsletter", ContactController, :subscribe
     get "/garden-planner/export", GardenExportController, :export
     get "/design-garden/export", GardenExportController, :export
   end
@@ -90,6 +93,8 @@ defmodule ShelleyPlantsWeb.Router do
     live_session :require_admin,
       on_mount: [{ShelleyPlantsWeb.UserAuth, :require_admin}] do
       live "/", Admin.DashboardLive, :index
+      live "/contact-messages", Admin.ContactMessagesLive, :index
+      live "/newsletter", Admin.NewsletterLive, :index
     end
   end
 
