@@ -6,5 +6,7 @@ defmodule ShelleyPlantsWeb.PageHTML do
   """
   use ShelleyPlantsWeb, :html
 
+  import ShelleyPlantsWeb.OutreachComponents
+
   embed_templates "page_html/*"
 end
