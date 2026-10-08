@@ -1,0 +1,128 @@
+<Layouts.flash_group flash={@flash} />
+
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer>
+</script>
+
+<%!-- Page header --%>
+<section class="bg-base-200/40 border-b border-base-200">
+  <div class="mx-auto max-w-5xl px-6 py-16 lg:px-8 text-center">
+    <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-4">
+      Get in touch
+    </p>
+    <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">Contact Us</h1>
+    <p class="mt-4 text-base text-base-content/70 max-w-xl mx-auto">
+      Questions about a plant, an order or your garden? Send us a note, or sign up
+      for our newsletter to hear about plant sales and events.
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="mx-auto max-w-5xl px-6 py-16 lg:px-8">
+    <div class="grid grid-cols-1 gap-10 lg:grid-cols-5">
+      <%!-- Contact form --%>
+      <div id="contact" class="lg:col-span-3 card bg-base-100 border border-base-200 shadow-sm">
+        <div class="card-body p-6 sm:p-8">
+          <h2 class="text-2xl font-bold tracking-tight">Send us a message</h2>
+          <p class="text-sm text-base-content/60 mb-2">We usually reply within a few days.</p>
+
+          <.form
+            :let={f}
+            for={@contact_form}
+            id="contact-form"
+            action={~p"/contact"}
+            class="relative space-y-1"
+          >
+            <.honeypot />
+            <.input field={f[:name]} label="Name" autocomplete="name" required />
+            <.input field={f[:email]} type="email" label="Email" autocomplete="email" required />
+            <.input field={f[:message]} type="textarea" label="Message" rows="6" required />
+            <div class="pt-2">
+              <.turnstile
+                site_key={@turnstile_site_key}
+                action="contact"
+                error={@contact_captcha_error}
+              />
+            </div>
+            <div class="pt-4">
+              <.button class="btn btn-primary gap-2">
+                <.icon name="hero-paper-airplane" class="size-5" /> Send message
+              </.button>
+            </div>
+          </.form>
+        </div>
+      </div>
+
+      <div class="lg:col-span-2 space-y-8">
+        <%!-- Newsletter --%>
+        <div id="newsletter" class="card bg-primary/5 border border-primary/20">
+          <div class="card-body p-6 sm:p-8">
+            <div class="flex items-center gap-2 text-primary">
+              <.icon name="hero-envelope-open" class="size-6" />
+              <h2 class="text-xl font-bold tracking-tight text-base-content">
+                Join our newsletter
+              </h2>
+            </div>
+            <p class="text-sm text-base-content/70">
+              News about what's in stock, upcoming plant sales and events, and tips for
+              growing native gardens.
+            </p>
+
+            <.form
+              :let={f}
+              for={@newsletter_form}
+              id="newsletter-form"
+              action={~p"/newsletter"}
+              class="relative space-y-1"
+            >
+              <.honeypot />
+              <.input field={f[:name]} label="Name (optional)" autocomplete="name" />
+              <.input
+                field={f[:email]}
+                type="email"
+                label="Email"
+                autocomplete="email"
+                required
+              />
+              <div class="pt-2">
+                <.turnstile
+                  site_key={@turnstile_site_key}
+                  action="newsletter"
+                  error={@newsletter_captcha_error}
+                />
+              </div>
+              <div class="pt-4">
+                <.button class="btn btn-primary w-full gap-2">
+                  <.icon name="hero-check" class="size-5" /> Sign me up
+                </.button>
+              </div>
+            </.form>
+          </div>
+        </div>
+
+        <%!-- Other ways to reach us --%>
+        <div class="space-y-4 text-sm text-base-content/70 px-1">
+          <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+            Other ways to reach us
+          </p>
+          <div class="flex items-start gap-3">
+            <.icon name="hero-phone" class="size-5 text-primary mt-0.5 shrink-0" />
+            <a href="tel:+16136176524" class="font-medium text-base-content hover:text-primary">
+              613-617-6524
+            </a>
+          </div>
+          <div class="flex items-start gap-3">
+            <.icon name="hero-map-pin" class="size-5 text-primary mt-0.5 shrink-0" />
+            <div>
+              <p class="font-medium text-base-content">1107 Althorpe Road</p>
+              <p>Westport, ON, K0G 1X0</p>
+              <.link href={~p"/about"} class="text-primary hover:underline text-xs">
+                Map and directions
+              </.link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

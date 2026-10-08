@@ -1,7 +1,7 @@
 defmodule ShelleyPlantsWeb.Admin.DashboardLive do
   use ShelleyPlantsWeb, :live_view
 
-  alias ShelleyPlants.Catalog
+  alias ShelleyPlants.{Catalog, Outreach}
 
   @impl true
   def render(assigns) do
@@ -59,6 +59,21 @@ defmodule ShelleyPlantsWeb.Admin.DashboardLive do
         </div>
       </section>
 
+      <%!-- Contact messages and newsletter --%>
+      <section class="mt-12 space-y-4">
+        <h2 class="text-lg font-semibold">Messages &amp; Newsletter</h2>
+        <div class="flex flex-col sm:flex-row flex-wrap gap-3">
+          <.link navigate={~p"/admin/contact-messages"} class="btn btn-outline gap-2">
+            <.icon name="hero-inbox" /> Contact messages
+            <span class="badge badge-sm">{@contact_message_count}</span>
+          </.link>
+          <.link navigate={~p"/admin/newsletter"} class="btn btn-outline gap-2">
+            <.icon name="hero-envelope-open" /> Newsletter signups
+            <span class="badge badge-sm">{@subscriber_count}</span>
+          </.link>
+        </div>
+      </section>
+
       <%!-- Guides --%>
       <section class="mt-12">
         <h2 class="text-lg font-semibold mb-4">Guides</h2>
@@ -86,6 +101,9 @@ defmodule ShelleyPlantsWeb.Admin.DashboardLive do
        plant_count: length(plants),
        with_picture_count: with_picture,
        without_picture_count: length(plants) - with_picture,
+       contact_message_count:
+         length(Outreach.list_contact_messages(socket.assigns.current_scope)),
+       subscriber_count: length(Outreach.list_subscribers(socket.assigns.current_scope)),
        guides: ShelleyPlantsWeb.Admin.GuideController.index()
      )}
   end
