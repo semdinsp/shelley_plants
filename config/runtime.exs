@@ -33,6 +33,29 @@ config :shelley_plants, :mail_sender,
   address: mail_from,
   reply_to: System.get_env("MAIL_REPLY_TO", mail_from)
 
+# Contact form messages go to CONTACT_EMAIL; every contact and newsletter
+# email is also BCC'd to EMAIL_BCC (comma-separated).
+config :shelley_plants, :outreach,
+  contact_recipient: System.get_env("CONTACT_EMAIL", "shellsphoto44@gmail.com"),
+  bcc:
+    "EMAIL_BCC"
+    |> System.get_env("scott.sproule@gmail.com")
+    |> String.split(",", trim: true)
+    |> Enum.map(&String.trim/1)
+
+# Cloudflare Turnstile (bot check on the contact and newsletter forms).
+# Outside prod, default to Cloudflare's test keys, which always pass:
+# https://developers.cloudflare.com/turnstile/troubleshooting/testing/
+# In prod both must be set, or the forms reject every submission.
+{turnstile_site_key, turnstile_secret_key} =
+  if config_env() == :prod,
+    do: {nil, nil},
+    else: {"1x00000000000000000000AA", "1x0000000000000000000000000000000AA"}
+
+config :shelley_plants, :turnstile,
+  site_key: System.get_env("TURNSTILE_SITE_KEY", turnstile_site_key),
+  secret_key: System.get_env("TURNSTILE_SECRET_KEY", turnstile_secret_key)
+
 # In dev, send real email through Amazon SES (instead of the local
 # /dev/mailbox preview) whenever AWS credentials are in the environment:
 #
