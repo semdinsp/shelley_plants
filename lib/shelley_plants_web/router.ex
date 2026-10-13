@@ -81,6 +81,21 @@ defmodule ShelleyPlantsWeb.Router do
     get "/design-garden", GardenPlannerRedirectController, :index
   end
 
+  ## Public, read-only MCP server (no auth, rate limited per IP).
+  ## Must come before the admin "/mcp" scope, whose forward would match it.
+
+  pipeline :public_mcp do
+    plug :accepts, ["json"]
+    plug ShelleyPlantsWeb.Plugs.RateLimit, bucket: :public_mcp
+  end
+
+  scope "/mcp/public" do
+    pipe_through :public_mcp
+
+    forward "/", Anubis.Server.Transport.StreamableHTTP.Plug,
+      server: ShelleyPlants.MCP.Public.Server
+  end
+
   ## MCP server
   ## Authenticated via a bearer token created on /settings (Accounts.McpToken).
 
