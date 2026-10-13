@@ -144,7 +144,7 @@ defmodule ShelleyPlantsWeb.PlantLive.Show do
   defp capitalize(str), do: String.capitalize(str)
 
   @impl true
-  def mount(%{"id" => id}, _session, socket) do
+  def mount(%{"slug" => slug}, _session, socket) do
     if connected?(socket) do
       Catalog.subscribe_plants()
     end
@@ -152,7 +152,7 @@ defmodule ShelleyPlantsWeb.PlantLive.Show do
     {:ok,
      socket
      |> then(fn socket ->
-       plant = Catalog.get_plant!(id)
+       plant = Catalog.get_plant_by_slug!(slug)
        socket |> assign(:page_title, plant.common_name) |> assign(:plant, plant)
      end)}
   end
