@@ -123,7 +123,11 @@ defmodule ShelleyPlantsWeb.StructuredData do
       "@id" => url <> "#product",
       "name" => plant.common_name,
       "alternateName" => Seo.latin_name(plant),
-      "description" => plant.ecological_benefit || Seo.plant_description(plant),
+      "description" =>
+        if(plant.ecological_benefit,
+          do: Seo.squish(plant.ecological_benefit),
+          else: Seo.plant_description(plant)
+        ),
       "image" => if(plant.picture, do: [Seo.absolute_url(plant.picture)], else: []),
       "url" => url,
       "category" => plant.category,
@@ -154,7 +158,7 @@ defmodule ShelleyPlantsWeb.StructuredData do
     ]
     |> Enum.reject(fn {_name, value} -> value in [nil, false, ""] end)
     |> Enum.map(fn {name, value} ->
-      %{"@type" => "PropertyValue", "name" => name, "value" => value}
+      %{"@type" => "PropertyValue", "name" => name, "value" => Seo.squish(value)}
     end)
   end
 

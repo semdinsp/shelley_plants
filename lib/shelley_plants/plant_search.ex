@@ -227,6 +227,7 @@ defmodule ShelleyPlants.PlantSearch do
       deer_resistant: plant.deer_resistant,
       url: page_url(plant)
     }
+    |> tidy()
   end
 
   @doc """
@@ -250,6 +251,15 @@ defmodule ShelleyPlants.PlantSearch do
       notes: plant.notes,
       image_url: plant.picture && ShelleyPlantsWeb.Seo.absolute_url(plant.picture)
     })
+    |> tidy()
+  end
+
+  # Collapse stray double and non-breaking spaces in text values
+  defp tidy(map) do
+    Map.new(map, fn
+      {k, v} when is_binary(v) -> {k, ShelleyPlantsWeb.Seo.squish(v)}
+      pair -> pair
+    end)
   end
 
   defp native_status(plant) do

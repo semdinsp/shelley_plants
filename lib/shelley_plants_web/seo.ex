@@ -266,5 +266,6 @@ defmodule ShelleyPlantsWeb.Seo do
     end
   end
 
-  defp squish(text), do: text |> String.trim() |> String.replace(~r/\s+/, " ")
+  @doc "Trims text and collapses runs of whitespace (including non-breaking spaces)."
+  def squish(text), do: text |> String.replace(~r/[\s\x{00A0}]+/u, " ") |> String.trim()
 end
