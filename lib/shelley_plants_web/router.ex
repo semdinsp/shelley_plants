@@ -34,6 +34,13 @@ defmodule ShelleyPlantsWeb.Router do
     plug ShelleyPlantsWeb.Plugs.McpAuth
   end
 
+  # Crawler files: no session or CSRF needed.
+  scope "/", ShelleyPlantsWeb do
+    get "/sitemap.xml", CrawlerController, :sitemap
+    get "/robots.txt", CrawlerController, :robots
+    get "/llms.txt", CrawlerController, :llms
+  end
+
   scope "/", ShelleyPlantsWeb do
     pipe_through :browser
 
@@ -58,20 +65,35 @@ defmodule ShelleyPlantsWeb.Router do
   ## PlantLive.Form has its own on_mount :require_admin guard.
 
   scope "/", ShelleyPlantsWeb do
-    pipe_through :browser
+    pipe_through [:browser, ShelleyPlantsWeb.Plugs.RedirectPlantUuid]
 
     live_session :plants,
       on_mount: [{ShelleyPlantsWeb.UserAuth, :mount_current_scope}] do
       live "/plants", PlantLive.Index, :index
       live "/plants/gallery", PlantLive.Gallery, :index
       live "/plants/new", PlantLive.Form, :new
-      live "/plants/:id", PlantLive.Show, :show
-      live "/plants/:id/edit", PlantLive.Form, :edit
+      live "/plants/:slug", PlantLive.Show, :show
+      live "/plants/:slug/edit", PlantLive.Form, :edit
       live "/garden-planner", GardenLive.Design, :index
     end
 
     # Old URL, kept as a redirect so existing links/bookmarks still work.
     get "/design-garden", GardenPlannerRedirectController, :index
+  end
+
+  ## Public, read-only MCP server (no auth, rate limited per IP).
+  ## Must come before the admin "/mcp" scope, whose forward would match it.
+
+  pipeline :public_mcp do
+    plug :accepts, ["json"]
+    plug ShelleyPlantsWeb.Plugs.RateLimit, bucket: :public_mcp
+  end
+
+  scope "/mcp/public" do
+    pipe_through :public_mcp
+
+    forward "/", Anubis.Server.Transport.StreamableHTTP.Plug,
+      server: ShelleyPlants.MCP.Public.Server
   end
 
   ## MCP server

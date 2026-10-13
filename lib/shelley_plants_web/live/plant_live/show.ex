@@ -2,6 +2,7 @@ defmodule ShelleyPlantsWeb.PlantLive.Show do
   use ShelleyPlantsWeb, :live_view
 
   alias ShelleyPlants.Catalog
+  alias ShelleyPlantsWeb.Seo
 
   @impl true
   def render(assigns) do
@@ -78,6 +79,12 @@ defmodule ShelleyPlantsWeb.PlantLive.Show do
               <.fact icon="hero-swatch" label="Flower colour" value={@plant.flower_color} />
               <.fact icon="hero-calendar" label="Bloom time" value={@plant.bloom_time} />
               <.fact icon="hero-arrows-up-down" label="Height" value={@plant.height} />
+              <.fact
+                :if={@plant.spread_cm}
+                icon="hero-arrows-right-left"
+                label="Spread"
+                value={"#{@plant.spread_cm} cm"}
+              />
               <.fact icon="hero-sun" label="Light" value={@plant.light_requirements} />
               <.fact icon="hero-beaker" label="Moisture" value={@plant.moisture} />
               <.fact
@@ -108,6 +115,16 @@ defmodule ShelleyPlantsWeb.PlantLive.Show do
               <h2 class="text-sm font-semibold text-base-content mb-2">Notes</h2>
               <p class="text-sm text-base-content/70 leading-relaxed">{@plant.notes}</p>
             </div>
+
+            <%!-- More of this category in the shop --%>
+            <.link
+              :if={@plant.category}
+              navigate={~p"/plants/gallery?category=#{@plant.category}"}
+              class="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+            >
+              See more {category_plural(@plant.category)} in the shop
+              <.icon name="hero-arrow-right" class="size-4" />
+            </.link>
 
             <%!-- Near Native definition --%>
             <p
@@ -140,11 +157,14 @@ defmodule ShelleyPlantsWeb.PlantLive.Show do
     """
   end
 
+  defp category_plural("Grass"), do: "native grasses"
+  defp category_plural(category), do: "native #{String.downcase(category)}s"
+
   defp capitalize(nil), do: "—"
   defp capitalize(str), do: String.capitalize(str)
 
   @impl true
-  def mount(%{"id" => id}, _session, socket) do
+  def mount(%{"slug" => slug}, _session, socket) do
     if connected?(socket) do
       Catalog.subscribe_plants()
     end
@@ -152,8 +172,8 @@ defmodule ShelleyPlantsWeb.PlantLive.Show do
     {:ok,
      socket
      |> then(fn socket ->
-       plant = Catalog.get_plant!(id)
-       socket |> assign(:page_title, plant.common_name) |> assign(:plant, plant)
+       plant = Catalog.get_plant_by_slug!(slug)
+       socket |> assign(Seo.plant_meta(plant)) |> assign(:plant, plant)
      end)}
   end
 
@@ -162,7 +182,7 @@ defmodule ShelleyPlantsWeb.PlantLive.Show do
         {:updated, %ShelleyPlants.Catalog.Plant{id: id} = plant},
         %{assigns: %{plant: %{id: id}}} = socket
       ) do
-    {:noreply, assign(socket, :plant, plant)}
+    {:noreply, socket |> assign(Seo.plant_meta(plant)) |> assign(:plant, plant)}
   end
 
   def handle_info(

@@ -19,7 +19,7 @@ defmodule ShelleyPlantsWeb do
 
   def static_paths,
     do: ~w(assets fonts images favicon.ico favicon.svg apple-touch-icon.png
-           android-chrome-192.png android-chrome-512.png site.webmanifest robots.txt)
+           android-chrome-192.png android-chrome-512.png site.webmanifest)
 
   def router do
     quote do

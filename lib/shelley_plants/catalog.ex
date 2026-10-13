@@ -66,6 +66,16 @@ defmodule ShelleyPlants.Catalog do
   def get_plant!(id), do: Repo.get!(Plant, id)
 
   @doc """
+  Gets a plant by its URL slug (e.g. "aquilegia-canadensis").
+
+  Raises `Ecto.NoResultsError` if there's no such plant.
+  """
+  def get_plant_by_slug!(slug), do: Repo.get_by!(Plant, slug: slug)
+
+  @doc "Gets a plant by its URL slug, or nil."
+  def get_plant_by_slug(slug) when is_binary(slug), do: Repo.get_by(Plant, slug: slug)
+
+  @doc """
   Creates a plant. Requires an admin scope.
   """
   def create_plant(%Scope{admin?: true} = _scope, attrs) do

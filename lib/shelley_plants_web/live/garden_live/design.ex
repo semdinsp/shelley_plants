@@ -45,7 +45,13 @@ defmodule ShelleyPlantsWeb.GardenLive.Design do
   def mount(_params, _session, socket) do
     {:ok,
      socket
-     |> assign(:page_title, "Plan Your Garden")
+     |> assign(:page_title, "Plan Your Garden: Native Plant Garden Planner")
+     |> assign(
+       :meta_description,
+       "Free native garden planner: enter your garden's size, sun and moisture to get " <>
+         "a planting list of Ontario native wildflowers and grasses from Biosphere Native Plants."
+     )
+     |> assign(:canonical_path, ~p"/garden-planner")
      |> assign(:height_structures, @height_structures)
      |> assign(:sun_options, @sun_options)
      |> assign(:moisture_options, @moisture_options)

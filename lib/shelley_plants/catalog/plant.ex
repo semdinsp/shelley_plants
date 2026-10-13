@@ -7,6 +7,9 @@ defmodule ShelleyPlants.Catalog.Plant do
   @sun_levels ~w(full_sun part_shade full_shade)
   @moisture_levels ~w(wet average dry very_dry)
 
+  # URLs use the slug (/plants/aquilegia-canadensis), so ~p"/plants/#{plant}"
+  # builds slug URLs everywhere.
+  @derive {Phoenix.Param, key: :slug}
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "plants" do
@@ -33,6 +36,7 @@ defmodule ShelleyPlants.Catalog.Plant do
     field :moisture_level, :string
     field :moisture_unacceptable, {:array, :string}, default: []
     field :picture, :string
+    field :slug, :string
 
     timestamps(type: :utc_datetime)
   end
@@ -69,6 +73,33 @@ defmodule ShelleyPlants.Catalog.Plant do
     |> validate_number(:height_max_cm, greater_than: 0, less_than: 2000)
     |> validate_number(:spread_cm, greater_than: 0, less_than: 500)
     |> unique_constraint(:latin_name)
+    |> put_slug()
+    |> unique_constraint(:slug)
+  end
+
+  @doc """
+  The URL slug for a Latin name: lowercase words joined by hyphens, ignoring
+  anything in brackets. "Aquilegia canadensis" becomes "aquilegia-canadensis".
+
+  The migration that added the column copies this rule; keep them in sync.
+  """
+  def slugify(latin_name) when is_binary(latin_name) do
+    latin_name
+    |> String.replace(~r/\(.*?\)/, "")
+    |> String.downcase()
+    |> String.replace(~r/[^a-z0-9]+/, "-")
+    |> String.trim("-")
+  end
+
+  # The slug follows the Latin name, so renaming a plant changes its URL.
+  defp put_slug(changeset) do
+    case get_field(changeset, :latin_name) do
+      latin_name when is_binary(latin_name) and latin_name != "" ->
+        put_change(changeset, :slug, slugify(latin_name))
+
+      _ ->
+        changeset
+    end
   end
 
   # Convert empty string submissions from select prompts to nil

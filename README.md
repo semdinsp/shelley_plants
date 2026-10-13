@@ -32,6 +32,37 @@ Production (Fly.io):
   The architecture:
 
 
+## Public MCP endpoint (for AI agents)
+
+`https://biosphere-native-plants.ca/mcp/public` is a public, read-only MCP
+server (Streamable HTTP, no authentication) that lets AI agents search the
+plant catalogue. It only returns what the public plant pages show, and is
+rate limited to 60 requests per minute per IP.
+
+Tools:
+
+- `search_plants`: filter by name, category, light, moisture, height, bloom
+  season, flower colour, deer resistance, wildlife (e.g. hummingbirds) and
+  Ontario-native status (up to 25 results)
+- `get_plant`: full details for one plant, by slug or Latin name
+- `list_filters`: valid values for each filter
+- `recommend_plants`: plants for a garden's light, moisture, height and
+  wildlife goal (uses the garden planner's matching)
+
+To connect from Claude (claude.ai or the desktop app): **Settings ›
+Connectors › Add custom connector**, name it "Biosphere Native Plants" and
+enter the URL `https://biosphere-native-plants.ca/mcp/public`. No
+authentication settings are needed.
+
+From Claude Code:
+
+```bash
+claude mcp add --transport http biosphere-plants https://biosphere-native-plants.ca/mcp/public
+```
+
+The separate admin endpoint at `/mcp` (with read/write tools) still requires
+a bearer token created on the Settings page.
+
 ## Learn more
 
 * Official website: https://www.phoenixframework.org/

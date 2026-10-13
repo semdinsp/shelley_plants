@@ -265,7 +265,8 @@ defmodule ShelleyPlantsWeb.PlantLiveTest do
                form_lv
                |> form("#plant-form", plant: @update_attrs)
                |> render_submit()
-               |> follow_redirect(conn, ~p"/plants/#{plant}")
+               # The slug follows the (changed) Latin name
+               |> follow_redirect(conn, ~p"/plants/baptisia-australis")
 
       assert render(show_lv) =~ "Plant updated successfully"
       assert render(show_lv) =~ "Blue Wild Indigo (updated)"
@@ -314,7 +315,9 @@ defmodule ShelleyPlantsWeb.PlantLiveTest do
       {:ok, view, _html} = live(conn, ~p"/plants/gallery")
 
       assert {:error, {:live_redirect, %{to: to}}} =
-               view |> element(~s|a[tabindex="-1"][href="/plants/#{plant.id}"]|) |> render_click()
+               view
+               |> element(~s|a[tabindex="-1"][href="/plants/#{plant.slug}"]|)
+               |> render_click()
 
       assert to == ~p"/plants/#{plant}"
     end

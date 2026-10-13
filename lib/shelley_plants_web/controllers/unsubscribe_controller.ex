@@ -23,6 +23,6 @@ defmodule ShelleyPlantsWeb.UnsubscribeController do
   end
 
   defp render_page(conn, state, assigns \\ []) do
-    render(conn, :show, [page_title: "Unsubscribe", state: state] ++ assigns)
+    render(conn, :show, [page_title: "Unsubscribe", robots: "noindex", state: state] ++ assigns)
   end
 end

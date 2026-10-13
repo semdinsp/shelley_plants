@@ -84,6 +84,13 @@ defmodule ShelleyPlantsWeb.ContactController do
   defp render_page(conn, assigns \\ []) do
     render(conn, :show,
       page_title: "Contact Us",
+      meta_description:
+        "Contact Biosphere Native Plants, an Ontario native plant nursery near Westport, " <>
+          "Eastern Ontario: send a message, call 613-617-6524, or join the newsletter " <>
+          "for plant sales and events.",
+      canonical_path: ~p"/contact",
+      json_ld:
+        ShelleyPlantsWeb.StructuredData.business_page("ContactPage", "/contact", "Contact Us"),
       turnstile_site_key: Turnstile.site_key(),
       contact_form:
         Phoenix.Component.to_form(
@@ -101,14 +108,10 @@ defmodule ShelleyPlantsWeb.ContactController do
   defp bot?(params), do: params["website"] not in [nil, ""]
 
   defp verified?(conn, params, action) do
-    Turnstile.verify(params["cf-turnstile-response"], action, client_ip(conn)) == :ok
-  end
-
-  # Fly's proxy passes the visitor's IP in Fly-Client-IP.
-  defp client_ip(conn) do
-    case get_req_header(conn, "fly-client-ip") do
-      [ip | _] -> ip
-      [] -> conn.remote_ip |> :inet.ntoa() |> to_string()
-    end
+    Turnstile.verify(
+      params["cf-turnstile-response"],
+      action,
+      ShelleyPlantsWeb.ClientIp.from_conn(conn)
+    ) == :ok
   end
 end

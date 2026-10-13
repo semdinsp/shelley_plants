@@ -35,6 +35,9 @@ config :shelley_plants, ShelleyPlantsWeb.Endpoint,
   pubsub_server: ShelleyPlants.PubSub,
   live_view: [signing_salt: "9QLolbg2"]
 
+# Per-IP rate limits (ShelleyPlantsWeb.Plugs.RateLimit)
+config :shelley_plants, :rate_limits, public_mcp: [limit: 60, window_seconds: 60]
+
 # Configure the mailer
 #
 # By default it uses the "Local" adapter which stores the emails

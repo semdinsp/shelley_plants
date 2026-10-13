@@ -2,7 +2,7 @@ defmodule ShelleyPlantsWeb.PlantLive.Gallery do
   use ShelleyPlantsWeb, :live_view
 
   alias ShelleyPlants.Catalog
-  alias ShelleyPlantsWeb.PlantImages
+  alias ShelleyPlantsWeb.{PlantImages, Seo}
 
   @categories ~w(Wildflower Grass Shrub Tree)
 
@@ -62,10 +62,13 @@ defmodule ShelleyPlantsWeb.PlantLive.Gallery do
     category = Map.get(params, "category")
     category = if category in @categories, do: category, else: nil
 
+    plants = Catalog.list_plants_by_category(category)
+
     {:noreply,
      socket
      |> assign(:category, category)
-     |> assign(:plants, Catalog.list_plants_by_category(category))}
+     |> assign(:plants, plants)
+     |> assign(Seo.plant_list_meta(:gallery, category, plants))}
   end
 
   # ── Coming soon (category with no plants yet) ─────────────────────────────────

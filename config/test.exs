@@ -54,3 +54,8 @@ config :phoenix,
 
 # Stub Cloudflare Turnstile verification (see ShelleyPlants.Turnstile)
 config :shelley_plants, :turnstile_req_options, plug: {Req.Test, ShelleyPlants.Turnstile}
+
+# Effectively no rate limit in tests; RateLimitTest uses its own bucket
+config :shelley_plants, :rate_limits,
+  public_mcp: [limit: 100_000, window_seconds: 60],
+  test_bucket: [limit: 3, window_seconds: 3600]

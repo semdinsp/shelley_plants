@@ -15,7 +15,9 @@ defmodule ShelleyPlants.Application do
         ShelleyPlants.Repo,
         {DNSCluster, query: Application.get_env(:shelley_plants, :dns_cluster_query) || :ignore},
         {Phoenix.PubSub, name: ShelleyPlants.PubSub},
-        {ShelleyPlants.MCP.PlantsServer, transport: mcp_transport()}
+        ShelleyPlants.RateLimiter,
+        {ShelleyPlants.MCP.PlantsServer, transport: mcp_transport()},
+        {ShelleyPlants.MCP.Public.Server, transport: mcp_transport()}
       ] ++
         mcp_sse_reaper() ++
         [

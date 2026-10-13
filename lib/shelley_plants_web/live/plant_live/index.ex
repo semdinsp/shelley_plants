@@ -2,7 +2,7 @@ defmodule ShelleyPlantsWeb.PlantLive.Index do
   use ShelleyPlantsWeb, :live_view
 
   alias ShelleyPlants.Catalog
-  alias ShelleyPlantsWeb.PlantImages
+  alias ShelleyPlantsWeb.{PlantImages, Seo}
 
   @categories ~w(Wildflower Grass Shrub Tree)
 
@@ -123,10 +123,13 @@ defmodule ShelleyPlantsWeb.PlantLive.Index do
     category = Map.get(params, "category")
     category = if category in @categories, do: category, else: nil
 
+    plants = Catalog.list_plants_by_category(category)
+
     {:noreply,
      socket
      |> assign(:category, category)
-     |> stream(:plants, Catalog.list_plants_by_category(category), reset: true)}
+     |> assign(Seo.plant_list_meta(:species_list, category, plants))
+     |> stream(:plants, plants, reset: true)}
   end
 
   @impl true
