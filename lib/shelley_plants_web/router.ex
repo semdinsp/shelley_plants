@@ -34,6 +34,13 @@ defmodule ShelleyPlantsWeb.Router do
     plug ShelleyPlantsWeb.Plugs.McpAuth
   end
 
+  # Crawler files: no session or CSRF needed.
+  scope "/", ShelleyPlantsWeb do
+    get "/sitemap.xml", CrawlerController, :sitemap
+    get "/robots.txt", CrawlerController, :robots
+    get "/llms.txt", CrawlerController, :llms
+  end
+
   scope "/", ShelleyPlantsWeb do
     pipe_through :browser
 
