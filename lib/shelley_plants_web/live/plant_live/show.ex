@@ -79,6 +79,12 @@ defmodule ShelleyPlantsWeb.PlantLive.Show do
               <.fact icon="hero-swatch" label="Flower colour" value={@plant.flower_color} />
               <.fact icon="hero-calendar" label="Bloom time" value={@plant.bloom_time} />
               <.fact icon="hero-arrows-up-down" label="Height" value={@plant.height} />
+              <.fact
+                :if={@plant.spread_cm}
+                icon="hero-arrows-right-left"
+                label="Spread"
+                value={"#{@plant.spread_cm} cm"}
+              />
               <.fact icon="hero-sun" label="Light" value={@plant.light_requirements} />
               <.fact icon="hero-beaker" label="Moisture" value={@plant.moisture} />
               <.fact
@@ -110,6 +116,16 @@ defmodule ShelleyPlantsWeb.PlantLive.Show do
               <p class="text-sm text-base-content/70 leading-relaxed">{@plant.notes}</p>
             </div>
 
+            <%!-- More of this category in the shop --%>
+            <.link
+              :if={@plant.category}
+              navigate={~p"/plants/gallery?category=#{@plant.category}"}
+              class="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+            >
+              See more {category_plural(@plant.category)} in the shop
+              <.icon name="hero-arrow-right" class="size-4" />
+            </.link>
+
             <%!-- Near Native definition --%>
             <p
               :if={@plant.near_native && !@plant.native_ontario}
@@ -140,6 +156,9 @@ defmodule ShelleyPlantsWeb.PlantLive.Show do
     </div>
     """
   end
+
+  defp category_plural("Grass"), do: "native grasses"
+  defp category_plural(category), do: "native #{String.downcase(category)}s"
 
   defp capitalize(nil), do: "—"
   defp capitalize(str), do: String.capitalize(str)

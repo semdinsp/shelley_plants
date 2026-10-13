@@ -41,6 +41,13 @@ defmodule ShelleyPlantsWeb.SeoTest do
       %{plant: plant, doc: page(conn, ~p"/plants/#{plant}")}
     end
 
+    test "shows the spread and links to more of the category in the shop", %{doc: doc} do
+      text = doc |> LazyHTML.query("article") |> LazyHTML.text()
+      assert text =~ "Spread"
+      assert text =~ "30 cm"
+      assert attr(doc, ~s(article a[href="/plants/gallery?category=Wildflower"]), "href")
+    end
+
     test "has a one-line, descriptive title", %{doc: doc} do
       assert title(doc) ==
                "Canada Columbine (Aquilegia canadensis), Ontario native wildflower · Biosphere Native Plants"
