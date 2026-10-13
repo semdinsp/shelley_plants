@@ -4,12 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title
-      default="Biosphere Native Plants"
-      suffix={assigns[:page_title] && " · Biosphere Native Plants"}
-    >
-      {assigns[:page_title]}
-    </.live_title>
+    <ShelleyPlantsWeb.Seo.title_tag page_title={assigns[:page_title]} />
+    <ShelleyPlantsWeb.Seo.meta_tags page={assigns} />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" href="/android-chrome-192.png" type="image/png" sizes="192x192" />
     <link rel="icon" href="/android-chrome-512.png" type="image/png" sizes="512x512" />

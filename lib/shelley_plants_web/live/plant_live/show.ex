@@ -2,6 +2,7 @@ defmodule ShelleyPlantsWeb.PlantLive.Show do
   use ShelleyPlantsWeb, :live_view
 
   alias ShelleyPlants.Catalog
+  alias ShelleyPlantsWeb.Seo
 
   @impl true
   def render(assigns) do
@@ -153,7 +154,7 @@ defmodule ShelleyPlantsWeb.PlantLive.Show do
      socket
      |> then(fn socket ->
        plant = Catalog.get_plant_by_slug!(slug)
-       socket |> assign(:page_title, plant.common_name) |> assign(:plant, plant)
+       socket |> assign(Seo.plant_meta(plant)) |> assign(:plant, plant)
      end)}
   end
 
@@ -162,7 +163,7 @@ defmodule ShelleyPlantsWeb.PlantLive.Show do
         {:updated, %ShelleyPlants.Catalog.Plant{id: id} = plant},
         %{assigns: %{plant: %{id: id}}} = socket
       ) do
-    {:noreply, assign(socket, :plant, plant)}
+    {:noreply, socket |> assign(Seo.plant_meta(plant)) |> assign(:plant, plant)}
   end
 
   def handle_info(
