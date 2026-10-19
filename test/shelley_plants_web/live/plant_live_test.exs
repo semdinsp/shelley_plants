@@ -321,6 +321,16 @@ defmodule ShelleyPlantsWeb.PlantLiveTest do
 
       assert to == ~p"/plants/#{plant}"
     end
+
+    test "card fact icons have tooltips naming what they mean", %{conn: conn} do
+      plant_fixture(%{latin_name: "Cervus nonedibilis", deer_resistant: true})
+      {:ok, view, _html} = live(conn, ~p"/plants/gallery")
+
+      assert has_element?(view, ~s|.tooltip[data-tip="Deer resistant: Yes"]|)
+      assert has_element?(view, ~s|.tooltip[data-tip^="Height: "]|)
+      assert has_element?(view, ~s|.tooltip[data-tip^="Light: "]|)
+      assert has_element?(view, ~s|.tooltip[data-tip^="Moisture: "]|)
+    end
   end
 
   describe "Form — moisture level" do

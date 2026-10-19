@@ -190,9 +190,16 @@ defmodule ShelleyPlantsWeb.PlantLive.Gallery do
 
   defp fact(assigns) do
     ~H"""
-    <div class="flex items-start gap-1.5 min-w-0">
+    <%!-- The tooltip names the icon ("Deer resistant: Yes") and shows the full
+         value when it's truncated; tabindex lets a tap or keyboard focus open it. --%>
+    <div
+      class="tooltip tooltip-top flex items-start gap-1.5 min-w-0 cursor-help text-left"
+      data-tip={"#{@label}: #{@value}"}
+      tabindex="0"
+    >
       <.icon name={@icon} class="size-4 shrink-0 mt-0.5 text-primary" />
-      <span class="truncate" title={@value}>{@value}</span>
+      <span class="sr-only">{@label}:</span>
+      <span class="truncate">{@value}</span>
     </div>
     """
   end
