@@ -35,6 +35,22 @@ config :shelley_plants, ShelleyPlantsWeb.Endpoint,
   pubsub_server: ShelleyPlants.PubSub,
   live_view: [signing_salt: "9QLolbg2"]
 
+# Background jobs. The customer_contact queue sends campaign emails; keep its
+# concurrency at or below the SES maximum send rate.
+config :shelley_plants, Oban,
+  repo: ShelleyPlants.Repo,
+  queues: [default: 10, customer_contact: 5]
+
+# Campaign email (admin pages at /admin/contact, public links at /cc)
+config :customer_contact,
+  repo: ShelleyPlants.Repo,
+  mailer: ShelleyPlants.Mailer,
+  host: ShelleyPlants.CustomerContactHost,
+  endpoint: ShelleyPlantsWeb.Endpoint,
+  public_path: "/cc",
+  oban: Oban,
+  queue: :customer_contact
+
 # Per-IP rate limits (ShelleyPlantsWeb.Plugs.RateLimit)
 config :shelley_plants, :rate_limits, public_mcp: [limit: 60, window_seconds: 60]
 

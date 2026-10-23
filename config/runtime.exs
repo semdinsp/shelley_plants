@@ -80,6 +80,16 @@ if config_env() == :dev and System.get_env("AWS_ACCESS_KEY_ID") do
 end
 
 if config_env() == :prod do
+  # Campaign email tracking: SES sends delivery/bounce/complaint events to an
+  # SNS topic, which posts them to /cc/sns. Only the listed topics are trusted.
+  config :customer_contact,
+    ses_configuration_set: System.get_env("CC_SES_CONFIGURATION_SET"),
+    sns_topic_arns:
+      "CC_SNS_TOPIC_ARNS"
+      |> System.get_env("")
+      |> String.split(",", trim: true)
+      |> Enum.map(&String.trim/1)
+
   database_url =
     System.get_env("DATABASE_URL") ||
       raise """

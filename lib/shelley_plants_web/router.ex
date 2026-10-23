@@ -2,6 +2,7 @@ defmodule ShelleyPlantsWeb.Router do
   use ShelleyPlantsWeb, :router
 
   import ShelleyPlantsWeb.UserAuth
+  import CustomerContact.Web.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -33,6 +34,11 @@ defmodule ShelleyPlantsWeb.Router do
     plug :accepts, ["json"]
     plug ShelleyPlantsWeb.Plugs.McpAuth
   end
+
+  # Campaign email tracking pixel, click redirect, unsubscribe and the SNS
+  # webhook. No session or CSRF: SNS and one-click unsubscribe POST without a
+  # token; signed tokens and AWS signatures authorize them instead.
+  forward "/cc", CustomerContact.Web.PublicPlug
 
   # Crawler files: no session or CSRF needed.
   scope "/", ShelleyPlantsWeb do
@@ -137,6 +143,14 @@ defmodule ShelleyPlantsWeb.Router do
       live "/contact-messages", Admin.ContactMessagesLive, :index
       live "/newsletter", Admin.NewsletterLive, :index
     end
+  end
+
+  # Campaign email admin pages (CustomerContact). Outside the aliased scope
+  # above, as the macro expects; both admin checks still apply.
+  scope "/admin" do
+    pipe_through [:browser, :require_authenticated_user, :require_admin_user]
+
+    customer_contact_admin("/contact", on_mount: [{ShelleyPlantsWeb.UserAuth, :require_admin}])
   end
 
   ## Authentication routes
