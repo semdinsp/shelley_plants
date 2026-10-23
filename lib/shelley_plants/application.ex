@@ -13,6 +13,7 @@ defmodule ShelleyPlants.Application do
       [
         ShelleyPlantsWeb.Telemetry,
         ShelleyPlants.Repo,
+        {Oban, Application.fetch_env!(:shelley_plants, Oban)},
         {DNSCluster, query: Application.get_env(:shelley_plants, :dns_cluster_query) || :ignore},
         {Phoenix.PubSub, name: ShelleyPlants.PubSub},
         ShelleyPlants.RateLimiter,

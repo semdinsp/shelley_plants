@@ -71,6 +71,9 @@ defmodule ShelleyPlantsWeb.Admin.DashboardLive do
             <.icon name="hero-envelope-open" /> Newsletter signups
             <span class="badge badge-sm">{@subscriber_count}</span>
           </.link>
+          <.link navigate="/admin/contact" class="btn btn-outline gap-2">
+            <.icon name="hero-megaphone" /> Customer contact
+          </.link>
         </div>
       </section>
 
