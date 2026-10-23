@@ -50,6 +50,31 @@ defmodule ShelleyPlantsWeb.UserLive.RegistrationTest do
                ~r/An email was sent to .*, please access it to confirm your account/
     end
 
+    test "emails the login link only to the new user and a notice to the BCC list",
+         %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      email = unique_user_email()
+
+      lv
+      |> form("#registration_form", user: valid_user_attributes(email: email))
+      |> render_submit()
+
+      assert_received {:email, %{subject: "Welcome to" <> _} = welcome}
+      assert welcome.to == [{"", email}]
+      assert welcome.bcc == []
+      assert welcome.reply_to == {"", "biosphere-native-plants@outlook.com"}
+
+      assert_received {:email, %{subject: "New account registration: " <> ^email} = notice}
+
+      assert notice.to == [
+               {"", "scott.sproule@gmail.com"},
+               {"", "biosphere-native-plants@outlook.com"}
+             ]
+
+      refute notice.text_body =~ "/users/log-in/"
+    end
+
     test "renders errors for duplicated email", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
