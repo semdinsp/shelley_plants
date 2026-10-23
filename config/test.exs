@@ -32,6 +32,9 @@ config :shelley_plants, mcp_force_start: true
 # tests' streams; its own tests start it directly.
 config :shelley_plants, :mcp_sse_reaper, false
 
+# Jobs are only run when a test asks (Oban.Testing)
+config :shelley_plants, Oban, testing: :manual
+
 # In test we don't send emails
 config :shelley_plants, ShelleyPlants.Mailer, adapter: Swoosh.Adapters.Test
 

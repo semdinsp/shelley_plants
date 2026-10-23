@@ -69,7 +69,9 @@ defmodule ShelleyPlants.MixProject do
       {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.5"},
       {:anubis_mcp, "~> 2.0"},
-      {:mdex, "~> 0.8"}
+      {:mdex, "~> 0.8"},
+      {:oban, "~> 2.19"},
+      {:customer_contact, github: "semdinsp/customer_contact", tag: "v0.1.0"}
     ]
   end
 
