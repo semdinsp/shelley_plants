@@ -24,22 +24,23 @@ config :shelley_plants, ShelleyPlantsWeb.Endpoint,
   http: [port: String.to_integer(System.get_env("PORT", "4000"))]
 
 # Sender for outgoing email. MAIL_FROM must be an identity verified in SES.
-# Replies go to the sender unless MAIL_REPLY_TO is set (e.g. when sending
-# from a noreply@ address with no mailbox).
+# Replies go to MAIL_REPLY_TO (the nursery's Outlook inbox by default), since
+# the sender is a noreply@ address with no mailbox.
 mail_from = System.get_env("MAIL_FROM", "scott.sproule@gmail.com")
 
 config :shelley_plants, :mail_sender,
   name: "Biosphere Native Plants",
   address: mail_from,
-  reply_to: System.get_env("MAIL_REPLY_TO", mail_from)
+  reply_to: System.get_env("MAIL_REPLY_TO", "biosphere-native-plants@outlook.com")
 
 # Contact form messages go to CONTACT_EMAIL; every contact and newsletter
-# email is also BCC'd to EMAIL_BCC (comma-separated).
+# email is also BCC'd to EMAIL_BCC (comma-separated), which also gets a notice
+# of each new account registration.
 config :shelley_plants, :outreach,
   contact_recipient: System.get_env("CONTACT_EMAIL", "shellsphoto44@gmail.com"),
   bcc:
     "EMAIL_BCC"
-    |> System.get_env("scott.sproule@gmail.com")
+    |> System.get_env("scott.sproule@gmail.com,biosphere-native-plants@outlook.com")
     |> String.split(",", trim: true)
     |> Enum.map(&String.trim/1)
 

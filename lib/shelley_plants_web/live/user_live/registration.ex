@@ -65,6 +65,8 @@ defmodule ShelleyPlantsWeb.UserLive.Registration do
             &url(~p"/users/log-in/#{&1}")
           )
 
+        ShelleyPlants.Outreach.Notifier.deliver_registration_notice(user)
+
         {:noreply,
          socket
          |> put_flash(

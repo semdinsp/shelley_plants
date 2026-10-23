@@ -10,7 +10,7 @@ defmodule ShelleyPlants.OutreachTest do
   @admin %Scope{admin?: true}
 
   describe "submit_contact_message/1" do
-    test "saves the message and emails it to Shelley, BCC'ing Scott" do
+    test "saves the message and emails it to Shelley, BCC'ing Scott and the nursery inbox" do
       {:ok, %ContactMessage{} = message} =
         Outreach.submit_contact_message(%{
           "name" => " Jane Gardener ",
@@ -22,7 +22,12 @@ defmodule ShelleyPlants.OutreachTest do
 
       assert_email_sent(fn email ->
         assert email.to == [{"", "shellsphoto44@gmail.com"}]
-        assert email.bcc == [{"", "scott.sproule@gmail.com"}]
+
+        assert email.bcc == [
+                 {"", "scott.sproule@gmail.com"},
+                 {"", "biosphere-native-plants@outlook.com"}
+               ]
+
         assert email.reply_to == {"Jane Gardener", "jane@example.com"}
         assert email.subject =~ "Jane Gardener"
         assert email.text_body =~ "Do you have <b>milkweed</b>?\nThanks!"
@@ -42,7 +47,7 @@ defmodule ShelleyPlants.OutreachTest do
   end
 
   describe "subscribe/1" do
-    test "adds the subscriber and sends a welcome email, BCC'ing Scott" do
+    test "adds the subscriber and sends a welcome email, BCC'ing Scott and the nursery inbox" do
       {:ok, %NewsletterSubscriber{} = sub} =
         Outreach.subscribe(%{"name" => "Sam", "email" => "sam@example.com"})
 
@@ -50,8 +55,14 @@ defmodule ShelleyPlants.OutreachTest do
 
       assert_email_sent(fn email ->
         assert email.to == [{"", "sam@example.com"}]
-        assert email.bcc == [{"", "scott.sproule@gmail.com"}]
+
+        assert email.bcc == [
+                 {"", "scott.sproule@gmail.com"},
+                 {"", "biosphere-native-plants@outlook.com"}
+               ]
+
         assert email.subject =~ "Welcome"
+        assert email.reply_to == {"", "biosphere-native-plants@outlook.com"}
         assert email.html_body =~ "Hi Sam,"
         assert email.html_body =~ "/plants/gallery"
       end)

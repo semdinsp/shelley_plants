@@ -3,11 +3,12 @@ defmodule ShelleyPlants.Outreach.Notifier do
   Emails for the contact form and newsletter signups.
 
   Recipients come from the `:outreach` config (see `config/runtime.exs`):
-  contact messages go to `:contact_recipient`, and every email here is BCC'd
-  to `:bcc`.
+  contact messages go to `:contact_recipient`, every email to someone else is
+  BCC'd to `:bcc`, and `:bcc` gets a notice of each new registration.
   """
 
   alias ShelleyPlants.{EmailLayout, Outreach}
+  alias ShelleyPlants.Accounts.User
   alias ShelleyPlants.Outreach.{ContactMessage, NewsletterSubscriber}
 
   @site_name EmailLayout.site_name()
@@ -71,6 +72,24 @@ defmodule ShelleyPlants.Outreach.Notifier do
       unsubscribe_url: unsubscribe_url(subscriber)
     }
     |> EmailLayout.build(to: subscriber.email, bcc: config(:bcc))
+    |> EmailLayout.deliver()
+  end
+
+  @doc """
+  Tells the `:bcc` list that someone registered an account. Sent as its own
+  email rather than BCC'ing the registration email, because that email holds
+  a one-time login link for the new account.
+  """
+  def deliver_registration_notice(%User{} = user) do
+    %{
+      subject: "New account registration: #{user.email}",
+      preheader: "#{user.email} registered an account on the website.",
+      heading: "New account registration",
+      greeting: "Hi,",
+      paragraphs: ["Someone registered an account on the website."],
+      details: [{"Email", user.email}]
+    }
+    |> EmailLayout.build(to: config(:bcc))
     |> EmailLayout.deliver()
   end
 
