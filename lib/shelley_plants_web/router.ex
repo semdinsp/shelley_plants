@@ -150,7 +150,9 @@ defmodule ShelleyPlantsWeb.Router do
   scope "/admin" do
     pipe_through [:browser, :require_authenticated_user, :require_admin_user]
 
-    customer_contact_admin("/contact", on_mount: [{ShelleyPlantsWeb.UserAuth, :require_admin}])
+    customer_contact_admin "/contact",
+      on_mount: [{ShelleyPlantsWeb.UserAuth, :require_admin}],
+      home_path: "/admin"
   end
 
   ## Authentication routes
