@@ -33,6 +33,14 @@ defmodule ShelleyPlantsWeb.CustomerContactTest do
       end
     end
 
+    test "their home icon links back to the admin dashboard", %{conn: conn} do
+      {:ok, admin} = ShelleyPlants.Accounts.set_user_admin(user_fixture(), true)
+      {:ok, lv, _html} = conn |> log_in_user(admin) |> live("/admin/contact/campaigns/new")
+
+      assert has_element?(lv, ~s|#cc-home[href="/admin"]|)
+      refute has_element?(lv, "#missing-postal-address")
+    end
+
     test "the admin dashboard links to them", %{conn: conn} do
       {:ok, admin} = ShelleyPlants.Accounts.set_user_admin(user_fixture(), true)
       {:ok, lv, _html} = conn |> log_in_user(admin) |> live(~p"/admin")
@@ -64,6 +72,7 @@ defmodule ShelleyPlantsWeb.CustomerContactTest do
 
     assert brand.from == {"Biosphere Native Plants", sender[:address]}
     assert brand.postal_address =~ "Westport, ON"
+    assert CustomerContact.Campaigns.postal_address?()
     assert brand.primary_color == "#0c170d"
   end
 
