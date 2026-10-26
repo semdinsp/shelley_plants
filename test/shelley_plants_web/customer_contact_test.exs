@@ -41,6 +41,13 @@ defmodule ShelleyPlantsWeb.CustomerContactTest do
       refute has_element?(lv, "#missing-postal-address")
     end
 
+    test "the audience page has the add-a-person form", %{conn: conn} do
+      {:ok, admin} = ShelleyPlants.Accounts.set_user_admin(user_fixture(), true)
+      {:ok, lv, _html} = conn |> log_in_user(admin) |> live("/admin/contact/audience")
+
+      assert has_element?(lv, "#contact-form")
+    end
+
     test "the admin dashboard links to them", %{conn: conn} do
       {:ok, admin} = ShelleyPlants.Accounts.set_user_admin(user_fixture(), true)
       {:ok, lv, _html} = conn |> log_in_user(admin) |> live(~p"/admin")
