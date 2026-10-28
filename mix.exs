@@ -71,7 +71,7 @@ defmodule ShelleyPlants.MixProject do
       {:anubis_mcp, "~> 2.0"},
       {:mdex, "~> 0.8"},
       {:oban, "~> 2.19"},
-      {:customer_contact, github: "semdinsp/customer_contact", tag: "v0.1.7"}
+      {:customer_contact, github: "semdinsp/customer_contact", tag: "v0.1.9"}
     ]
   end
 
