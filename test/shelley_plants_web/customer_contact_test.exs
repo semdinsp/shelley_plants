@@ -7,7 +7,12 @@ defmodule ShelleyPlantsWeb.CustomerContactTest do
   alias CustomerContact.Recipient
   alias ShelleyPlants.{CustomerContactHost, Outreach}
 
-  @admin_pages ["/admin/contact", "/admin/contact/audience", "/admin/contact/campaigns/new"]
+  @admin_pages [
+    "/admin/contact",
+    "/admin/contact/audience",
+    "/admin/contact/campaigns/new",
+    "/admin/contact/images"
+  ]
 
   describe "admin pages" do
     test "logged-out visitors are redirected", %{conn: conn} do
