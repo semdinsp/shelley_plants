@@ -49,7 +49,11 @@ defmodule ShelleyPlantsWeb.Admin.GuideControllerTest do
     test "returns 404 for an unknown slug", %{conn: conn} do
       conn = admin_conn(conn)
       conn = get(conn, ~p"/admin/guides/does-not-exist")
-      assert html_response(conn, 404)
+      html = html_response(conn, 404)
+
+      assert html =~ "Page not found"
+      # Rendered without the root layout, so it's a single HTML document
+      assert length(String.split(html, "<html")) == 2
     end
   end
 end

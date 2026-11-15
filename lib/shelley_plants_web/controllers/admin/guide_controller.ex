@@ -46,6 +46,8 @@ defmodule ShelleyPlantsWeb.Admin.GuideController do
       nil ->
         conn
         |> put_status(:not_found)
+        |> put_root_layout(false)
+        |> put_layout(false)
         |> put_view(ShelleyPlantsWeb.ErrorHTML)
         |> render(:"404")
 
