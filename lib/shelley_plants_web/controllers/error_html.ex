@@ -32,6 +32,13 @@ defmodule ShelleyPlantsWeb.ErrorHTML do
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <meta name="theme-color" content="#2d6a4f" />
         <link rel="stylesheet" href={~p"/assets/css/app.css"} />
+        <%!-- Apply the visitor's saved light/dark choice (set by the site's theme toggle) --%>
+        <script>
+          try {
+            const t = localStorage.getItem("phx:theme");
+            if (t && t !== "system") document.documentElement.setAttribute("data-theme", t);
+          } catch (_) {}
+        </script>
       </head>
       <body class="min-h-screen bg-base-100 text-base-content">
         <header class="border-b border-base-200/60 px-4 sm:px-6 lg:px-8">
@@ -47,10 +54,17 @@ defmodule ShelleyPlantsWeb.ErrorHTML do
             <p class="text-sm font-semibold tracking-widest text-primary">{@code}</p>
             <h1 class="mt-2 text-3xl font-bold sm:text-4xl">{@title}</h1>
             <div class="mt-4 text-base-content/70">{render_slot(@inner_block)}</div>
-            <div class="mt-8 flex flex-wrap justify-center gap-3">
-              <a href="/" class="btn btn-primary">Back to home</a>
-              <a href="/plants/gallery" class="btn btn-ghost">Shop plants</a>
-              <a href="/contact" class="btn btn-ghost">Contact us</a>
+            <%!-- Stacked full-width on phones so no button is orphaned on its own row --%>
+            <div class="mx-auto mt-8 flex max-w-xs flex-col gap-3 sm:max-w-none sm:flex-row sm:justify-center">
+              <a href="/" class="btn btn-primary gap-2">
+                <.icon name="hero-home" class="size-5" /> Back to home
+              </a>
+              <a href="/plants/gallery" class="btn btn-outline gap-2">
+                <.icon name="hero-photo" class="size-5" /> Shop plants
+              </a>
+              <a href="/contact" class="btn btn-outline gap-2">
+                <.icon name="hero-envelope" class="size-5" /> Contact us
+              </a>
             </div>
           </div>
         </main>
