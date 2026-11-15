@@ -2,23 +2,60 @@ defmodule ShelleyPlantsWeb.ErrorHTML do
   @moduledoc """
   This module is invoked by your endpoint in case of errors on HTML requests.
 
-  See config/config.exs.
+  See config/config.exs. Error pages render with `layout: false`, so each
+  page is a complete, self-contained document. They deliberately avoid
+  anything that depends on the session or current scope, since errors can
+  occur before those plugs have run.
   """
   use ShelleyPlantsWeb, :html
 
-  # If you want to customize your error pages,
-  # uncomment the embed_templates/1 call below
-  # and add pages to the error directory:
-  #
-  #   * lib/shelley_plants_web/controllers/error_html/404.html.heex
-  #   * lib/shelley_plants_web/controllers/error_html/500.html.heex
-  #
-  # embed_templates "error_html/*"
+  embed_templates "error_html/*"
 
-  # The default is to render a plain text page based on
-  # the template name. For example, "404.html" becomes
-  # "Not Found".
+  # Fallback for any other status (e.g. 403, 422): plain status message.
   def render(template, _assigns) do
     Phoenix.Controller.status_message_from_template(template)
+  end
+
+  attr :title, :string, required: true
+  attr :code, :string, required: true
+  slot :inner_block, required: true
+
+  def error_page(assigns) do
+    ~H"""
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="robots" content="noindex" />
+        <title>{@title} · Biosphere Native Plants</title>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <meta name="theme-color" content="#2d6a4f" />
+        <link rel="stylesheet" href={~p"/assets/css/app.css"} />
+      </head>
+      <body class="min-h-screen bg-base-100 text-base-content">
+        <header class="border-b border-base-200/60 px-4 sm:px-6 lg:px-8">
+          <div class="mx-auto flex h-14 max-w-5xl items-center">
+            <a href="/" class="flex items-center gap-2" aria-label="Biosphere Native Plants home">
+              <img src="/images/biologo.jpg" alt="" class="size-8 rounded-full object-cover" />
+              <span class="font-semibold">Biosphere Native Plants</span>
+            </a>
+          </div>
+        </header>
+        <main class="px-4 py-16 sm:py-24">
+          <div class="mx-auto max-w-xl text-center">
+            <p class="text-sm font-semibold tracking-widest text-primary">{@code}</p>
+            <h1 class="mt-2 text-3xl font-bold sm:text-4xl">{@title}</h1>
+            <div class="mt-4 text-base-content/70">{render_slot(@inner_block)}</div>
+            <div class="mt-8 flex flex-wrap justify-center gap-3">
+              <a href="/" class="btn btn-primary">Back to home</a>
+              <a href="/plants/gallery" class="btn btn-ghost">Shop plants</a>
+              <a href="/contact" class="btn btn-ghost">Contact us</a>
+            </div>
+          </div>
+        </main>
+      </body>
+    </html>
+    """
   end
 end
